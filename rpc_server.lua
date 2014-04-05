@@ -22,6 +22,6 @@ myobj2 = {
   end
 }
 
-serv1 = luarpc.createServant (myobj1, arq_interface)
-serv2 = luarpc.createServant (myobj2, arq_interface)
+server1 = luarpc.createServant (myobj1, arq_interface)
+server2 = luarpc.createServant (myobj2, arq_interface)
 luarpc.waitIncoming()

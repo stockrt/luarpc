@@ -9,7 +9,7 @@
 -- void
 
 interface {
-  name = minhaInt,
+  name = myInterface,
   methods = {
     foo = {
       resulttype = "double",
