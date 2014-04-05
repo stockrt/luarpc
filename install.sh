@@ -3,4 +3,4 @@
 brew install lua
 brew install luarocks
 luarocks install luasocket
-luarocks install lua-cjson
+#luarocks install lua-cjson
