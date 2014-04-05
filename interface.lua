@@ -8,6 +8,7 @@
 -- double
 -- void
 
+-- Interface.
 interface {
   name = myInterface,
   methods = {

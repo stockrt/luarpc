@@ -2,11 +2,13 @@
 
 local socket = require("socket")
 
+-- This is the main module luarpc.
 local luarpc = {}
+
 local server_list = {}
 local client_list = {}
 
-function luarpc.createServant(myobj, arq_interface)
+function luarpc.createServant(myobj, interface_file)
   print("Setting up server " .. #server_list .. "...")
 
   -- tcp, bind, listen shortcut.

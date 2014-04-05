@@ -1,11 +1,20 @@
 #!/usr/bin/env lua
 
+-- Module.
 local luarpc = require("luarpc")
 
-local arq_interface = "interface.lua"
+-- Arguments.
+if #arg < 3 then
+  print("Usage: " .. arg[0] .. " <interface_file> <server_address> <server_port>")
+  os.exit(1)
+end
+local interface_file = arg[1]
+local server_ip = arg[2]
+local server_port = arg[3]
 
-local proxy1 = luarpc.createproxy(server_ip, server_port, arq_interface)
-local proxy2 = luarpc.createproxy(server_ip, server_port, arq_interface)
+-- Proxies.
+local proxy1 = luarpc.createproxy(server_ip, server_port, interface_file)
+local proxy2 = luarpc.createproxy(server_ip, server_port, interface_file)
 
 -- proxy1/myobj1
 local sum, str = proxy1.foo(5, 3)

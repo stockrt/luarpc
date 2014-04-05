@@ -1,9 +1,16 @@
 #!/usr/bin/env lua
 
+-- Module.
 local luarpc = require("luarpc")
 
-local arq_interface = "interface.lua"
+-- Arguments.
+if #arg < 1 then
+  print("Usage: " .. arg[0] .. " <interface_file>")
+  os.exit(1)
+end
+local interface_file = arg[1]
 
+-- Objects.
 local myobj1 = {
   foo = function (a, b, str)
     return a + b, "alo alo"
@@ -12,7 +19,6 @@ local myobj1 = {
     return n
   end
 }
-
 local myobj2 = {
   foo = function (a, b, str)
     return a - b, "tchau"
@@ -22,7 +28,11 @@ local myobj2 = {
   end
 }
 
-local server1 = luarpc.createServant(myobj1, arq_interface)
-local server2 = luarpc.createServant(myobj2, arq_interface)
+-- server1/myobj1
+local server1 = luarpc.createServant(myobj1, interface_file)
 
+-- server2/myobj2
+local server2 = luarpc.createServant(myobj2, interface_file)
+
+-- Wait for clients.
 luarpc.waitIncoming()
