@@ -18,7 +18,7 @@ function SaveTable(Table)
     end
     local outValue = function(value) return outFuncs[type(value)](value) end
     local out = "{"
-    for i,v in pairs(value) do out = out .. "[" .. outValue(i) .. "]=" .. outValue(v) .. ";" end
+    for i, v in pairs(value) do out = out .. "[" .. outValue(i) .. "]=" .. outValue(v) .. ";" end
     -- record that it has already been saved
     savedTables[value] = true;
     return out .. "}"
