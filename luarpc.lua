@@ -39,3 +39,5 @@ function createrpcproxy(hostname, port, interface)
         return functions;
     end
 end
+
+return luarpc

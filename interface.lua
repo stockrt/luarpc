@@ -1,5 +1,3 @@
-#!/usr/bin/env lua5.1
-
 -- Os tipos que podem aparecer nesta especificação de interface são char,
 -- string, double e void.
 -- Os parâmetros podem ser declarados como in, out ou inout.
