@@ -9,12 +9,12 @@ if #arg < 3 then
   os.exit(1)
 end
 local interface_file = arg[1]
-local server_ip = arg[2]
+local server_address = arg[2]
 local server_port = arg[3]
 
 -- Proxies.
-local proxy1 = luarpc.createproxy(server_ip, server_port, interface_file)
-local proxy2 = luarpc.createproxy(server_ip, server_port, interface_file)
+local proxy1 = luarpc.createproxy(server_address, server_port, interface_file)
+local proxy2 = luarpc.createproxy(server_address, server_port, interface_file)
 
 -- proxy1/myobj1
 local sum, str = proxy1.foo(5, 3)
