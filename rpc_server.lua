@@ -2,9 +2,9 @@
 
 local luarpc = require("luarpc")
 
-arq_interface = "interface.lua"
+local arq_interface = "interface.lua"
 
-myobj1 = {
+local myobj1 = {
   foo = function (a, b, s)
     return a+b, "alo alo"
   end,
@@ -13,7 +13,7 @@ myobj1 = {
   end
 }
 
-myobj2 = {
+local myobj2 = {
   foo = function (a, b, s)
     return a-b, "tchau"
   end,
@@ -22,6 +22,6 @@ myobj2 = {
   end
 }
 
-server1 = luarpc.createServant (myobj1, arq_interface)
-server2 = luarpc.createServant (myobj2, arq_interface)
+local server1 = luarpc.createServant (myobj1, arq_interface)
+local server2 = luarpc.createServant (myobj2, arq_interface)
 luarpc.waitIncoming()

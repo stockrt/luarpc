@@ -2,7 +2,7 @@
 
 local luarpc = require("luarpc")
 
-arq_interface = "interface.lua"
+local arq_interface = "interface.lua"
 
 local proxy1 = luarpc.createproxy (IP, porta1, arq_interface)
 local proxy2 = luarpc.createproxy (IP, porta2, arq_interface)

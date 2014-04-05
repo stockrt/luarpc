@@ -1,6 +1,6 @@
 -- http://www.inf.puc-rio.br/~noemi/sd-14/trab1.html
 
-socket = require("socket")
+local socket = require("socket")
 
 local luarpc = {}
 local server_list = {}
@@ -21,7 +21,7 @@ function luarpc.createServant(myobj, arq_interface)
   server:setoption('keepalive', true)
   server:setoption('linger', {on = false, timeout = 0})
   server:setoption('tcp-nodelay', true)
-  server:settimeout(1) -- accept/send/receive timeout
+  server:settimeout(0.1) -- accept/send/receive timeout
 
   -- Server list.
   table.insert(server_list, server)
@@ -30,6 +30,7 @@ function luarpc.createServant(myobj, arq_interface)
   -- Info.
   local ip, port = server:getsockname()
   print("Please connect on port " .. port)
+  print()
 
   return server
 end
@@ -40,9 +41,8 @@ function luarpc.waitIncoming()
 
   while true do
     for i, server in pairs(server_list) do
-      print("Server " .. i .. " " .. server)
+      -- print("Server " .. i .. " waiting for a client...")
       local client = server:accept()
-      print("Client " .. client)
 
       -- Client connected.
       if client then
@@ -54,24 +54,25 @@ function luarpc.waitIncoming()
 
         -- Info.
         local ip, port = client:getsockname()
-        print("Client connected " .. client:getpeername() .. " client local port " .. port)
+        print("Client connected " .. client:getpeername() .. " on port " .. port)
       end
     end
 
-    -- Sleep.
-    socket.select(nil, nil, 3)
-
     -- Connected client sent some data.
-    client_recv_ready_list = socket.select(client_list, nil, 1)
-    -- table.foreach(client_recv_ready_list, print)
+    -- print("Waiting for any client activity...")
+    local client_recv_ready_list, client_send_ready_list, err = socket.select(client_list, nil, 0.1)
     for i, client in pairs(client_recv_ready_list) do
-      local line, err = client:receive("*l")
-      if err then
-        print("ERROR: " .. err)
-      else
-        print("LINE: " .. line)
+      if type(client) ~= "number" then
+        local ip, port = client:getsockname()
+        print("Receiving data from client " .. client:getpeername() .. " on port " .. port)
+        local line, err = client:receive("*l")
+        if err then
+          print("ERROR: " .. err)
+        else
+          print("< " .. line)
+        end
+        client:close()
       end
-      client:close()
     end
   end
 end
