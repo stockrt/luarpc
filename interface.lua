@@ -7,7 +7,6 @@
 -- string
 -- double
 -- void
--- table
 
 interface {
   name = minhaInt,

@@ -1,3 +1,5 @@
+-- http://www.inf.puc-rio.br/~noemi/sd-14/trab1.html
+
 local luarpc = {}
 
 function luarpc.createServant()
