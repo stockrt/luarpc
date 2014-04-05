@@ -1,17 +1,26 @@
 -- http://www.inf.puc-rio.br/~noemi/sd-14/trab1.html
 
+socket = require("socket")
+
 local luarpc = {}
+local servant_list = {}
 
 function luarpc.createServant()
-  print("luarpc.createServant")
+  local serv = assert(socket.bind("*", 0))
+  table.insert(servant_list, serv)
+  -- table.foreach(servant_list, print)
+  local ip, port = serv:getsockname()
+  print("Please connect on port " .. port)
+  return serv
 end
 
 function luarpc.waitIncoming()
-  print("luarpc.waitIncoming")
+  print("Waiting for clients...")
+  -- table.foreach(servant_list, print)
+  -- socket.select(servant_list)
 end
 
 function luarpc.createProxy()
-  print("luarpc.createProxy")
 end
 
 function createrpcproxy(hostname, port, interface)

@@ -1,23 +1,23 @@
 #!/usr/bin/env lua
 
-local luarpc = require('luarpc')
+local luarpc = require("luarpc")
 
-myobj1 = { foo =
-  function (a, b, s)
+arq_interface = "interface.lua"
+
+myobj1 = {
+  foo = function (a, b, s)
     return a+b, "alo alo"
   end,
-  boo =
-  function (n)
+  boo = function (n)
     return n
   end
 }
 
-myobj2 = { foo =
-  function (a, b, s)
+myobj2 = {
+  foo = function (a, b, s)
     return a-b, "tchau"
   end,
-  boo =
-  function (n)
+  boo = function (n)
     return 1
   end
 }
