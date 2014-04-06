@@ -56,6 +56,8 @@ function luarpc.waitIncoming()
   print("Waiting for clients...")
 
   while true do
+    local skip = false
+
     for _, servant in pairs(servant_list) do
       -- Wait for new client connection on this servant.
       -- Wait for connection just a few ms.
@@ -88,6 +90,8 @@ function luarpc.waitIncoming()
           local rpc_method, err = client:receive("*l")
           if err then
             print("ERROR: Receiving method from client: " .. err)
+            skip = true
+            break
           else
             print("< rpc_method: " .. rpc_method)
           end
@@ -103,21 +107,33 @@ function luarpc.waitIncoming()
               if param.direction == "in" or param.direction == "inout" then
                 print("Receiving value...")
                 local val, err = client:receive("*l")
-                table.insert(values, val)
+                if err then
+                  print("ERROR: Receiving value from client: " .. err)
+                  skip = true
+                  break
+                else
+                  -- TODO: Validate types.
+                  print("< val: " .. val)
+                  table.insert(values, val)
+                end
               end
             end
 
-            -- Call the method on server-side.
-            local status, res = pcall(servant.obj[rpc_method], unpack(values))
-            print(status)
-            print(res)
-
-            -- Return the result to client-side.
+            -- Call method on server.
+            if not skip then
+              local status, result = pcall(servant.obj[rpc_method], unpack(values))
+              if not status then
+              else
+                -- Return result to client.
+                client:send(result)
+              end
+            end
           else
             print("ERROR: Invalid method " .. rpc_method)
             client:send("___ERRORPC: Invalid method " .. rpc_method)
           end
 
+          -- Terminate connection.
           client:close()
         end
       end

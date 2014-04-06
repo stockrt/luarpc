@@ -18,6 +18,12 @@ local myobj1 = {
   boo = function (n)
     return n
   end
+  bar = function (n)
+    return n + 1
+  end
+  baz = function (str1, str2)
+    return "echo concat1: " .. str1 .. str2
+  end
 }
 local myobj2 = {
   foo = function (a, b, str)
@@ -25,6 +31,12 @@ local myobj2 = {
   end,
   boo = function (n)
     return 1
+  end
+  bar = function (n)
+    return n - 1
+  end
+  baz = function (str1, str2)
+    return "echo concat2: " .. str1 .. str2
   end
 }
 

@@ -26,5 +26,20 @@ interface {
         {direction = "inout", type = "double"},
       },
     },
+    bar = {
+      resulttype = "string",
+      args = {
+        {direction = "in", type = "string"},
+        {direction = "out", type = "string"},
+      },
+    },
+    baz = {
+      resulttype = "string",
+      args = {
+        {direction = "in", type = "string"},
+        {direction = "in", type = "string"},
+        {direction = "out", type = "string"},
+      },
+    },
   }
 }

@@ -19,22 +19,50 @@ local proxy2 = luarpc.createproxy(server_address, server_port2, interface_file)
 
 -- proxy1/myobj1
 print("Proxy1")
-local sum, str = proxy1.foo(5, 3)
-print(sum)
-print(str)
-local res = proxy1.boo(20)
-print("echo " .. res)
-local res = proxy1.baz("nao existe")
-print("err " .. res)
+
+local result, msg = proxy1.foo(5, 3)
+print("Result: " .. result .. " / Msg: " .. msg)
+
+local result = proxy1.boo(20)
+print("Echo: " .. result)
+
+local result = proxy1.boo(30)
+print("Echo: " .. result)
+
+local result = proxy1.bar("tipo errado")
+print("Err: " .. result)
+
+local result = proxy1.bar("quantia errada", "tudo errado")
+print("Err: " .. result)
+
+local result = proxy1.baz("abc", "def")
+print("Concat1: " .. result)
+
+local result = proxy1.nodef("nao existe")
+print("Err: " .. result)
 
 print()
 
 -- proxy2/myobj2
 print("Proxy2")
-local sub, str = proxy2.foo(5, 3)
-print(sub)
-print(str)
-local res = proxy2.boo(20)
-print("fixed " .. res)
-local res = proxy2.baz("nao existe")
-print("err " .. res)
+
+local result, msg = proxy2.foo(5, 3)
+print("Result: " .. result .. " / Msg: " .. msg)
+
+local result = proxy2.boo(20)
+print("Fixed: " .. result)
+
+local result = proxy2.boo(30)
+print("Fixed: " .. result)
+
+local result = proxy2.bar("tipo errado")
+print("Err: " .. result)
+
+local result = proxy2.bar("quantia errada", "tudo errado")
+print("Err: " .. result)
+
+local result = proxy2.baz("abc", "def")
+print("Concat2: " .. result)
+
+local result = proxy2.nodef("nao existe")
+print("Err: " .. result)
