@@ -5,11 +5,17 @@ local socket = require("socket")
 -- This is the main module luarpc.
 local luarpc = {}
 
-local server_list = {}
+local servant_list = {} -- {server, myobj, myinterface}
 local client_list = {}
+myinterface = {}
+
+function interface(iface)
+  -- Global namespace.
+  myinterface = iface
+end
 
 function luarpc.createServant(myobj, interface_file)
-  print("Setting up server " .. #server_list .. "...")
+  print("Setting up servant " .. #servant_list .. "...")
 
   -- tcp, bind, listen shortcut.
   local server = socket.bind("*", 0, 2048)
@@ -25,26 +31,34 @@ function luarpc.createServant(myobj, interface_file)
   server:setoption('tcp-nodelay', true)
   server:settimeout(0.1) -- accept/send/receive timeout
 
-  -- Server list.
-  table.insert(server_list, server)
-  -- table.foreach(server_list, print)
+  -- Interface.
+  dofile(interface_file)
+
+  -- Servant.
+  local servant = {
+    server = server,
+    obj = myobj,
+    iface = myinterface,
+  }
+
+  -- Servant list.
+  table.insert(servant_list, servant)
 
   -- Info.
   local ip, port = server:getsockname()
   print("Please connect on port " .. port)
   print()
 
-  return server
+  return servant
 end
 
 function luarpc.waitIncoming()
   print("Waiting for clients...")
-  -- table.foreach(server_list, print)
 
   while true do
-    for i, server in pairs(server_list) do
-      -- print("Server " .. i .. " waiting for a client...")
-      local client = server:accept()
+    for _, servant in pairs(servant_list) do
+      -- Wait for new client connection.
+      local client = servant.server:accept()
 
       -- Client connected.
       if client then
@@ -61,9 +75,8 @@ function luarpc.waitIncoming()
     end
 
     -- Connected client sent some data.
-    -- print("Waiting for any client activity...")
-    local client_recv_ready_list, client_send_ready_list, err = socket.select(client_list, nil, 0.1)
-    for i, client in pairs(client_recv_ready_list) do
+    local client_recv_ready_list, _, err = socket.select(client_list, nil, 0.1)
+    for _, client in pairs(client_recv_ready_list) do
       if type(client) ~= "number" then
         local ip, port = client:getsockname()
         print("Receiving data from client " .. client:getpeername() .. " on port " .. port)

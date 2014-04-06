@@ -10,7 +10,7 @@
 
 -- Interface.
 interface {
-  name = myInterface,
+  name = "myInterface",
   methods = {
     foo = {
       resulttype = "double",

@@ -29,10 +29,10 @@ local myobj2 = {
 }
 
 -- server1/myobj1
-local server1 = luarpc.createServant(myobj1, interface_file)
+local servant1 = luarpc.createServant(myobj1, interface_file)
 
 -- server2/myobj2
-local server2 = luarpc.createServant(myobj2, interface_file)
+local servant2 = luarpc.createServant(myobj2, interface_file)
 
 -- Wait for clients.
 luarpc.waitIncoming()
