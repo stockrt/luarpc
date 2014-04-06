@@ -1,0 +1,35 @@
+local luarpc = require("luarpc")
+
+describe("luarpc module", function()
+  describe("should work", function()
+    it("should serialize a string", function()
+      assert.same("oi", luarpc.encode("string", "oi"))
+    end)
+
+    it("should escape new lines", function()
+      assert.same("\\n", luarpc.encode("string", "\n"))
+    end)
+
+    it("should escape slashes", function()
+      assert.same("\\\\n", luarpc.encode("string", "\\n"))
+    end)
+
+    it("should serialize a char", function()
+      assert.same("o", luarpc.encode("char", "o"))
+    end)
+
+    it("should support doubles", function()
+      assert.same("3.1415", luarpc.encode("double", 3.1415))
+    end)
+
+    it("should deserialize to original value", function()
+      assert.same("abc", luarpc.decode("string", luarpc.encode("string", "abc")))
+      assert.same("a", luarpc.decode("char", luarpc.encode("char", "a")))
+      assert.same(3.14, luarpc.decode("double", luarpc.encode("double", 3.14)))
+      assert.same("a\\b", luarpc.decode("string", luarpc.encode("string", "a\\b")))
+      assert.same("a\n", luarpc.decode("string", luarpc.encode("string", "a\n")))
+      assert.same("\n", luarpc.decode("string", luarpc.encode("string", "\n")))
+      assert.same("\\n\\", luarpc.decode("string", luarpc.encode("string", "\\n\\")))
+    end)
+  end)
+end)
