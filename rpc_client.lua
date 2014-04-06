@@ -38,6 +38,9 @@ print("Err: " .. result)
 local result = proxy1.baz("abc", "def")
 print("Concat1: " .. result)
 
+local result = proxy1.baz("multiline1\nmultiline2\ncom escape indicado o barran \\n na mesma linha", ".")
+print("Concat1: " .. result)
+
 local result = proxy1.nodef("nao existe")
 print("Err: " .. result)
 
@@ -62,6 +65,12 @@ local result = proxy2.bar("quantia errada", "tudo errado")
 print("Err: " .. result)
 
 local result = proxy2.baz("abc", "def")
+print("Concat2: " .. result)
+
+x = [[multiline1
+multiline2
+com escape indicado o barran \n na mesma linha]]
+local result = proxy2.baz(x, ".")
 print("Concat2: " .. result)
 
 local result = proxy2.nodef("nao existe")
