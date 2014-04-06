@@ -48,5 +48,18 @@ interface {
         {direction = "out", type = "string"},
       },
     },
+    hello = {
+      resulttype = "string",
+      args = {
+        {direction = "inout", type = "string"},
+      },
+    },
+    capabilities = {
+      resulttype = "string",
+      args = {
+        {direction = "in", type = "void"},
+        {direction = "out", type = "string"},
+      },
+    },
   }
 }

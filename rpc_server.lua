@@ -27,6 +27,27 @@ local myobj1 = {
   cha = function (c1, c2)
     return "echo char concat1: " .. c1 .. c2
   end,
+  hello = function (str)
+    return "Greetings from obj1, " .. str .. "!"
+  end,
+  capabilities = function ()
+    local caps = ""
+    for method_name, method in pairs(myinterface.methods) do
+      local cap = method.resulttype .. " " .. method_name .. "("
+      for i, param in pairs(method.args) do
+        if param.direction == "in" or param.direction == "inout" then
+          cap = cap .. param.type .. ", "
+        end
+      end
+      -- Removes the last ", " and appends ")" for method termination.
+      cap = cap:gsub(", $", "") .. ")"
+      -- Each capability goes in a new line.
+      caps = caps .. cap .. "\n"
+    end
+    -- Removes the last "\n" capability separator.
+    caps = caps:gsub("\n$", "")
+    return caps
+  end,
 }
 local myobj2 = {
   foo = function (a, b, str)
@@ -43,6 +64,27 @@ local myobj2 = {
   end,
   cha = function (c1, c2)
     return "echo char concat2: " .. c1 .. c2
+  end,
+  hello = function (str)
+    return "Greetings from obj2, " .. str .. "!"
+  end,
+  capabilities = function ()
+    local caps = ""
+    for method_name, method in pairs(myinterface.methods) do
+      local cap = method.resulttype .. " " .. method_name .. "("
+      for i, param in pairs(method.args) do
+        if param.direction == "in" or param.direction == "inout" then
+          cap = cap .. param.type .. ", "
+        end
+      end
+      -- Removes the last ", " and appends ")" for method termination.
+      cap = cap:gsub(", $", "") .. ")"
+      -- Each capability is separated by "  |  ".
+      caps = caps .. cap .. "  |  "
+    end
+    -- Removes the last " | " capability separator.
+    caps = caps:gsub("  |  $", "")
+    return caps
   end,
 }
 

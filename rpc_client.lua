@@ -47,7 +47,25 @@ print("Str: " .. result)
 local result = proxy1.cha("abc", 123)
 print("Err: " .. result)
 
-local result = proxy1.nodef("nao existe")
+local result = proxy1.naodefinido("nao existe")
+print("Err: " .. result)
+
+local result = proxy1.hello("Rogerio proxy1")
+print("Greet: " .. result)
+
+local result = proxy1.capabilities()
+print("Cap: " .. result)
+
+local result = proxy1.hello()
+print("Err: " .. result)
+
+local result = proxy1.capabilities("nao deveria passar param")
+print("Err: " .. result)
+
+local result = proxy1.capabilities(1, 2)
+print("Err: " .. result)
+
+local result = proxy1.capabilities(1)
 print("Err: " .. result)
 
 print()
@@ -85,5 +103,23 @@ print("Str: " .. result)
 local result = proxy2.cha(1, 2)
 print("Err: " .. result)
 
-local result = proxy2.nodef("nao existe")
+local result = proxy2.naodefinido("nao existe")
+print("Err: " .. result)
+
+local result = proxy2.hello("Rogerio proxy2")
+print("Greet: " .. result)
+
+local result = proxy2.capabilities()
+print("Cap: " .. result)
+
+local result = proxy2.hello()
+print("Err: " .. result)
+
+local result = proxy2.capabilities("nao deveria passar param")
+print("Err: " .. result)
+
+local result = proxy2.capabilities(1, 2)
+print("Err: " .. result)
+
+local result = proxy2.capabilities(1)
 print("Err: " .. result)

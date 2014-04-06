@@ -133,20 +133,10 @@ function luarpc.waitIncoming()
             for _, param in pairs(servant.iface.methods[rpc_method].args) do
               if param.direction == "in" or param.direction == "inout" then
                 print("Receiving value...")
-                local value, err = client:receive("*l")
-                if err then
-                  local err_msg = "___ERRORPC: Receiving value from client: " .. err
-                  print(err_msg)
-                  local _, err = client:send(err_msg)
+                if param.type ~= "void" then
+                  local value, err = client:receive("*l")
                   if err then
-                    print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
-                  end
-                  skip = true
-                  break
-                else
-                  -- Validate type.
-                  if not validate_type(value, param.type) then
-                    local err_msg = "___ERRORPC: Wrong type for value \"" .. value .. "\" expecting type \"" .. param.type .. "\""
+                    local err_msg = "___ERRORPC: Receiving value from client: " .. err
                     print(err_msg)
                     local _, err = client:send(err_msg)
                     if err then
@@ -154,11 +144,26 @@ function luarpc.waitIncoming()
                     end
                     skip = true
                     break
-                  end
+                  else
+                    -- Validate type.
+                    if not validate_type(value, param.type) then
+                      local err_msg = "___ERRORPC: Wrong type for value \"" .. value .. "\" expecting type \"" .. param.type .. "\""
+                      print(err_msg)
+                      local _, err = client:send(err_msg)
+                      if err then
+                        print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+                      end
+                      skip = true
+                      break
+                    end
 
+                    -- Method params.
+                    print("< value: " .. value)
+                    table.insert(values, value)
+                  end
+                else
                   -- Method params.
-                  print("< value: " .. value)
-                  table.insert(values, value)
+                  print("< value: void")
                 end
               end
             end
