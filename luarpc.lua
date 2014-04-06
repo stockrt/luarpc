@@ -6,7 +6,9 @@ local unpack = unpack or table.unpack
 -- This is the main module luarpc.
 local luarpc = {}
 
+-- Lists.
 local servant_list = {} -- {server, obj, iface, client_list}
+
 -- Global namespace.
 myinterface = {}
 
@@ -55,7 +57,7 @@ end
 function luarpc.decode()
 end
 
-function luarpc.createServant(myobj, interface_file)
+function luarpc.createServant(obj, interface_file)
   print("Setting up servant " .. #servant_list .. "...")
 
   -- tcp, bind, listen shortcut.
@@ -78,7 +80,7 @@ function luarpc.createServant(myobj, interface_file)
   -- Servant.
   local servant = {
     server = server,
-    obj = myobj,
+    obj = obj,
     iface = myinterface,
     client_list = {},
   }
@@ -86,7 +88,7 @@ function luarpc.createServant(myobj, interface_file)
   -- Servant list.
   table.insert(servant_list, servant)
 
-  -- Info.
+  -- Connection info.
   local ip, port = server:getsockname()
   print("Please connect on port " .. port)
   print()
@@ -114,7 +116,7 @@ function luarpc.waitIncoming()
         -- Client list.
         table.insert(servant.client_list, client)
 
-        -- Info.
+        -- Connection info.
         local ip, port = client:getsockname()
         print("Client connected " .. client:getpeername() .. " on port " .. port)
       end
@@ -126,15 +128,15 @@ function luarpc.waitIncoming()
         skip = false
 
         if type(client) ~= "number" then
-          -- Info.
+          -- Connection info.
           local ip, port = client:getsockname()
-          print("Receiving data from client " .. client:getpeername() .. " on port " .. port)
+          print("Receiving request data from client " .. client:getpeername() .. " on port " .. port)
 
           -- Method receive.
-          print("Receiving method...")
+          print("Receiving request method...")
           local rpc_method, err = client:receive("*l")
           if err then
-            local err_msg = "___ERRORPC: Receiving method from client: " .. err
+            local err_msg = "___ERRORPC: Receiving request method from client: " .. err
             print(err_msg)
             local _, err = client:send(err_msg)
             if err then
@@ -142,20 +144,21 @@ function luarpc.waitIncoming()
             end
             break
           else
-            print("< rpc_method: " .. rpc_method)
+            print("< request rpc_method: " .. rpc_method)
           end
 
-          -- Validate method.
+          -- Validate method name.
           if servant.iface.methods[rpc_method] then
             -- Parameters receive.
             local values = {}
-            for _, param in pairs(servant.iface.methods[rpc_method].args) do
+            local params = servant.iface.methods[rpc_method].args
+            for _, param in pairs(params) do
               if param.direction == "in" or param.direction == "inout" then
-                print("Receiving value...")
+                print("Receiving request value...")
                 if param.type ~= "void" then
                   local value, err = client:receive("*l")
                   if err then
-                    local err_msg = "___ERRORPC: Receiving value from client: " .. err
+                    local err_msg = "___ERRORPC: Receiving request value from client: " .. err
                     print(err_msg)
                     local _, err = client:send(err_msg)
                     if err then
@@ -164,7 +167,7 @@ function luarpc.waitIncoming()
                     skip = true
                     break
                   else
-                    -- Validate type.
+                    -- Validate request types after receive.
                     if not luarpc.validate_type(value, param.type) then
                       local err_msg = "___ERRORPC: Wrong type for value \"" .. value .. "\" expecting type \"" .. param.type .. "\""
                       print(err_msg)
@@ -176,13 +179,14 @@ function luarpc.waitIncoming()
                       break
                     end
 
-                    -- Method params.
-                    print("< value: " .. value)
+                    -- Show request value.
+                    print("< request value: " .. value)
+                    -- Method params to be used when calling local object.
                     table.insert(values, value)
                   end
                 else
-                  -- Method params.
-                  print("< value: void")
+                  -- Show request value.
+                  print("< request value: void")
                 end
               end
             end
@@ -206,29 +210,31 @@ function luarpc.waitIncoming()
                   print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
                 end
               else
+                -- Validate response types before send?
+
                 -- One result fits all.
-                print("= result: " .. result)
+                print("= response result: " .. result)
                 -- Return result to client.
                 local _, err = client:send(result)
                 if err then
-                  print("ERROR: Sending client the result \"" .. result .. "\": " .. err)
+                  print("ERROR: Sending response to client with result \"" .. result .. "\": " .. err)
                 end
 
                 -- Separate results for multisend.
                 --[[
                 for _, result in pairs({unpack(packed_result, 2)}) do
-                  print("= result: " .. result)
+                  print("= response result: " .. result)
                   -- Return result to client.
                   local _, err = client:send(result)
                   if err then
-                    print("ERROR: Sending client the result \"" .. result .. "\": " .. err)
+                    print("ERROR: Sending response to client with result \"" .. result .. "\": " .. err)
                   end
                 end
                 ]]
               end
             end
           else
-            local err_msg = "___ERRORPC: Invalid method \"" .. rpc_method .. "\""
+            local err_msg = "___ERRORPC: Invalid request method \"" .. rpc_method .. "\""
             print(err_msg)
             local _, err = client:send(err_msg)
             if err then

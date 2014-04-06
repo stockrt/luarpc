@@ -17,7 +17,7 @@ local server_port2 = arg[4]
 local proxy1 = luarpc.createproxy(server_address, server_port1, interface_file)
 local proxy2 = luarpc.createproxy(server_address, server_port2, interface_file)
 
--- proxy1/myobj1
+-- proxy1/obj1
 print("Proxy1")
 
 local result, msg = proxy1.foo(5, 3)
@@ -70,7 +70,7 @@ print("Err: " .. result)
 
 print()
 
--- proxy2/myobj2
+-- proxy2/obj2
 print("Proxy2")
 
 local result, msg = proxy2.foo(5, 3)

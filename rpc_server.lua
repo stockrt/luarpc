@@ -11,7 +11,7 @@ end
 local interface_file = arg[1]
 
 -- Objects.
-local myobj1 = {
+local obj1 = {
   foo = function (a, b, str)
     return a + b, "alo alo"
   end,
@@ -32,9 +32,9 @@ local myobj1 = {
   end,
   capabilities = function ()
     local caps = ""
-    for method_name, method in pairs(myinterface.methods) do
-      local cap = method.resulttype .. " " .. method_name .. "("
-      for i, param in pairs(method.args) do
+    for rpc_method, method in pairs(myinterface.methods) do
+      local cap = method.resulttype .. " " .. rpc_method .. "("
+      for _, param in pairs(method.args) do
         if param.direction == "in" or param.direction == "inout" then
           cap = cap .. param.type .. ", "
         end
@@ -49,7 +49,7 @@ local myobj1 = {
     return caps
   end,
 }
-local myobj2 = {
+local obj2 = {
   foo = function (a, b, str)
     return a - b, "tchau"
   end,
@@ -70,9 +70,9 @@ local myobj2 = {
   end,
   capabilities = function ()
     local caps = ""
-    for method_name, method in pairs(myinterface.methods) do
-      local cap = method.resulttype .. " " .. method_name .. "("
-      for i, param in pairs(method.args) do
+    for rpc_method, method in pairs(myinterface.methods) do
+      local cap = method.resulttype .. " " .. rpc_method .. "("
+      for _, param in pairs(method.args) do
         if param.direction == "in" or param.direction == "inout" then
           cap = cap .. param.type .. ", "
         end
@@ -88,11 +88,11 @@ local myobj2 = {
   end,
 }
 
--- server1/myobj1
-local servant1 = luarpc.createServant(myobj1, interface_file)
+-- server1/obj1
+local servant1 = luarpc.createServant(obj1, interface_file)
 
--- server2/myobj2
-local servant2 = luarpc.createServant(myobj2, interface_file)
+-- server2/obj2
+local servant2 = luarpc.createServant(obj2, interface_file)
 
 -- Wait for clients.
 luarpc.waitIncoming()
