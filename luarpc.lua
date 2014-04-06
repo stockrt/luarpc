@@ -14,6 +14,18 @@ function interface(iface)
   myinterface = iface
 end
 
+-- TODO: Encode/decode.
+--[[
+oi                -- string "oi"
+3                 -- double 3
+a                 -- char "a"
+\n                -- char de quebra de linha
+\\                -- char "\"
+nova\nlinha       -- string "nova
+                     linha"
+string\\n         -- string "string\n"
+]]
+
 function validate_type(value, param_type)
   if param_type == "char" then
     if #value == 1 then
@@ -226,6 +238,7 @@ function luarpc.waitIncoming()
 end
 
 function luarpc.createProxy()
+--  aqui
 end
 
 function createrpcproxy(hostname, port, interface)
