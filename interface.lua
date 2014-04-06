@@ -27,10 +27,9 @@ interface {
       },
     },
     bar = {
-      resulttype = "string",
+      resulttype = "double",
       args = {
-        {direction = "in", type = "string"},
-        {direction = "out", type = "string"},
+        {direction = "inout", type = "double"},
       },
     },
     baz = {

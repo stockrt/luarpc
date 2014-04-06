@@ -13,6 +13,26 @@ function interface(iface)
   myinterface = iface
 end
 
+function validate_type(value, param_type)
+  if param_type == "char" then
+    if #value == 1 then
+      return true
+    end
+  elseif param_type == "string" then
+    return true
+  elseif param_type == "double" then
+    if tonumber(value) then
+      return true
+    end
+  elseif param_type == "void" then
+    if value == "" or value == "\n" then
+      return true
+    end
+  end
+
+  return false
+end
+
 function luarpc.createServant(myobj, interface_file)
   print("Setting up servant " .. #servant_list .. "...")
 
@@ -99,7 +119,7 @@ function luarpc.waitIncoming()
             print("< rpc_method: " .. rpc_method)
           end
 
-          -- Method validate.
+          -- Validate method.
           if servant.iface.methods[rpc_method] then
             -- Parameters receive.
             local values = {}
@@ -112,7 +132,23 @@ function luarpc.waitIncoming()
                   skip = true
                   break
                 else
-                  -- TODO: Validate types.
+                  -- Validate type.
+                  if not validate_type(value, param.type) then
+                    local err_msg = "___ERRORPC: Wrong type for value \"" .. value .. "\" expecting type \"" .. param.type .. "\""
+                    print(err_msg)
+                    local _, err = client:send(err_msg)
+                    if err then
+                      print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+                    end
+                    skip = true
+                    break
+                  end
+
+                  -- Type conversion.
+                  if param.type == "double" then
+                    value = tonumber(value)
+                  end
+
                   print("< value: " .. value)
                   table.insert(values, value)
                 end
