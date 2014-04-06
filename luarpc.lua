@@ -165,7 +165,15 @@ function luarpc.waitIncoming()
 
             -- Call method on server.
             if not skip then
+              -- One result fits all.
               local status, result = pcall(servant.obj[rpc_method], unpack(values))
+
+              -- Separate results for multisend.
+              --[[
+              local packed_result = {pcall(servant.obj[rpc_method], unpack(values))}
+              local status = packed_result[1]
+              ]]
+
               if not status then
                 local err_msg = "___ERRORPC: Problem calling method \"" .. rpc_method .. "\""
                 print(err_msg)
@@ -174,12 +182,25 @@ function luarpc.waitIncoming()
                   print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
                 end
               else
+                -- One result fits all.
                 print("= result: " .. result)
                 -- Return result to client.
                 local _, err = client:send(result)
                 if err then
                   print("ERROR: Sending client the result \"" .. result .. "\": " .. err)
                 end
+
+                -- Separate results for multisend.
+                --[[
+                for _, result in pairs({unpack(packed_result, 2)}) do
+                  print("= result: " .. result)
+                  -- Return result to client.
+                  local _, err = client:send(result)
+                  if err then
+                    print("ERROR: Sending client the result \"" .. result .. "\": " .. err)
+                  end
+                end
+                ]]
               end
             end
           else
