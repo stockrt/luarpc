@@ -22,7 +22,10 @@ local myobj1 = {
     return n + 1
   end,
   baz = function (str1, str2)
-    return "echo concat1: " .. str1 .. str2
+    return "echo str concat1: " .. str1 .. str2
+  end,
+  cha = function (c1, c2)
+    return "echo char concat1: " .. c1 .. c2
   end,
 }
 local myobj2 = {
@@ -36,7 +39,10 @@ local myobj2 = {
     return n - 1
   end,
   baz = function (str1, str2)
-    return "echo concat2: " .. str1 .. str2
+    return "echo str concat2: " .. str1 .. str2
+  end,
+  cha = function (c1, c2)
+    return "echo char concat2: " .. c1 .. c2
   end,
 }
 

@@ -40,5 +40,13 @@ interface {
         {direction = "out", type = "string"},
       },
     },
+    cha = {
+      resulttype = "string",
+      args = {
+        {direction = "in", type = "char"},
+        {direction = "in", type = "char"},
+        {direction = "out", type = "string"},
+      },
+    },
   }
 }
