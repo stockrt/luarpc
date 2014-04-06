@@ -112,8 +112,12 @@ function luarpc.waitIncoming()
           print("Receiving method...")
           local rpc_method, err = client:receive("*l")
           if err then
-            print("ERROR: Receiving method from client: " .. err)
-            skip = true
+            local err_msg = "___ERRORPC: Receiving method from client: " .. err
+            print(err_msg)
+            local _, err = client:send(err_msg)
+            if err then
+              print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+            end
             break
           else
             print("< rpc_method: " .. rpc_method)
@@ -128,7 +132,12 @@ function luarpc.waitIncoming()
                 print("Receiving value...")
                 local value, err = client:receive("*l")
                 if err then
-                  print("ERROR: Receiving value from client: " .. err)
+                  local err_msg = "___ERRORPC: Receiving value from client: " .. err
+                  print(err_msg)
+                  local _, err = client:send(err_msg)
+                  if err then
+                    print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+                  end
                   skip = true
                   break
                 else
