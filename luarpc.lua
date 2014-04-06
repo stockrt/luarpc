@@ -103,9 +103,6 @@ function luarpc.waitIncoming()
           if servant.iface.methods[rpc_method] then
             -- Parameters receive.
             local values = {}
-            print(servant.iface.name)
-            print(servant.iface.methods[rpc_method].resulttype)
-            print(servant.iface.methods[rpc_method].args)
             for _, param in pairs(servant.iface.methods[rpc_method].args) do
               if param.direction == "in" or param.direction == "inout" then
                 print("Receiving value...")
