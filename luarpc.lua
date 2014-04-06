@@ -1,6 +1,7 @@
 -- http://www.inf.puc-rio.br/~noemi/sd-14/trab1.html
 
 local socket = require("socket")
+local unpack = unpack or table.unpack
 
 -- This is the main module luarpc.
 local luarpc = {}
