@@ -106,15 +106,15 @@ function luarpc.waitIncoming()
             for _, param in pairs(servant.iface.methods[rpc_method].args) do
               if param.direction == "in" or param.direction == "inout" then
                 print("Receiving value...")
-                local val, err = client:receive("*l")
+                local value, err = client:receive("*l")
                 if err then
                   print("ERROR: Receiving value from client: " .. err)
                   skip = true
                   break
                 else
                   -- TODO: Validate types.
-                  print("< val: " .. val)
-                  table.insert(values, val)
+                  print("< value: " .. value)
+                  table.insert(values, value)
                 end
               end
             end
@@ -130,6 +130,7 @@ function luarpc.waitIncoming()
                   print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
                 end
               else
+                print("= result: " .. result)
                 -- Return result to client.
                 local _, err = client:send(result)
                 if err then
