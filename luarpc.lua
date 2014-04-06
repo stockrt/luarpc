@@ -213,7 +213,7 @@ function luarpc.waitIncoming()
                 -- Validate response types before send?
 
                 -- One result fits all.
-                print("= response result: " .. result)
+                print("> response result: " .. result)
                 -- Return result to client.
                 local _, err = client:send(result)
                 if err then
