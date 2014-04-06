@@ -144,11 +144,7 @@ function luarpc.waitIncoming()
                     break
                   end
 
-                  -- Type conversion.
-                  if param.type == "double" then
-                    value = tonumber(value)
-                  end
-
+                  -- Method params.
                   print("< value: " .. value)
                   table.insert(values, value)
                 end

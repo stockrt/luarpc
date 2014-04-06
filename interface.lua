@@ -2,7 +2,7 @@
 -- string, double e void.
 -- Os parâmetros podem ser declarados como in, out ou inout.
 
--- TODO: Suportar
+-- Support types:
 -- char
 -- string
 -- double
