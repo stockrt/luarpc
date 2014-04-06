@@ -5,7 +5,7 @@ local socket = require("socket")
 -- This is the main module luarpc.
 local luarpc = {}
 
-local servant_list = {} -- {server, myobj, myinterface, client_list}
+local servant_list = {} -- {server, obj, iface, client_list}
 myinterface = {}
 
 function interface(iface)
@@ -79,14 +79,45 @@ function luarpc.waitIncoming()
       local client_recv_ready_list, _, err = socket.select(servant.client_list, nil, 0.1)
       for _, client in pairs(client_recv_ready_list) do
         if type(client) ~= "number" then
+          -- Info.
           local ip, port = client:getsockname()
           print("Receiving data from client " .. client:getpeername() .. " on port " .. port)
-          local line, err = client:receive("*l")
+
+          -- Method receive.
+          print("Receiving method...")
+          local rpc_method, err = client:receive("*l")
           if err then
-            print("ERROR: " .. err)
+            print("ERROR: Receiving method from client: " .. err)
           else
-            print("< " .. line)
+            print("< rpc_method: " .. rpc_method)
           end
+
+          -- Method validate.
+          if servant.iface.methods[rpc_method] then
+            -- Parameters receive.
+            local values = {}
+            print(servant.iface.name)
+            print(servant.iface.methods[rpc_method].resulttype)
+            print(servant.iface.methods[rpc_method].args)
+            for _, param in pairs(servant.iface.methods[rpc_method].args) do
+              if param.direction == "in" or param.direction == "inout" then
+                print("Receiving value...")
+                local val, err = client:receive("*l")
+                table.insert(values, val)
+              end
+            end
+
+            -- Call the method on server-side.
+            local status, res = pcall(servant.obj[rpc_method], unpack(values))
+            print(status)
+            print(res)
+
+            -- Return the result to client-side.
+          else
+            print("ERROR: Invalid method " .. rpc_method)
+            client:send("___ERRORPC: Invalid method " .. rpc_method)
+          end
+
           client:close()
         end
       end
