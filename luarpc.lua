@@ -7,6 +7,7 @@ local unpack = unpack or table.unpack
 local luarpc = {}
 
 local servant_list = {} -- {server, obj, iface, client_list}
+-- Global namespace.
 myinterface = {}
 
 function interface(iface)
@@ -26,7 +27,7 @@ nova\nlinha       -- string "nova
 string\\n         -- string "string\n"
 ]]
 
-function validate_type(value, param_type)
+function luarpc.validate_type(value, param_type)
   if param_type == "char" then
     if #value == 1 then
       return true
@@ -46,6 +47,12 @@ function validate_type(value, param_type)
   end
 
   return false
+end
+
+function luarpc.encode()
+end
+
+function luarpc.decode()
 end
 
 function luarpc.createServant(myobj, interface_file)
@@ -158,7 +165,7 @@ function luarpc.waitIncoming()
                     break
                   else
                     -- Validate type.
-                    if not validate_type(value, param.type) then
+                    if not luarpc.validate_type(value, param.type) then
                       local err_msg = "___ERRORPC: Wrong type for value \"" .. value .. "\" expecting type \"" .. param.type .. "\""
                       print(err_msg)
                       local _, err = client:send(err_msg)
