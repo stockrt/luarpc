@@ -19,7 +19,9 @@ function validate_type(value, param_type)
       return true
     end
   elseif param_type == "string" then
-    return true
+    if tostring(value) then
+      return true
+    end
   elseif param_type == "double" then
     if tonumber(value) then
       return true
