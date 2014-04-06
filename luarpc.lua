@@ -140,7 +140,7 @@ function luarpc.waitIncoming()
             print(err_msg)
             local _, err = client:send(err_msg)
             if err then
-              print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+              print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
             end
             break
           else
@@ -158,22 +158,22 @@ function luarpc.waitIncoming()
                 if param.type ~= "void" then
                   local value, err = client:receive("*l")
                   if err then
-                    local err_msg = "___ERRORPC: Receiving request value from client: " .. err
+                    local err_msg = "___ERRORPC: Receiving request value for method \"" .. rpc_method .. "\" from client: " .. err
                     print(err_msg)
                     local _, err = client:send(err_msg)
                     if err then
-                      print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+                      print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
                     end
                     skip = true
                     break
                   else
                     -- Validate request types after receive.
                     if not luarpc.validate_type(value, param.type) then
-                      local err_msg = "___ERRORPC: Wrong type for value \"" .. value .. "\" expecting type \"" .. param.type .. "\""
+                      local err_msg = "___ERRORPC: Wrong request type received for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
                       print(err_msg)
                       local _, err = client:send(err_msg)
                       if err then
-                        print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+                        print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
                       end
                       skip = true
                       break
@@ -207,7 +207,7 @@ function luarpc.waitIncoming()
                 print(err_msg)
                 local _, err = client:send(err_msg)
                 if err then
-                  print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+                  print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
                 end
               else
                 -- Validate response types before send?
@@ -217,7 +217,7 @@ function luarpc.waitIncoming()
                 -- Return result to client.
                 local _, err = client:send(result)
                 if err then
-                  print("ERROR: Sending response to client with result \"" .. result .. "\": " .. err)
+                  print("___ERRONET: Sending response to client with result \"" .. result .. "\" for method \"" .. rpc_method .. "\": " .. err)
                 end
 
                 -- Separate results for multisend.
@@ -227,7 +227,7 @@ function luarpc.waitIncoming()
                   -- Return result to client.
                   local _, err = client:send(result)
                   if err then
-                    print("ERROR: Sending response to client with result \"" .. result .. "\": " .. err)
+                    print("___ERRONET: Sending response to client with result \"" .. result .. "\" for method \"" .. rpc_method .. "\": " .. err)
                   end
                 end
                 ]]
@@ -238,7 +238,7 @@ function luarpc.waitIncoming()
             print(err_msg)
             local _, err = client:send(err_msg)
             if err then
-              print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+              print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
             end
           end
 
