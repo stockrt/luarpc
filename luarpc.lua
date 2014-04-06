@@ -5,8 +5,7 @@ local socket = require("socket")
 -- This is the main module luarpc.
 local luarpc = {}
 
-local servant_list = {} -- {server, myobj, myinterface}
-local client_list = {}
+local servant_list = {} -- {server, myobj, myinterface, client_list}
 myinterface = {}
 
 function interface(iface)
@@ -39,6 +38,7 @@ function luarpc.createServant(myobj, interface_file)
     server = server,
     obj = myobj,
     iface = myinterface,
+    client_list = {},
   }
 
   -- Servant list.
@@ -57,7 +57,8 @@ function luarpc.waitIncoming()
 
   while true do
     for _, servant in pairs(servant_list) do
-      -- Wait for new client connection.
+      -- Wait for new client connection on this servant.
+      -- Wait for connection just a few ms.
       local client = servant.server:accept()
 
       -- Client connected.
@@ -66,27 +67,28 @@ function luarpc.waitIncoming()
         client:settimeout(10) -- send/receive timeout (line inactivity).
 
         -- Client list.
-        table.insert(client_list, client)
+        table.insert(servant.client_list, client)
 
         -- Info.
         local ip, port = client:getsockname()
         print("Client connected " .. client:getpeername() .. " on port " .. port)
       end
-    end
 
-    -- Connected client sent some data.
-    local client_recv_ready_list, _, err = socket.select(client_list, nil, 0.1)
-    for _, client in pairs(client_recv_ready_list) do
-      if type(client) ~= "number" then
-        local ip, port = client:getsockname()
-        print("Receiving data from client " .. client:getpeername() .. " on port " .. port)
-        local line, err = client:receive("*l")
-        if err then
-          print("ERROR: " .. err)
-        else
-          print("< " .. line)
+      -- Connected client sent some data for this servant.
+      -- Wait for activity just a few ms.
+      local client_recv_ready_list, _, err = socket.select(servant.client_list, nil, 0.1)
+      for _, client in pairs(client_recv_ready_list) do
+        if type(client) ~= "number" then
+          local ip, port = client:getsockname()
+          print("Receiving data from client " .. client:getpeername() .. " on port " .. port)
+          local line, err = client:receive("*l")
+          if err then
+            print("ERROR: " .. err)
+          else
+            print("< " .. line)
+          end
+          client:close()
         end
-        client:close()
       end
     end
   end
