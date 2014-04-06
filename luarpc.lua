@@ -55,9 +55,10 @@ end
 function luarpc.waitIncoming()
   print("Waiting for clients...")
 
-  while true do
-    local skip = false
+  -- Jump on protocol errors.
+  local skip = false
 
+  while true do
     for _, servant in pairs(servant_list) do
       -- Wait for new client connection on this servant.
       -- Wait for connection just a few ms.
@@ -80,6 +81,8 @@ function luarpc.waitIncoming()
       -- Wait for activity just a few ms.
       local client_recv_ready_list, _, err = socket.select(servant.client_list, nil, 0.1)
       for _, client in pairs(client_recv_ready_list) do
+        skip = false
+
         if type(client) ~= "number" then
           -- Info.
           local ip, port = client:getsockname()
@@ -123,14 +126,27 @@ function luarpc.waitIncoming()
             if not skip then
               local status, result = pcall(servant.obj[rpc_method], unpack(values))
               if not status then
+                local err_msg = "___ERRORPC: Problem calling method \"" .. rpc_method .. "\""
+                print(err_msg)
+                local _, err = client:send(err_msg)
+                if err then
+                  print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+                end
               else
                 -- Return result to client.
-                client:send(result)
+                local _, err = client:send(result)
+                if err then
+                  print("ERROR: Sending client the result \"" .. result .. "\": " .. err)
+                end
               end
             end
           else
-            print("ERROR: Invalid method " .. rpc_method)
-            client:send("___ERRORPC: Invalid method " .. rpc_method)
+            local err_msg = "___ERRORPC: Invalid method \"" .. rpc_method .. "\""
+            print(err_msg)
+            local _, err = client:send(err_msg)
+            if err then
+              print("ERROR: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+            end
           end
 
           -- Terminate connection.
