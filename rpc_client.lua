@@ -22,104 +22,104 @@ print()
 print("- Proxy1")
 
 local result = proxy1.foo(5, 3)
-print("Result: " .. result)
+print("* Result: " .. result)
 
 local result = proxy1.boo(20)
-print("Echo: " .. result)
+print("* Echo: " .. result)
 
 local result = proxy1.boo(30)
-print("Echo: " .. result)
+print("* Echo: " .. result)
 
 local result = proxy1.bar("tipo errado ERRO_ESPERADO")
-print("Err: " .. result)
+print("* Err: " .. result)
 
 local result = proxy1.bar("quantia errada ERRO_ESPERADO", "tudo errado ERRO_ESPERADO")
-print("Err: " .. result)
+print("* Err: " .. result)
 
 local result = proxy1.baz("abc", "def")
-print("Concat1: " .. result)
+print("* Concat1: " .. result)
 
 local result = proxy1.baz("multiline1\nmultiline2\ncom escape indicado o barran \\n na mesma linha", ".")
-print("Concat1: " .. result)
+print("* Concat1: " .. result)
 
 local result = proxy1.cha("a", "b")
-print("Str: " .. result)
+print("* Str: " .. result)
 
 local result = proxy1.cha("abc ERRO_ESPERADO", 123)
-print("Err: " .. result)
+print("* Err: " .. result)
 
 -- local result = proxy1.naodefinido("nao existe ERRO_ESPERADO")
--- print("Err: " .. result)
+-- print("* Err: " .. result)
 
 local result = proxy1.hello("Rogerio proxy1")
-print("Greet: " .. result)
+print("* Greet: " .. result)
 
 local result = proxy1.capabilities()
-print("Cap: " .. result)
+print("* Cap: " .. result)
 
 local result = proxy1.hello()
-print("Err: " .. result)
+print("* Err: " .. result)
 
 local result = proxy1.capabilities("nao deveria passar param ERRO_ESPERADO")
-print("Err: " .. result)
+print("* Err: " .. result)
 
 local result = proxy1.capabilities(1, 2, "ERRO_ESPERADO")
-print("Err: " .. result)
+print("* Err: " .. result)
 
 local result = proxy1.capabilities(1, "ERRO_ESPERADO")
-print("Err: " .. result)
+print("* Err: " .. result)
 
 -- proxy2/obj2
 print()
 print("- Proxy2")
 
 local result = proxy2.foo(5, 3)
-print("Result: " .. result)
+print("* Result: " .. result)
 
 local result = proxy2.boo(20)
-print("Fixed: " .. result)
+print("* Fixed: " .. result)
 
 local result = proxy2.boo(30)
-print("Fixed: " .. result)
+print("* Fixed: " .. result)
 
 local result = proxy2.bar("tipo errado ERRO_ESPERADO")
-print("Err: " .. result)
+print("* Err: " .. result)
 
 local result = proxy2.bar("quantia errada ERRO_ESPERADO", "tudo errado ERRO_ESPERADO")
-print("Err: " .. result)
+print("* Err: " .. result)
 
 local result = proxy2.baz("abc", "def")
-print("Concat2: " .. result)
+print("* Concat2: " .. result)
 
 x = [[multiline1
 multiline2
 com escape indicado o barran \n na mesma linha]]
 local result = proxy2.baz(x, ".")
-print("Concat2: " .. result)
+print("* Concat2: " .. result)
 
 local result = proxy2.cha("1", "2")
-print("Str: " .. result)
+print("* Str: " .. result)
 
 local result = proxy2.cha(1, 2)
-print("Err: " .. result)
+print("* Err: " .. result)
 
 -- local result = proxy2.naodefinido("nao existe ERRO_ESPERADO")
--- print("Err: " .. result)
+-- print("* Err: " .. result)
 
 local result = proxy2.hello("Rogerio proxy2")
-print("Greet: " .. result)
+print("* Greet: " .. result)
 
 local result = proxy2.capabilities()
-print("Cap: " .. result)
+print("* Cap: " .. result)
 
 local result = proxy2.hello()
-print("Err: " .. result)
+print("* Err: " .. result)
 
 local result = proxy2.capabilities("nao deveria passar param ERRO_ESPERADO")
-print("Err: " .. result)
+print("* Err: " .. result)
 
 local result = proxy2.capabilities(1, 2, "ERRO_ESPERADO")
-print("Err: " .. result)
+print("* Err: " .. result)
 
 local result = proxy2.capabilities(1, "ERRO_ESPERADO")
-print("Err: " .. result)
+print("* Err: " .. result)
