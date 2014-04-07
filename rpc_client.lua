@@ -57,8 +57,10 @@ print("* Greet: " .. result)
 local result = proxy1.capabilities()
 print("* Cap: " .. result)
 
+print("ERRO_ESPERADO deveria passar algum valor para hello ERRO_ESPERADO"
 local result = proxy1.hello()
 print("* Err: " .. result)
+print("ERRO_ESPERADO deveria passar algum valor para hello ERRO_ESPERADO"
 
 local result = proxy1.capabilities("nao deveria passar param ERRO_ESPERADO")
 print("* Err: " .. result)
@@ -112,8 +114,10 @@ print("* Greet: " .. result)
 local result = proxy2.capabilities()
 print("* Cap: " .. result)
 
+print("ERRO_ESPERADO deveria passar algum valor para hello ERRO_ESPERADO"
 local result = proxy2.hello()
 print("* Err: " .. result)
+print("ERRO_ESPERADO deveria passar algum valor para hello ERRO_ESPERADO"
 
 local result = proxy2.capabilities("nao deveria passar param ERRO_ESPERADO")
 print("* Err: " .. result)
