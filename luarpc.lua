@@ -327,8 +327,6 @@ function luarpc.createProxy(server_address, server_port, interface_file)
         if param.direction == "in" or param.direction == "inout" then
           i = i + 1
           local value = arg[i]
-          print(param.direction)
-          print(param.type)
           print("Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"" .. value .. "\"")
           local _, err = client:send(value .. "\n")
           if err then
