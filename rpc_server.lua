@@ -49,6 +49,7 @@ local obj1 = {
     return caps
   end,
 }
+
 local obj2 = {
   foo = function (a, b, str)
     return a - b, "tchau"
