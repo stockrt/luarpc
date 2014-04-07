@@ -2,6 +2,14 @@
 
 --[[
 TODO:
+### Ainda vou refinar:
+- Revisar protocolo (número de parâmetros e de retornos);
+- Utilizar encode/decode para multiline e outros escapes combinados com a turma;
+- Do ponto de vista de engenharia, algumas chamadas poderiam ser encapsuladas para termos menos linhas de código e menos repetição;
+- Testado apenas contra LUA 5.1:
+Lua 5.1.5  Copyright (C) 1994-2012 Lua.org, PUC-Rio
+
+TODO:
 local r, s = p1.foo(3, 5)
 Como sugerido nesse exemplo, um parâmetro out deve ser tratado como um
 resultado a mais da função.
