@@ -284,12 +284,14 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local i = 0
       for _, param in pairs(params) do
         if param.direction == "in" or param.direction == "inout" then
-          i = i + 1
-          local value = arg[i]
-          if not luarpc.validate_type(value, param.type) then
-            local err_msg = "___ERRORPC: Wrong request type passed for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
-            print(err_msg)
-            return err_msg
+          if param.type ~= "void" then
+            i = i + 1
+            local value = arg[i]
+            if not luarpc.validate_type(value, param.type) then
+              local err_msg = "___ERRORPC: Wrong request type passed for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
+              print(err_msg)
+              return err_msg
+            end
           end
         end
       end
@@ -335,18 +337,24 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local i = 0
       for _, param in pairs(params) do
         if param.direction == "in" or param.direction == "inout" then
-          i = i + 1
-          local value = arg[i]
-          print("Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"" .. value .. "\"")
-          local _, err = client:send(value .. "\n")
-          if err then
-            local err_msg = "___ERRONET: Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"" .. value .. "\": " .. err
-            print(err_msg)
-            return err_msg
-          end
+          if param.type ~= "void" then
+            i = i + 1
+            local value = arg[i]
+            print("Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"" .. value .. "\"")
+            local _, err = client:send(value .. "\n")
+            if err then
+              local err_msg = "___ERRONET: Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"" .. value .. "\": " .. err
+              print(err_msg)
+              return err_msg
+            end
 
-          -- Show request value.
-          print("> request value: " .. value)
+            -- Show request value.
+            print("> request value: " .. value)
+          else
+            -- Show request value.
+            print("Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"\"")
+            print("> request value: void")
+          end
         end
       end
 
@@ -355,9 +363,9 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local values = {}
       for _, param in pairs(params) do
         if param.direction == "out" or param.direction == "inout" then
-          i = i + 1
-          print("Receiving response method \"" .. rpc_method .. "\" value " .. i .. "...")
           if param.type ~= "void" then
+            i = i + 1
+            print("Receiving response method \"" .. rpc_method .. "\" value " .. i .. "...")
             local value, err = client:receive("*l")
             if err then
               print("___ERRORPC: Receiving response method \"" .. rpc_method .. "\" value " .. i .. ": " .. err)
@@ -376,6 +384,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
             end
           else
             -- Show response value.
+            print("Receiving response method \"" .. rpc_method .. "\" value " .. i .. "...")
             print("< response value: void")
           end
         end
