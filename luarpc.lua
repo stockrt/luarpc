@@ -356,11 +356,11 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       for _, param in pairs(params) do
         if param.direction == "out" then
           i = i + 1
-          print("Receiving response  method \"" .. rpc_method .. "\" value " .. i .. "...")
+          print("Receiving response method \"" .. rpc_method .. "\" value " .. i .. "...")
           if param.type ~= "void" then
             local value, err = client:receive("*l")
             if err then
-              print("___ERRORPC: Receiving response  method \"" .. rpc_method .. "\" value " .. i .. ": " .. err)
+              print("___ERRORPC: Receiving response method \"" .. rpc_method .. "\" value " .. i .. ": " .. err)
               break
             else
               -- Validate response types after receive.
