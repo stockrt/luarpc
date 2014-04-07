@@ -17,18 +17,6 @@ function interface(iface)
   myinterface = iface
 end
 
--- TODO: Encode/decode.
---[[
-oi                -- string "oi"
-3                 -- double 3
-a                 -- char "a"
-\n                -- char de quebra de linha
-\\                -- char "\"
-nova\nlinha       -- string "nova
-                     linha"
-string\\n         -- string "string\n"
-]]
-
 function luarpc.validate_type(value, param_type)
   if param_type == "char" then
     if #tostring(value) == 1 then
@@ -50,6 +38,18 @@ function luarpc.validate_type(value, param_type)
 
   return false
 end
+
+-- TODO: Encode/decode.
+--[[
+oi                -- string "oi"
+3                 -- double 3
+a                 -- char "a"
+\n                -- char de quebra de linha
+\\                -- char "\"
+nova\nlinha       -- string "nova
+                     linha"
+string\\n         -- string "string\n"
+]]
 
 function luarpc.encode()
 end
