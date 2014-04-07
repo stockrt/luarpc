@@ -250,36 +250,130 @@ function luarpc.waitIncoming()
   end
 end
 
-function luarpc.createProxy()
---  aqui
-end
+function luarpc.createProxy(server_address, server_port, interface_file)
+  -- Proxy object.
+  local pobj = {}
 
-function createrpcproxy(hostname, port, interface)
-    local functions = {}
-    local prototypes = parser(interface)
-    for name, sig in pairs(prototypes) do
-        functions[name] = function(...)
-            -- validating params
-            local params = {...}
-            local values = {name}
-            local types = sig.input
-            for i=1, #types do
-                if (#params >= i) then
-                    values[#values+1] = params[i]
-                    if (type(params[i])~="number") then
-                        values[#values] = "\"" .. values[#values] .. "\""
-                    end
-                end
-                -- creating request
-                local request = pack(values)
-                -- creating socket
-                local client = socket.tcp()
-                local conn = client:connect(hostname, port)
-                local result = client:send(request .. '\n')
-            end
+  -- Interface.
+  dofile(interface_file)
+
+  for rpc_method, method in pairs(myinterface.methods) do
+    -- Proxied methods builder.
+    pobj[rpc_method] = function(...)
+      print()
+      print(arg)
+      print()
+      table.foreach(arg, print)
+      print()
+
+      -- Method in/out params.
+      local params = myinterface.methods[rpc_method].args
+
+      -- Validate request types before send.
+      local i = 1
+      for _, param in pairs(params) do
+        if param.direction == "in" or param.direction == "inout" then
+          local value = arg[i]
+          i = i + 1
+          if not luarpc.validate_type(value, param.type) then
+            print("___ERRORPC: Wrong request type passed for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\"")
+            return false
+          end
         end
-        return functions;
+      end
+
+      -- Validate request #params.
+      if arg.n ~= i - 1 then
+        print("___ERRORPC: Wrong request number of arguments for method \"" .. rpc_method .. "\" expecting " .. i - 1 .. " got " .. arg.n)
+        return false
+      end
+
+      -- tcp, connect shortcut.
+      local client = socket.connect(server_address, server_port)
+
+      -- Step by step.
+      -- local client = socket.tcp()
+      -- client:connect(server_address, server_port)
+
+      -- Options.
+      client:setoption('keepalive', true)
+      client:setoption('linger', {on = false, timeout = 0})
+      client:setoption('tcp-nodelay', true)
+      client:settimeout(10) -- send/receive timeout
+
+      -- Connection info.
+      local ip, port = client:getsockname()
+      print("Connected to " .. ip .. " on port " .. port)
+
+      -- Send request method.
+      print("Sending request method \"" .. rpc_method .. "\"...")
+      local _, err = client:send(rpc_method)
+      if err then
+        print("___ERRONET: Sending request method \"" .. rpc_method .. "\": " .. err)
+        return false
+      end
+
+      -- Show request method.
+      print("> request rpc_method: " .. rpc_method)
+
+      -- Send request values.
+      local i = 1
+      for _, param in pairs(params) do
+        if param.direction == "in" or param.direction == "inout" then
+          --print(param.direction)
+          --print(param.type)
+          local value = arg[i]
+          i = i + 1
+          print("Sending request method \"" .. rpc_method .. "\" value \"" .. value .. "\"")
+          local _, err = client:send(value)
+          if err then
+            print("___ERRONET: Sending request method \"" .. rpc_method .. "\" value \"" .. value .. "\": " .. err)
+            return false
+          end
+
+          -- Show request value.
+          print("> request value: " .. value)
+        end
+      end
+
+      -- Receive response.
+      local values = {}
+      for _, param in pairs(params) do
+        if param.direction == "out" then
+          print("Receiving response value...")
+          if param.type ~= "void" then
+            local value, err = client:receive("*l")
+            if err then
+              print("___ERRORPC: Receiving response value for method \"" .. rpc_method .. "\" from server: " .. err)
+              break
+            else
+              -- Validate response types after receive.
+              if not luarpc.validate_type(value, param.type) then
+                print("___ERRORPC: Wrong response type received for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\"")
+                break
+              end
+
+              -- Show response value.
+              print("< response value: " .. value)
+              -- Results to be returned from proxied object.
+              table.insert(values, value)
+            end
+          else
+            -- Show response value.
+            print("< response value: void")
+          end
+        end
+      end
+
+      -- Terminate connection.
+      client:close()
+
+      -- Return unpacked result.
+      return unpack(values)
     end
+  end
+
+  return pobj
 end
 
 return luarpc
