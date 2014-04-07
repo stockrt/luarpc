@@ -19,7 +19,13 @@ local proxy2 = luarpc.createProxy(server_address, server_port2, interface_file)
 
 -- proxy1/obj1
 print()
+print()
+print("###################################################################")
 print("- Proxy1")
+
+print()
+print("### Chamadas bem comportadas, sem erro.")
+print()
 
 local result = proxy1.foo(5, 3)
 print("* Result: " .. result)
@@ -30,12 +36,6 @@ print("* Echo: " .. result)
 local result = proxy1.boo(30)
 print("* Echo: " .. result)
 
-local result = proxy1.bar("tipo errado ERRO_ESPERADO")
-print("* Err: " .. result)
-
-local result = proxy1.bar("quantia errada ERRO_ESPERADO", "tudo errado ERRO_ESPERADO")
-print("* Err: " .. result)
-
 local result = proxy1.baz("abc", "def")
 print("* Concat1: " .. result)
 
@@ -45,11 +45,8 @@ print("* Concat1: " .. result)
 local result = proxy1.cha("a", "b")
 print("* Str: " .. result)
 
-local result = proxy1.cha("abc ERRO_ESPERADO", 123)
-print("* Err: " .. result)
-
--- local result = proxy1.naodefinido("nao existe ERRO_ESPERADO")
--- print("* Err: " .. result)
+local result = proxy2.cha(3, 4)
+print("* Str: " .. result)
 
 local result = proxy1.hello("Rogerio proxy1")
 print("* Greet: " .. result)
@@ -57,7 +54,22 @@ print("* Greet: " .. result)
 local result = proxy1.capabilities()
 print("* Cap: " .. result)
 
-print("ERRO_ESPERADO deveria passar algum valor para hello ERRO_ESPERADO")
+print()
+print("### Chamadas mal comportadas, ERRO_ESPERADO.")
+print()
+
+local result = proxy1.bar("tipo errado ERRO_ESPERADO")
+print("* Err: " .. result)
+
+local result = proxy1.bar("quantia errada ERRO_ESPERADO", "tudo errado ERRO_ESPERADO")
+print("* Err: " .. result)
+
+local result = proxy1.cha("abc ERRO_ESPERADO", 123)
+print("* Err: " .. result)
+
+-- local result = proxy1.naodefinido("nao existe ERRO_ESPERADO")
+-- print("* Err: " .. result)
+
 local result = proxy1.hello()
 print("* Err: " .. result)
 print("ERRO_ESPERADO deveria passar algum valor para hello ERRO_ESPERADO")
@@ -71,9 +83,16 @@ print("* Err: " .. result)
 local result = proxy1.capabilities(1, "ERRO_ESPERADO")
 print("* Err: " .. result)
 
+
 -- proxy2/obj2
 print()
+print()
+print("###################################################################")
 print("- Proxy2")
+
+print()
+print("### Chamadas bem comportadas, sem erro.")
+print()
 
 local result = proxy2.foo(5, 3)
 print("* Result: " .. result)
@@ -83,12 +102,6 @@ print("* Fixed: " .. result)
 
 local result = proxy2.boo(30)
 print("* Fixed: " .. result)
-
-local result = proxy2.bar("tipo errado ERRO_ESPERADO")
-print("* Err: " .. result)
-
-local result = proxy2.bar("quantia errada ERRO_ESPERADO", "tudo errado ERRO_ESPERADO")
-print("* Err: " .. result)
 
 local result = proxy2.baz("abc", "def")
 print("* Concat2: " .. result)
@@ -103,10 +116,7 @@ local result = proxy2.cha("1", "2")
 print("* Str: " .. result)
 
 local result = proxy2.cha(1, 2)
-print("* Err: " .. result)
-
--- local result = proxy2.naodefinido("nao existe ERRO_ESPERADO")
--- print("* Err: " .. result)
+print("* Str: " .. result)
 
 local result = proxy2.hello("Rogerio proxy2")
 print("* Greet: " .. result)
@@ -114,7 +124,22 @@ print("* Greet: " .. result)
 local result = proxy2.capabilities()
 print("* Cap: " .. result)
 
-print("ERRO_ESPERADO deveria passar algum valor para hello ERRO_ESPERADO")
+print()
+print("### Chamadas mal comportadas, ERRO_ESPERADO.")
+print()
+
+local result = proxy2.bar("tipo errado ERRO_ESPERADO")
+print("* Err: " .. result)
+
+local result = proxy2.bar("quantia errada ERRO_ESPERADO", "tudo errado ERRO_ESPERADO")
+print("* Err: " .. result)
+
+local result = proxy2.cha("abc ERRO_ESPERADO", "123")
+print("* Err: " .. result)
+
+-- local result = proxy2.naodefinido("nao existe ERRO_ESPERADO")
+-- print("* Err: " .. result)
+
 local result = proxy2.hello()
 print("* Err: " .. result)
 print("ERRO_ESPERADO deveria passar algum valor para hello ERRO_ESPERADO")
