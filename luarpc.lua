@@ -138,7 +138,7 @@ function luarpc.waitIncoming()
           if err then
             local err_msg = "___ERRORPC: Receiving request method from client: " .. err
             print(err_msg)
-            local _, err = client:send(err_msg)
+            local _, err = client:send(err_msg .. "\n")
             if err then
               print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
             end
@@ -160,7 +160,7 @@ function luarpc.waitIncoming()
                   if err then
                     local err_msg = "___ERRORPC: Receiving request value for method \"" .. rpc_method .. "\" from client: " .. err
                     print(err_msg)
-                    local _, err = client:send(err_msg)
+                    local _, err = client:send(err_msg .. "\n")
                     if err then
                       print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
                     end
@@ -171,7 +171,7 @@ function luarpc.waitIncoming()
                     if not luarpc.validate_type(value, param.type) then
                       local err_msg = "___ERRORPC: Wrong request type received for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
                       print(err_msg)
-                      local _, err = client:send(err_msg)
+                      local _, err = client:send(err_msg .. "\n")
                       if err then
                         print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
                       end
@@ -205,7 +205,7 @@ function luarpc.waitIncoming()
               if not status then
                 local err_msg = "___ERRORPC: Problem calling method \"" .. rpc_method .. "\""
                 print(err_msg)
-                local _, err = client:send(err_msg)
+                local _, err = client:send(err_msg .. "\n")
                 if err then
                   print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
                 end
@@ -215,7 +215,7 @@ function luarpc.waitIncoming()
                 -- One result fits all.
                 print("> response result: " .. result)
                 -- Return result to client.
-                local _, err = client:send(result)
+                local _, err = client:send(result .. "\n")
                 if err then
                   print("___ERRONET: Sending response to client with result \"" .. result .. "\" for method \"" .. rpc_method .. "\": " .. err)
                 end
@@ -225,7 +225,7 @@ function luarpc.waitIncoming()
                 for _, result in pairs({unpack(packed_result, 2)}) do
                   print("= response result: " .. result)
                   -- Return result to client.
-                  local _, err = client:send(result)
+                  local _, err = client:send(result .. "\n")
                   if err then
                     print("___ERRONET: Sending response to client with result \"" .. result .. "\" for method \"" .. rpc_method .. "\": " .. err)
                   end
@@ -236,7 +236,7 @@ function luarpc.waitIncoming()
           else
             local err_msg = "___ERRORPC: Invalid request method \"" .. rpc_method .. "\""
             print(err_msg)
-            local _, err = client:send(err_msg)
+            local _, err = client:send(err_msg .. "\n")
             if err then
               print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
             end
@@ -307,7 +307,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
 
       -- Send request method.
       print("Sending request method \"" .. rpc_method .. "\"...")
-      local _, err = client:send(rpc_method)
+      local _, err = client:send(rpc_method .. "\n")
       if err then
         print("___ERRONET: Sending request method \"" .. rpc_method .. "\": " .. err)
         return false
@@ -325,7 +325,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           local value = arg[i]
           i = i + 1
           print("Sending request method \"" .. rpc_method .. "\" value \"" .. value .. "\"")
-          local _, err = client:send(value)
+          local _, err = client:send(value .. "\n")
           if err then
             print("___ERRONET: Sending request method \"" .. rpc_method .. "\" value \"" .. value .. "\": " .. err)
             return false
