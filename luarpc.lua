@@ -58,7 +58,7 @@ function luarpc.decode()
 end
 
 function luarpc.createServant(obj, interface_file)
-  print("Setting up servant " .. #servant_list .. "...")
+  print("Setting up servant " .. #servant_list + 1 .. "...")
 
   -- tcp, bind, listen shortcut.
   local server = socket.bind("*", 0, 2048)
@@ -90,7 +90,11 @@ function luarpc.createServant(obj, interface_file)
 
   -- Connection info.
   local ip, port = server:getsockname()
-  print("Please connect on port " .. port)
+  local port_file = "port" .. #servant_list .. ".txt"
+  local file = io.open(port_file, "w")
+  file:write(port .. "\n")
+  file:close()
+  print("Please connect on port " .. port .. " (also, you can script clients reading port number from file " .. port_file .. ")")
   print()
 
   return servant
