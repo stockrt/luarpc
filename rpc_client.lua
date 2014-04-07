@@ -30,10 +30,10 @@ print("Echo: " .. result)
 local result = proxy1.boo(30)
 print("Echo: " .. result)
 
-local result = proxy1.bar("tipo errado")
+local result = proxy1.bar("tipo errado ERRO_ESPERADO")
 print("Err: " .. result)
 
-local result = proxy1.bar("quantia errada", "tudo errado")
+local result = proxy1.bar("quantia errada ERRO_ESPERADO", "tudo errado ERRO_ESPERADO")
 print("Err: " .. result)
 
 local result = proxy1.baz("abc", "def")
@@ -45,11 +45,11 @@ print("Concat1: " .. result)
 local result = proxy1.cha("a", "b")
 print("Str: " .. result)
 
-local result = proxy1.cha("abc", 123)
+local result = proxy1.cha("abc ERRO_ESPERADO", 123)
 print("Err: " .. result)
 
-local result = proxy1.naodefinido("nao existe")
-print("Err: " .. result)
+-- local result = proxy1.naodefinido("nao existe ERRO_ESPERADO")
+-- print("Err: " .. result)
 
 local result = proxy1.hello("Rogerio proxy1")
 print("Greet: " .. result)
@@ -60,13 +60,13 @@ print("Cap: " .. result)
 local result = proxy1.hello()
 print("Err: " .. result)
 
-local result = proxy1.capabilities("nao deveria passar param")
+local result = proxy1.capabilities("nao deveria passar param ERRO_ESPERADO")
 print("Err: " .. result)
 
-local result = proxy1.capabilities(1, 2)
+local result = proxy1.capabilities(1, 2, "ERRO_ESPERADO")
 print("Err: " .. result)
 
-local result = proxy1.capabilities(1)
+local result = proxy1.capabilities(1, "ERRO_ESPERADO")
 print("Err: " .. result)
 
 -- proxy2/obj2
@@ -82,10 +82,10 @@ print("Fixed: " .. result)
 local result = proxy2.boo(30)
 print("Fixed: " .. result)
 
-local result = proxy2.bar("tipo errado")
+local result = proxy2.bar("tipo errado ERRO_ESPERADO")
 print("Err: " .. result)
 
-local result = proxy2.bar("quantia errada", "tudo errado")
+local result = proxy2.bar("quantia errada ERRO_ESPERADO", "tudo errado ERRO_ESPERADO")
 print("Err: " .. result)
 
 local result = proxy2.baz("abc", "def")
@@ -103,8 +103,8 @@ print("Str: " .. result)
 local result = proxy2.cha(1, 2)
 print("Err: " .. result)
 
-local result = proxy2.naodefinido("nao existe")
-print("Err: " .. result)
+-- local result = proxy2.naodefinido("nao existe ERRO_ESPERADO")
+-- print("Err: " .. result)
 
 local result = proxy2.hello("Rogerio proxy2")
 print("Greet: " .. result)
@@ -115,11 +115,11 @@ print("Cap: " .. result)
 local result = proxy2.hello()
 print("Err: " .. result)
 
-local result = proxy2.capabilities("nao deveria passar param")
+local result = proxy2.capabilities("nao deveria passar param ERRO_ESPERADO")
 print("Err: " .. result)
 
-local result = proxy2.capabilities(1, 2)
+local result = proxy2.capabilities(1, 2, "ERRO_ESPERADO")
 print("Err: " .. result)
 
-local result = proxy2.capabilities(1)
+local result = proxy2.capabilities(1, "ERRO_ESPERADO")
 print("Err: " .. result)
