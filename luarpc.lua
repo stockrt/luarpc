@@ -303,7 +303,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       -- Client connection to server.
       local client, err = socket.connect(server_address, server_port)
       if err then
-        locla err_msg = "___ERRONET: Could not connect to " .. server_address .. " on port " .. server_port .. ": " .. err
+        local err_msg = "___ERRONET: Could not connect to " .. server_address .. " on port " .. server_port .. ": " .. err
         print(err_msg)
         return err_msg
       end
