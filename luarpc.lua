@@ -354,7 +354,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local i = 0
       local values = {}
       for _, param in pairs(params) do
-        if param.direction == "out" then
+        if param.direction == "out" or param.direction == "inout" then
           i = i + 1
           print("Receiving response method \"" .. rpc_method .. "\" value " .. i .. "...")
           if param.type ~= "void" then
