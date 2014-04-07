@@ -63,8 +63,9 @@ function luarpc.createServant(obj, interface_file)
   -- tcp, bind, listen shortcut.
   local server, err = socket.bind("*", 0, 2048)
   if err then
-    print("___ERRONET: Server could not bind: " .. err)
-    return false
+    local err_msg = "___ERRONET: Server could not bind: " .. err
+    print(err_msg)
+    return err_msg
   end
 
   -- Step by step.
@@ -285,23 +286,26 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           i = i + 1
           local value = arg[i]
           if not luarpc.validate_type(value, param.type) then
-            print("___ERRORPC: Wrong request type passed for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\"")
-            return false
+            local err_msg = "___ERRORPC: Wrong request type passed for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
+            print(err_msg)
+            return err_msg
           end
         end
       end
 
       -- Validate request #params.
       if arg.n ~= i then
-        print("___ERRORPC: Wrong request number of arguments for method \"" .. rpc_method .. "\" expecting " .. i .. " got " .. arg.n)
-        return false
+        local err_msg = "___ERRORPC: Wrong request number of arguments for method \"" .. rpc_method .. "\" expecting " .. i .. " got " .. arg.n
+        print(err_msg)
+        return err_msg
       end
 
       -- Client connection to server.
       local client, err = socket.connect(server_address, server_port)
       if err then
-        print("___ERRONET: Could not connect to " .. server_address .. " on port " .. server_port .. ": " .. err)
-        return false
+        locla err_msg = "___ERRONET: Could not connect to " .. server_address .. " on port " .. server_port .. ": " .. err
+        print(err_msg)
+        return err_msg
       end
 
       -- Connection options.
@@ -318,8 +322,9 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       print("Sending request method \"" .. rpc_method .. "\"...")
       local _, err = client:send(rpc_method .. "\n")
       if err then
-        print("___ERRONET: Sending request method \"" .. rpc_method .. "\": " .. err)
-        return false
+        local err_msg = "___ERRONET: Sending request method \"" .. rpc_method .. "\": " .. err
+        print(err_msg)
+        return err_msg
       end
 
       -- Show request method.
@@ -334,8 +339,9 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           print("Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"" .. value .. "\"")
           local _, err = client:send(value .. "\n")
           if err then
-            print("___ERRONET: Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"" .. value .. "\": " .. err)
-            return false
+            local err_msg = "___ERRONET: Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"" .. value .. "\": " .. err
+            print(err_msg)
+            return err_msg
           end
 
           -- Show request value.
