@@ -136,7 +136,7 @@ function luarpc.waitIncoming()
           print("Receiving request method...")
           local rpc_method, err = client:receive("*l")
           if err then
-            local err_msg = "___ERRORPC: Receiving request method from client: " .. err
+            local err_msg = "___ERRORPC: Receiving request method: " .. err
             print(err_msg)
             local _, err = client:send(err_msg .. "\n")
             if err then
@@ -144,7 +144,7 @@ function luarpc.waitIncoming()
             end
             break
           else
-            print("< request rpc_method: " .. rpc_method)
+            print("< request method: " .. rpc_method)
           end
 
           -- Validate method name.
@@ -154,11 +154,11 @@ function luarpc.waitIncoming()
             local params = servant.iface.methods[rpc_method].args
             for _, param in pairs(params) do
               if param.direction == "in" or param.direction == "inout" then
-                print("Receiving request value...")
+                print("Receiving request value for method \"" .. rpc_method .. "\"...")
                 if param.type ~= "void" then
                   local value, err = client:receive("*l")
                   if err then
-                    local err_msg = "___ERRORPC: Receiving request value for method \"" .. rpc_method .. "\" from client: " .. err
+                    local err_msg = "___ERRORPC: Receiving request value for method \"" .. rpc_method .. "\": " .. err
                     print(err_msg)
                     local _, err = client:send(err_msg .. "\n")
                     if err then
@@ -314,7 +314,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       end
 
       -- Show request method.
-      print("> request rpc_method: " .. rpc_method)
+      print("> request method: " .. rpc_method)
 
       -- Send request values.
       local i = 1
@@ -340,11 +340,11 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local values = {}
       for _, param in pairs(params) do
         if param.direction == "out" then
-          print("Receiving response value...")
+          print("Receiving response value for method \"" .. rpc_method .. "\"...")
           if param.type ~= "void" then
             local value, err = client:receive("*l")
             if err then
-              print("___ERRORPC: Receiving response value for method \"" .. rpc_method .. "\" from server: " .. err)
+              print("___ERRORPC: Receiving response value for method \"" .. rpc_method .. "\": " .. err)
               break
             else
               -- Validate response types after receive.
