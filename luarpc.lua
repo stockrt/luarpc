@@ -1,5 +1,13 @@
 -- http://www.inf.puc-rio.br/~noemi/sd-14/trab1.html
 
+--[[
+TODO:
+local r, s = p1.foo(3, 5)
+Como sugerido nesse exemplo, um parâmetro out deve ser tratado como um
+resultado a mais da função.
+Um parâmetro inout é mapeado em um argumento de entrada e um resultado a mais.
+]]
+
 local socket = require("socket")
 local unpack = unpack or table.unpack
 
@@ -39,8 +47,8 @@ function luarpc.validate_type(value, param_type)
   return false
 end
 
--- TODO: Encode/decode.
 --[[
+TODO: Encode/decode.
 oi                -- string "oi"
 3                 -- double 3
 a                 -- char "a"

@@ -74,6 +74,7 @@ print("* Err: " .. result)
 local result = proxy1.cha("abc ERRO_ESPERADO", 123)
 print("* Err: " .. result)
 
+-- TODO: metatable?
 -- local result = proxy1.naodefinido("nao existe ERRO_ESPERADO")
 -- print("* Err: " .. result)
 
@@ -151,6 +152,7 @@ print("* Err: " .. result)
 local result = proxy2.cha("abc ERRO_ESPERADO", "123")
 print("* Err: " .. result)
 
+-- TODO: metatable?
 -- local result = proxy2.naodefinido("nao existe ERRO_ESPERADO")
 -- print("* Err: " .. result)
 
