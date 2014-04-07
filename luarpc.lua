@@ -61,14 +61,18 @@ function luarpc.createServant(obj, interface_file)
   print("Setting up servant " .. #servant_list + 1 .. "...")
 
   -- tcp, bind, listen shortcut.
-  local server = socket.bind("*", 0, 2048)
+  local server, err = socket.bind("*", 0, 2048)
+  if err then
+    print("___ERRONET: Server could not bind: " .. err)
+    return false
+  end
 
   -- Step by step.
   -- local server = socket.tcp()
   -- server:bind("*", 0)
   -- server:listen(2048)
 
-  -- Options.
+  -- Connection options.
   server:setoption('keepalive', true)
   server:setoption('linger', {on = false, timeout = 0})
   server:setoption('tcp-nodelay', true)
@@ -114,7 +118,7 @@ function luarpc.waitIncoming()
 
       -- Client connected.
       if client then
-        -- Options.
+        -- Connection options.
         client:settimeout(10) -- send/receive timeout (line inactivity).
 
         -- Client list.
@@ -257,6 +261,8 @@ function luarpc.waitIncoming()
 end
 
 function luarpc.createProxy(server_address, server_port, interface_file)
+  print("Building proxy object for server " .. server_address .. " on port " .. server_port .. "...")
+
   -- Proxy object.
   local pobj = {}
 
@@ -293,14 +299,14 @@ function luarpc.createProxy(server_address, server_port, interface_file)
         return false
       end
 
-      -- tcp, connect shortcut.
-      local client = socket.connect(server_address, server_port)
+      -- Client connection to server.
+      local client, err = socket.connect(server_address, server_port)
+      if err then
+        print("___ERRONET: Could not connect to " .. server_address .. " on port " .. server_port ": " .. err)
+        return false
+      end
 
-      -- Step by step.
-      -- local client = socket.tcp()
-      -- client:connect(server_address, server_port)
-
-      -- Options.
+      -- Connection options.
       client:setoption('keepalive', true)
       client:setoption('linger', {on = false, timeout = 0})
       client:setoption('tcp-nodelay', true)
