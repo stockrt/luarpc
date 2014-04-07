@@ -152,13 +152,15 @@ function luarpc.waitIncoming()
             -- Parameters receive.
             local values = {}
             local params = servant.iface.methods[rpc_method].args
+            local i = 0
             for _, param in pairs(params) do
               if param.direction == "in" or param.direction == "inout" then
-                print("Receiving request value for method \"" .. rpc_method .. "\"...")
+                i = i + 1
+                print("Receiving request method \"" .. rpc_method .. "\" value " .. i .. "...")
                 if param.type ~= "void" then
                   local value, err = client:receive("*l")
                   if err then
-                    local err_msg = "___ERRORPC: Receiving request value for method \"" .. rpc_method .. "\": " .. err
+                    local err_msg = "___ERRORPC: Receiving request method \"" .. rpc_method .. "\" value " .. i .. ": " .. err
                     print(err_msg)
                     local _, err = client:send(err_msg .. "\n")
                     if err then
@@ -169,7 +171,7 @@ function luarpc.waitIncoming()
                   else
                     -- Validate request types after receive.
                     if not luarpc.validate_type(value, param.type) then
-                      local err_msg = "___ERRORPC: Wrong request type received for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
+                      local err_msg = "___ERRORPC: Wrong request type received for value " .. i .. " \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
                       print(err_msg)
                       local _, err = client:send(err_msg .. "\n")
                       if err then
@@ -217,7 +219,7 @@ function luarpc.waitIncoming()
                 -- Return result to client.
                 local _, err = client:send(result .. "\n")
                 if err then
-                  print("___ERRONET: Sending response to client with result \"" .. result .. "\" for method \"" .. rpc_method .. "\": " .. err)
+                  print("___ERRONET: Sending response method \"" .. rpc_method .. "\" with result \"" .. result .. "\": " .. err)
                 end
 
                 -- Separate results for multisend.
@@ -227,7 +229,7 @@ function luarpc.waitIncoming()
                   -- Return result to client.
                   local _, err = client:send(result .. "\n")
                   if err then
-                    print("___ERRONET: Sending response to client with result \"" .. result .. "\" for method \"" .. rpc_method .. "\": " .. err)
+                    print("___ERRONET: Sending response method \"" .. rpc_method .. "\" with result \"" .. result .. "\": " .. err)
                   end
                 end
                 ]]
@@ -270,11 +272,11 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local params = myinterface.methods[rpc_method].args
 
       -- Validate request types before send.
-      local i = 1
+      local i = 0
       for _, param in pairs(params) do
         if param.direction == "in" or param.direction == "inout" then
-          local value = arg[i]
           i = i + 1
+          local value = arg[i]
           if not luarpc.validate_type(value, param.type) then
             print("___ERRORPC: Wrong request type passed for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\"")
             return false
@@ -283,8 +285,8 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       end
 
       -- Validate request #params.
-      if arg.n ~= i - 1 then
-        print("___ERRORPC: Wrong request number of arguments for method \"" .. rpc_method .. "\" expecting " .. i - 1 .. " got " .. arg.n)
+      if arg.n ~= i then
+        print("___ERRORPC: Wrong request number of arguments for method \"" .. rpc_method .. "\" expecting " .. i .. " got " .. arg.n)
         return false
       end
 
@@ -317,17 +319,17 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       print("> request method: " .. rpc_method)
 
       -- Send request values.
-      local i = 1
+      local i = 0
       for _, param in pairs(params) do
         if param.direction == "in" or param.direction == "inout" then
-          --print(param.direction)
-          --print(param.type)
-          local value = arg[i]
           i = i + 1
-          print("Sending request method \"" .. rpc_method .. "\" value \"" .. value .. "\"")
+          local value = arg[i]
+          print(param.direction)
+          print(param.type)
+          print("Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"" .. value .. "\"")
           local _, err = client:send(value .. "\n")
           if err then
-            print("___ERRONET: Sending request method \"" .. rpc_method .. "\" value \"" .. value .. "\": " .. err)
+            print("___ERRONET: Sending request method \"" .. rpc_method .. "\" value " .. i .. " \"" .. value .. "\": " .. err)
             return false
           end
 
@@ -337,19 +339,21 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       end
 
       -- Receive response.
+      local i = 0
       local values = {}
       for _, param in pairs(params) do
         if param.direction == "out" then
-          print("Receiving response value for method \"" .. rpc_method .. "\"...")
+          i = i + 1
+          print("Receiving response  method \"" .. rpc_method .. "\" value " .. i .. "...")
           if param.type ~= "void" then
             local value, err = client:receive("*l")
             if err then
-              print("___ERRORPC: Receiving response value for method \"" .. rpc_method .. "\": " .. err)
+              print("___ERRORPC: Receiving response  method \"" .. rpc_method .. "\" value " .. i .. ": " .. err)
               break
             else
               -- Validate response types after receive.
               if not luarpc.validate_type(value, param.type) then
-                print("___ERRORPC: Wrong response type received for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\"")
+                print("___ERRORPC: Wrong response type received for value " .. i .. " \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\"")
                 break
               end
 
