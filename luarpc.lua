@@ -31,7 +31,7 @@ string\\n         -- string "string\n"
 
 function luarpc.validate_type(value, param_type)
   if param_type == "char" then
-    if #value == 1 then
+    if #tostring(value) == 1 then
       return true
     end
   elseif param_type == "string" then
@@ -43,7 +43,7 @@ function luarpc.validate_type(value, param_type)
       return true
     end
   elseif param_type == "void" then
-    if value == "" or value == "\n" then
+    if value == "" then
       return true
     end
   end
