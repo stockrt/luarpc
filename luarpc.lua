@@ -267,8 +267,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
     -- Proxied methods builder.
     pobj[rpc_method] = function(...)
       print()
-      print(arg)
-      print()
+      print("Params passed to proxy object when calling \"" .. rpc_method .. "\":")
       table.foreach(arg, print)
       print()
 
