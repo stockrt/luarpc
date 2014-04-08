@@ -349,13 +349,13 @@ function luarpc.createProxy(server_address, server_port, interface_file)
   dofile(interface_file)
 
   -- Catch all not defined methods and throw an error.
-  local mt = {__index = function ()
-    return function (...)
+  local mt = {__index = function (...)
+    return function ()
+      local rpc_method = arg[2]
       print()
-      --print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
-      print("* Params passed to proxy object when calling undefined method:")
+      print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
       table.foreach(arg, print)
-      return "___ERRORPC: Invalid request method"
+      return "___ERRORPC: Invalid request method \"" .. rpc_method .. "\""
     end
   end}
   setmetatable(pobj, mt)
