@@ -14,23 +14,18 @@ describe("luarpc module", function()
     end)
 
     it("should encode new lines", function()
-      local x = [[ola
-mundo]]
-      assert.same("ola\\nmundo", luarpc.encode("string", x))
+      local x = [[hello
+world]]
+      assert.same("hello\\nworld", luarpc.encode("string", x))
       assert.same("\\n", luarpc.encode("string", "\n"))
       assert.same("\\n\\n", luarpc.encode("string", "\n\n"))
+      assert.same("\\n\\n\\n", luarpc.encode("string", "\n\n\n"))
     end)
 
     it("should encode slashes", function()
       assert.same("\\\\", luarpc.encode("string", "\\"))
-
-      assert.same("\\\\n", luarpc.encode("string", "\\n"))
-      assert.same("n\\\\", luarpc.encode("string", "n\\"))
-      assert.same("n\\\\n", luarpc.encode("string", "n\\n"))
-
-      assert.same("\\\\n\\\\n", luarpc.encode("string", "\\n\\n"))
-      assert.same("n\\\\n\\\\", luarpc.encode("string", "n\\n\\"))
-      assert.same("n\\\\n\\\\n", luarpc.encode("string", "n\\n\\n"))
+      assert.same("\\\\\\\\", luarpc.encode("string", "\\\\"))
+      assert.same("\\\\\\\\\\\\", luarpc.encode("string", "\\\\\\"))
     end)
 
     it("should encode doubles", function()
@@ -49,23 +44,18 @@ mundo]]
     end)
 
     it("should decode new lines", function()
-      local x = [[ola
-mundo]]
-      assert.same(x, luarpc.decode("string", "ola\\nmundo"))
+      local x = [[hello
+world]]
+      assert.same(x, luarpc.decode("string", "hello\\nworld"))
       assert.same("\n", luarpc.decode("string", "\\n"))
       assert.same("\n\n", luarpc.decode("string", "\\n\\n"))
+      assert.same("\n\n\n", luarpc.decode("string", "\\n\\n\\n"))
     end)
 
     it("should decode slashes", function()
       assert.same("\\", luarpc.decode("string", "\\\\"))
-
---      assert.same("\\n", luarpc.decode("string", "\\\\n"))
-      assert.same("n\\", luarpc.decode("string", "n\\\\"))
---      assert.same("n\\n", luarpc.decode("string", "n\\\\n"))
-
---      assert.same("\\n\\n", luarpc.decode("string", "\\\\n\\\\n"))
---      assert.same("n\\n\\", luarpc.decode("string", "n\\\\n\\\\"))
---      assert.same("n\\n\\n", luarpc.decode("string", "n\\\\n\\\\n"))
+      assert.same("\\\\", luarpc.decode("string", "\\\\\\\\"))
+      assert.same("\\\\\\", luarpc.decode("string", "\\\\\\\\\\\\"))
     end)
 
     it("should decode doubles", function()
@@ -82,8 +72,11 @@ mundo]]
       local x = "a"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
-      local x = [[ola
-mundo]]
+      local x = [[hello
+world]]
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "hello\nworld"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
       local x = "abc"
@@ -95,89 +88,26 @@ mundo]]
       local x = "\\\\"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
-      local x = "a\\b"
+      local x = "\\\\\\"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
-      local x = "a\n"
+      local x = "\\\\\\\\"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
-      local x = "a\\n"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\na"
+      local x = "\\\\\\\\\\"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
-      local x = "\\na"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+      local x = "\\\\\\\\\\\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
       local x = "\n"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\n"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\n"
-      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\\n"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
       local x = "\n\n"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
       local x = "\n\n\n"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\n\\"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\n\\n\\"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\n\\\n\\"
-      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\n\\\\n\\"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\\n\\\\n\\"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\\\n\\\\n\\"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\\\n\\\\\n\\"
-      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\n\\\n\\\\"
-      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\n\\\\n\\\\"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\\n\\\\n\\\\"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\\\n\\\\n\\\\"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\\\n\\\\\n\\\\"
-      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\n\\n\\"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "\\\n\\\n\\"
-      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "n\\n"
- --     assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "n\\\n"
-      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
-
-      local x = "n\\\\n"
---      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
       local x = 3.1415
       assert.same(x, luarpc.decode("double", luarpc.encode("double", x)))
