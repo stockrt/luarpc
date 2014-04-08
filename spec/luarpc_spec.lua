@@ -12,6 +12,9 @@ describe("luarpc module", function()
     end)
 
     it("should encode new lines", function()
+      local x = [[ola
+mundo]]
+      assert.same("ola\\nmundo", luarpc.encode("string", x))
       assert.same("\\n", luarpc.encode("string", "\n"))
       assert.same("\\n\\n", luarpc.encode("string", "\n\n"))
     end)
@@ -44,6 +47,9 @@ describe("luarpc module", function()
     end)
 
     it("should decode new lines", function()
+      local x = [[ola
+mundo]]
+      assert.same(x, luarpc.decode("string", "ola\\nmundo"))
       assert.same("\n", luarpc.decode("string", "\\n"))
       assert.same("\n\n", luarpc.decode("string", "\\n\\n"))
     end)
@@ -68,45 +74,117 @@ describe("luarpc module", function()
 
     -- Back to original.
     it("should decode to original value", function()
-      local x = "okok"
+      local x = "a"
+      assert.same(x, luarpc.decode("char", luarpc.encode("char", x)))
+
+      local x = "a"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
 
-      assert.same("a", luarpc.decode("char", luarpc.encode("char", "a")))
-      assert.same("a", luarpc.decode("string", luarpc.encode("string", "a")))
-      assert.same("abc", luarpc.decode("string", luarpc.encode("string", "abc")))
-      assert.same("\\", luarpc.decode("string", luarpc.encode("string", "\\")))
-      assert.same("\\\\", luarpc.decode("string", luarpc.encode("string", "\\\\")))
-      assert.same("a\\b", luarpc.decode("string", luarpc.encode("string", "a\\b")))
-      assert.same("a\n", luarpc.decode("string", luarpc.encode("string", "a\n")))
-      assert.same("a\\n", luarpc.decode("string", luarpc.encode("string", "a\\n")))
-      assert.same("\na", luarpc.decode("string", luarpc.encode("string", "\na")))
-      assert.same("\\na", luarpc.decode("string", luarpc.encode("string", "\\na")))
-      assert.same("\n", luarpc.decode("string", luarpc.encode("string", "\n")))
-      assert.same("\\n", luarpc.decode("string", luarpc.encode("string", "\\n")))
-      assert.same("\\\n", luarpc.decode("string", luarpc.encode("string", "\\\n")))
-      assert.same("\\\\n", luarpc.decode("string", luarpc.encode("string", "\\\\n")))
-      assert.same("\n\n", luarpc.decode("string", luarpc.encode("string", "\n\n")))
-      assert.same("\n\n\n", luarpc.decode("string", luarpc.encode("string", "\n\n\n")))
-      assert.same("\\n\\", luarpc.decode("string", luarpc.encode("string", "\\n\\")))
-      assert.same("\\n\\n\\", luarpc.decode("string", luarpc.encode("string", "\\n\\n\\")))
-      assert.same("\\\n\\\n\\", luarpc.decode("string", luarpc.encode("string", "\\\n\\\n\\")))
-      assert.same("\\\n\\\\n\\", luarpc.decode("string", luarpc.encode("string", "\\\n\\\\n\\")))
-      assert.same("\\\\n\\\\n\\", luarpc.decode("string", luarpc.encode("string", "\\\\n\\\\n\\")))
-      assert.same("\\\\\n\\\\n\\", luarpc.decode("string", luarpc.encode("string", "\\\\\n\\\\n\\")))
-      assert.same("\\\\\n\\\\\n\\", luarpc.decode("string", luarpc.encode("string", "\\\\\n\\\\\n\\")))
-      assert.same("\\\n\\\n\\\\", luarpc.decode("string", luarpc.encode("string", "\\\n\\\n\\\\")))
-      assert.same("\\\n\\\\n\\\\", luarpc.decode("string", luarpc.encode("string", "\\\n\\\\n\\\\")))
-      assert.same("\\\\n\\\\n\\\\", luarpc.decode("string", luarpc.encode("string", "\\\\n\\\\n\\\\")))
-      assert.same("\\\\\n\\\\n\\\\", luarpc.decode("string", luarpc.encode("string", "\\\\\n\\\\n\\\\")))
-      assert.same("\\\\\n\\\\\n\\\\", luarpc.decode("string", luarpc.encode("string", "\\\\\n\\\\\n\\\\")))
-      assert.same("\\\n\\n\\", luarpc.decode("string", luarpc.encode("string", "\\\n\\n\\")))
-      assert.same("\\\n\\\n\\", luarpc.decode("string", luarpc.encode("string", "\\\n\\\n\\")))
-      assert.same("n\\n", luarpc.decode("string", luarpc.encode("string", "n\\n")))
-      assert.same("n\\\n", luarpc.decode("string", luarpc.encode("string", "n\\\n")))
-      assert.same("n\\\\n", luarpc.decode("string", luarpc.encode("string", "n\\\\n")))
-      assert.same(3.1415, luarpc.decode("double", luarpc.encode("double", 3.1415)))
-      assert.same(1, luarpc.decode("double", luarpc.encode("double", 1)))
-      assert.same(123, luarpc.decode("double", luarpc.encode("double", 123)))
+      local x = [[ola
+mundo]]
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "abc"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "a\\b"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "a\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "a\\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\na"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\na"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\n\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\n\n\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\n\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\n\\n\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\n\\\n\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\n\\\\n\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\\n\\\\n\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\\\n\\\\n\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\\\n\\\\\n\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\n\\\n\\\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\n\\\\n\\\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\\n\\\\n\\\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\\\n\\\\n\\\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\\\n\\\\\n\\\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\n\\n\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "\\\n\\\n\\"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "n\\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "n\\\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = "n\\\\n"
+      assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
+
+      local x = 3.1415
+      assert.same(x, luarpc.decode("double", luarpc.encode("double", x)))
+
+      local x = 1
+      assert.same(x, luarpc.decode("double", luarpc.encode("double", x)))
+
+      local x = 123
+      assert.same(x, luarpc.decode("double", luarpc.encode("double", x)))
     end)
   end)
 end)
