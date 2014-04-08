@@ -87,10 +87,12 @@ function luarpc.decode(param_type, value)
     str = str:gsub(x, "\n")
     return str
   elseif param_type == "double" then
-    return tonumber(value)
-  else
-    return value
+    if tonumber(value) then
+      return tonumber(value)
+    end
   end
+
+  return value
 end
 
 function luarpc.createServant(obj, interface_file, server_port)
@@ -224,6 +226,7 @@ function luarpc.waitIncoming()
                   end
 
                   value = luarpc.decode(param.type, value)
+
                   if err then
                     local err_msg = "___ERRORPC: Receiving request method \"" .. rpc_method .. "\" value " .. i .. ": " .. err
                     print(err_msg)
@@ -236,7 +239,6 @@ function luarpc.waitIncoming()
                   else
                     -- Validate request types after receive.
                     if not luarpc.validate_type(param.type, value) then
-                      if value == nil then value = "" end
                       local err_msg = "___ERRORPC: Wrong request type received for value " .. i .. " \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
                       print(err_msg)
                       local _, err = client:send(luarpc.encode("string", err_msg) .. "\n")
