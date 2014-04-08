@@ -1,5 +1,7 @@
 local luarpc = require("luarpc")
 
+-- TODO: Encode/decode with wrong type behavior.
+
 describe("luarpc module", function()
   describe("should work", function()
     -- Encode.
