@@ -29,7 +29,7 @@ interface {
     bar = {
       resulttype = "double",
       args = {
-        {direction = "inout", type = "double"},
+        {direction = "in", type = "double"},
       },
     },
     baz = {
@@ -37,7 +37,6 @@ interface {
       args = {
         {direction = "in", type = "string"},
         {direction = "in", type = "string"},
-        {direction = "out", type = "string"},
       },
     },
     cha = {
@@ -45,20 +44,18 @@ interface {
       args = {
         {direction = "in", type = "char"},
         {direction = "in", type = "char"},
-        {direction = "out", type = "string"},
       },
     },
     hello = {
       resulttype = "string",
       args = {
-        {direction = "inout", type = "string"},
+        {direction = "in", type = "string"},
       },
     },
     capabilities = {
       resulttype = "string",
       args = {
         {direction = "in", type = "void"},
-        {direction = "out", type = "string"},
       },
     },
   }

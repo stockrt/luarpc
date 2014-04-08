@@ -31,8 +31,8 @@ print("- Chamadas bem comportadas, sem erro.")
 print("############################################")
 print()
 
-local result = proxy1.foo(5, 3)
-print("* Result: " .. result)
+local result, msg = proxy1.foo(5, 3)
+print("* Result: " .. result .. " / Msg: " .. msg)
 
 local result = proxy1.boo(20)
 print("* Echo: " .. result)
@@ -106,8 +106,8 @@ print("- Chamadas bem comportadas, sem erro.")
 print("############################################")
 print()
 
-local result = proxy2.foo(5, 3)
-print("* Result: " .. result)
+local result, msg = proxy2.foo(5, 3)
+print("* Result: " .. result .. " / Msg: " .. msg)
 
 local result = proxy2.boo(20)
 print("* Fixed: " .. result)
