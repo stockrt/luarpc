@@ -141,9 +141,9 @@ function luarpc.createServant(obj, interface_file)
   -- server:listen(2048)
 
   -- Connection options.
-  server:setoption('keepalive', true)
-  server:setoption('linger', {on = false, timeout = 0})
-  server:setoption('tcp-nodelay', true)
+  server:setoption("keepalive", true)
+  server:setoption("linger", {on = false, timeout = 0})
+  server:setoption("tcp-nodelay", true)
   server:settimeout(0.1) -- accept/send/receive timeout
 
   -- Interface.
@@ -379,9 +379,9 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       end
 
       -- Connection options.
-      client:setoption('keepalive', true)
-      client:setoption('linger', {on = false, timeout = 0})
-      client:setoption('tcp-nodelay', true)
+      client:setoption("keepalive", true)
+      client:setoption("linger", {on = false, timeout = 0})
+      client:setoption("tcp-nodelay", true)
       client:settimeout(10) -- send/receive timeout
 
       -- Connection info.
