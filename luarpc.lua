@@ -77,7 +77,6 @@ http://www.lua.org/pil/20.4.html
 function luarpc.encode(param_type, value)
   if param_type == "string" then
     local x = "XXXXXXXXXX"
-    -- local str = value:gsub("([^\\]|%s)\n", x)
     local str = value:gsub("\n", x)
     str = str:gsub("\\", "\\\\")
     str = str:gsub(x, "\\n")
@@ -90,7 +89,6 @@ end
 function luarpc.decode(param_type, value)
   if param_type == "string" then
     local x = "XXXXXXXXXX"
-    -- local str = value:gsub("([^\\]|%s)\\n", x)
     local str = value:gsub("\\n", x)
     str = str:gsub("\\\\", "\\")
     str = str:gsub(x, "\n")
