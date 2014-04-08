@@ -348,8 +348,20 @@ function luarpc.createProxy(server_address, server_port, interface_file)
   -- Interface.
   dofile(interface_file)
 
+  -- Catch all not defined methods and throw an error.
+  local mt = {__index = function ()
+    return function (...)
+      print()
+      --print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
+      print("* Params passed to proxy object when calling undefined method:")
+      table.foreach(arg, print)
+      return "___ERRORPC: Invalid request method"
+    end
+  end}
+  setmetatable(pobj, mt)
+
+  -- Proxied methods builder.
   for rpc_method, method in pairs(myinterface.methods) do
-    -- Proxied methods builder.
     pobj[rpc_method] = function(...)
       print()
       print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
