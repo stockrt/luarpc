@@ -72,6 +72,7 @@ local obj2 = {
     return "Greetings from obj2, " .. str .. "!"
   end,
   capabilities = function ()
+    -- TODO: Extra results and types.
     local caps = ""
     for rpc_method, method in pairs(myinterface.methods) do
       local cap = method.resulttype .. " " .. rpc_method .. "("
