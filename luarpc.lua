@@ -2,17 +2,10 @@
 
 --[[
 TODO:
-- Revisar protocolo (número de parâmetros e de retornos);
 - Do ponto de vista de engenharia, algumas chamadas poderiam ser encapsuladas para termos menos linhas de código e menos repetição;
 
-- Apenas do in ou dos inout tb?
+- Como fazer para retornar __ERRORPC se o cliente espera um double?
 O protocolo é baseado na troca de strings ascii. Cada chamada é realizada pelo nome do método seguido da lista de parâmetros in. Entre o nome do método e o primeiro argumento, assim como depois de cada argumento, deve vir um fim de linha. A resposta deve conter o valor resultante seguido dos valores dos argumentos de saída, cada um em uma linha. Caso ocorra algum erro na execução da chamada, o servidor deve responder com uma string iniciada com "___ERRORPC: ", possivelmente seguida de uma descrição mais específica do erro (por exemplo, "função inexistente").
-
-TODO:
-local r, s = p1.foo(3, 5)
-Como sugerido nesse exemplo, um parâmetro out deve ser tratado como um
-resultado a mais da função.
-Um parâmetro inout é mapeado em um argumento de entrada e um resultado a mais.
 ]]
 
 local socket = require("socket")
@@ -204,9 +197,8 @@ function luarpc.waitIncoming()
           if servant.iface.methods[rpc_method] then
             -- Parameters receive.
             local values = {}
-            local params = servant.iface.methods[rpc_method].args
             local i = 0
-            for _, param in pairs(params) do
+            for _, param in pairs(servant.iface.methods[rpc_method].args) do
               if param.direction == "in" or param.direction == "inout" then
                 i = i + 1
                 print("Receiving request method \"" .. rpc_method .. "\" value " .. i .. "...")
@@ -249,14 +241,9 @@ function luarpc.waitIncoming()
 
             -- Call method on server.
             if not skip then
-              -- One result fits all.
-              local status, result = pcall(servant.obj[rpc_method], unpack(values))
-
-              -- Separate results for multisend.
-              --[[
+              -- Separate result and extra results for multisend.
               local packed_result = {pcall(servant.obj[rpc_method], unpack(values))}
               local status = packed_result[1]
-              ]]
 
               if not status then
                 local err_msg = "___ERRORPC: Problem calling method \"" .. rpc_method .. "\""
@@ -266,27 +253,64 @@ function luarpc.waitIncoming()
                   print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
                 end
               else
-                -- Validate response types before send?
-
-                -- One result fits all.
-                print("> response result: " .. result)
-                -- Return result to client.
-                local _, err = client:send(luarpc.encode(servant.iface.methods[rpc_method].resulttype, result) .. "\n")
-                if err then
-                  print("___ERRONET: Sending response method \"" .. rpc_method .. "\" with result \"" .. result .. "\": " .. err)
+                -- Validate response types before send.
+                if servant.iface.methods[rpc_method].resulttype == "void" then
+                  -- Void result placeholder.
+                  table.insert(packed_result, 2, "")
+                end
+                if not luarpc.validate_type(servant.iface.methods[rpc_method].resulttype, packed_result[2]) then
+                  local err_msg = "___ERRORPC: Wrong response type for value \"" .. packed_result[2] .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. servant.iface.methods[rpc_method].resulttype .. "\""
+                  print(err_msg)
+                  local _, err = client:send(luarpc.encode("string", err_msg) .. "\n")
+                  if err then
+                    print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+                  end
                 end
 
-                -- Separate results for multisend.
-                --[[
-                for _, result in pairs({unpack(packed_result, 2)}) do
-                  print("= response result: " .. result)
+                -- Result.
+                if servant.iface.methods[rpc_method].resulttype ~= "void" then
+                  local result = packed_result[2]
+                  -- Show response value.
+                  print("> response result: " .. result)
                   -- Return result to client.
                   local _, err = client:send(luarpc.encode(servant.iface.methods[rpc_method].resulttype, result) .. "\n")
                   if err then
                     print("___ERRONET: Sending response method \"" .. rpc_method .. "\" with result \"" .. result .. "\": " .. err)
                   end
+                else
+                  -- Show response value.
+                  print("> response result: void")
                 end
-                ]]
+
+                -- Extra results.
+                local i = 2
+                for _, param in pairs(servant.iface.methods[rpc_method].args) do
+                  if param.direction == "out" or param.direction == "inout" then
+                    if param.type ~= "void" then
+                      i = i + 1
+
+                      -- Validate extra response types before send.
+                      if not luarpc.validate_type(param.type, packed_result[i]) then
+                        local err_msg = "___ERRORPC: Wrong extra response type for value \"" .. packed_result[i] .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
+                        print(err_msg)
+                        local _, err = client:send(luarpc.encode("string", err_msg) .. "\n")
+                        if err then
+                          print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err)
+                          break
+                        end
+                      end
+
+                      -- Show extra response value.
+                      print("> response extra result: " .. packed_result[i])
+                      -- Return extra result to client.
+                      local _, err = client:send(luarpc.encode(param.type, packed_result[i]) .. "\n")
+                      if err then
+                        print("___ERRONET: Sending response method \"" .. rpc_method .. "\" with extra result \"" .. packed_result[i] .. "\": " .. err)
+                        break
+                      end
+                    end
+                  end
+                end
               end
             end
           else
@@ -322,12 +346,9 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
       table.foreach(arg, print)
 
-      -- Method in/out params.
-      local params = myinterface.methods[rpc_method].args
-
       -- Validate request types before send.
       local i = 0
-      for _, param in pairs(params) do
+      for _, param in pairs(myinterface.methods[rpc_method].args) do
         if param.direction == "in" or param.direction == "inout" then
           if param.type ~= "void" then
             i = i + 1
@@ -380,7 +401,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
 
       -- Send request values.
       local i = 0
-      for _, param in pairs(params) do
+      for _, param in pairs(myinterface.methods[rpc_method].args) do
         if param.direction == "in" or param.direction == "inout" then
           if param.type ~= "void" then
             i = i + 1
@@ -403,35 +424,63 @@ function luarpc.createProxy(server_address, server_port, interface_file)
         end
       end
 
-      -- Receive response.
-      local i = 0
+      -- Receive result.
       local values = {}
-      for _, param in pairs(params) do
+      if myinterface.methods[rpc_method].resulttype ~= "void" then
+        print("Receiving response method \"" .. rpc_method .. "\" value...")
+        local value, err = client:receive("*l")
+        value = luarpc.decode(myinterface.methods[rpc_method].resulttype, value)
+        if err then
+          local err_msg = "___ERRORPC: Receiving response method \"" .. rpc_method .. "\" value: " .. err
+          print(err_msg)
+          return err_msg
+        else
+          -- Validate response types after receive.
+          if not luarpc.validate_type(myinterface.methods[rpc_method].resulttype, value) then
+            local err_msg = "___ERRORPC: Wrong response type received for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. myinterface.methods[rpc_method].resulttype .. "\""
+            print(err_msg)
+            return err_msg
+          end
+
+          -- Show response value.
+          print("< response value: " .. value)
+          -- Results to be returned from proxied object.
+          table.insert(values, value)
+        end
+      else
+        -- Show response value.
+        print("Receiving response method \"" .. rpc_method .. "\" value...")
+        print("< response value: void")
+      end
+
+      -- Receive extra results.
+      local i = 0
+      for _, param in pairs(myinterface.methods[rpc_method].args) do
         if param.direction == "out" or param.direction == "inout" then
           if param.type ~= "void" then
             i = i + 1
-            print("Receiving response method \"" .. rpc_method .. "\" value " .. i .. "...")
+            print("Receiving response method \"" .. rpc_method .. "\" extra value " .. i .. "...")
             local value, err = client:receive("*l")
             value = luarpc.decode(param.type, value)
             if err then
-              print("___ERRORPC: Receiving response method \"" .. rpc_method .. "\" value " .. i .. ": " .. err)
+              print("___ERRORPC: Receiving response method \"" .. rpc_method .. "\" extra value " .. i .. ": " .. err)
               break
             else
               -- Validate response types after receive.
               if not luarpc.validate_type(param.type, value) then
-                print("___ERRORPC: Wrong response type received for value " .. i .. " \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\"")
+                print("___ERRORPC: Wrong response type received for extra value " .. i .. " \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\"")
                 break
               end
 
-              -- Show response value.
-              print("< response value: " .. value)
+              -- Show response extra value.
+              print("< response extra value: " .. value)
               -- Results to be returned from proxied object.
               table.insert(values, value)
             end
           else
             -- Show response value.
-            print("Receiving response method \"" .. rpc_method .. "\" value " .. i .. "...")
-            print("< response value: void")
+            print("Receiving response method \"" .. rpc_method .. "\" extra value " .. i .. "...")
+            print("< response extra value: void")
           end
         end
       end
