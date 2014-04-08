@@ -281,7 +281,7 @@ function luarpc.waitIncoming()
                 for _, result in pairs({unpack(packed_result, 2)}) do
                   print("= response result: " .. result)
                   -- Return result to client.
-                  local _, err = client:send(luarpc.encode("string", result) .. "\n")
+                  local _, err = client:send(luarpc.encode(servant.iface.methods[rpc_method].resulttype, result) .. "\n")
                   if err then
                     print("___ERRONET: Sending response method \"" .. rpc_method .. "\" with result \"" .. result .. "\": " .. err)
                   end
