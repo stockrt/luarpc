@@ -2,7 +2,7 @@ local luarpc = require("luarpc")
 
 describe("luarpc module", function()
   describe("should work", function()
-    -- Encode
+    -- Encode.
     it("should encode chars", function()
       assert.same("a", luarpc.encode("char", "a"))
     end)
@@ -34,7 +34,7 @@ describe("luarpc module", function()
       assert.same("123", luarpc.encode("double", 123))
     end)
 
-    -- Decode
+    -- Decode.
     it("should decode chars", function()
       assert.same("a", luarpc.decode("char", "a"))
     end)
@@ -66,7 +66,7 @@ describe("luarpc module", function()
       assert.same(123, luarpc.decode("double", "123"))
     end)
 
-    -- back to original
+    -- Back to original.
     it("should decode to original value", function()
       local x = "okok"
       assert.same(x, luarpc.decode("string", luarpc.encode("string", x)))
