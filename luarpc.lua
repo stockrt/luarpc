@@ -4,10 +4,13 @@
 TODO:
 ### Ainda vou refinar:
 - Revisar protocolo (número de parâmetros e de retornos);
-- Utilizar encode/decode para multiline e outros escapes combinados com a turma;
+OK mas ainda tem erro com slahes - Utilizar encode/decode para multiline e outros escapes combinados com a turma;
 - Do ponto de vista de engenharia, algumas chamadas poderiam ser encapsuladas para termos menos linhas de código e menos repetição;
 - Testado apenas contra LUA 5.1:
 Lua 5.1.5  Copyright (C) 1994-2012 Lua.org, PUC-Rio
+
+- Apenas do in ou dos inout tb?
+O protocolo é baseado na troca de strings ascii. Cada chamada é realizada pelo nome do método seguido da lista de parâmetros in. Entre o nome do método e o primeiro argumento, assim como depois de cada argumento, deve vir um fim de linha. A resposta deve conter o valor resultante seguido dos valores dos argumentos de saída, cada um em uma linha. Caso ocorra algum erro na execução da chamada, o servidor deve responder com uma string iniciada com "___ERRORPC: ", possivelmente seguida de uma descrição mais específica do erro (por exemplo, "função inexistente").
 
 TODO:
 local r, s = p1.foo(3, 5)
@@ -33,7 +36,7 @@ function interface(iface)
   myinterface = iface
 end
 
-function luarpc.validate_type(value, param_type)
+function luarpc.validate_type(param_type, value)
   if param_type == "char" then
     if #tostring(value) == 1 then
       return true
@@ -56,21 +59,69 @@ function luarpc.validate_type(value, param_type)
 end
 
 --[[
-TODO: Encode/decode.
-oi                -- string "oi"
-3                 -- double 3
-a                 -- char "a"
-\n                -- char de quebra de linha
-\\                -- char "\"
-nova\nlinha       -- string "nova
-                     linha"
-string\\n         -- string "string\n"
-]]
+20.3 – Captures
+http://www.lua.org/pil/20.3.html
 
-function luarpc.encode()
+20.4 – Tricks of the Trade
+http://www.lua.org/pil/20.4.html
+
+function unescape (s)
+  s = string.gsub(s, "+", " ")
+  s = string.gsub(s, "%%(%x%x)", function (h)
+    return string.char(tonumber(h, 16))
+  end)
+  return s
 end
 
-function luarpc.decode()
+function decode (s)
+  for name, value in string.gfind(s, "([^&=]+)=([^&=]+)") do
+    name = unescape(name)
+    value = unescape(value)
+    cgi[name] = value
+  end
+end
+
+function escape (s)
+  s = string.gsub(s, "([&=+%c])", function (c)
+    return string.format("%%%02X", string.byte(c))
+  end)
+  s = string.gsub(s, " ", "+")
+  return s
+end
+
+function encode (t)
+  local s = ""
+  for k,v in pairs(t) do
+    s = s .. "&" .. escape(k) .. "=" .. escape(v)
+  end
+  return string.sub(s, 2)     -- remove first `&'
+end
+]]
+
+function luarpc.encode(param_type, value)
+  if param_type == "string" then
+    local x = "XXXXXXXXXX"
+    local str = value:gsub("\n", x)
+    str = str:gsub("\\", "\\\\")
+    str = str:gsub(x, "\\n")
+    return str
+  else
+    return tostring(value)
+  end
+end
+
+function luarpc.decode(param_type, value)
+  if param_type == "string" then
+    local x = "XXXXXXXXXX"
+    local str = value:gsub("\\n", x)
+    str = str:gsub("\\\\", "\\")
+    str = str:gsub(x, "\n")
+    return str
+  elseif param_type == "double" then
+    return tonumber(value)
+  else
+    return value
+  end
 end
 
 function luarpc.createServant(obj, interface_file)
@@ -195,7 +246,7 @@ function luarpc.waitIncoming()
                     break
                   else
                     -- Validate request types after receive.
-                    if not luarpc.validate_type(value, param.type) then
+                    if not luarpc.validate_type(param.type, value) then
                       local err_msg = "___ERRORPC: Wrong request type received for value " .. i .. " \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
                       print(err_msg)
                       local _, err = client:send(err_msg .. "\n")
