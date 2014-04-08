@@ -74,7 +74,7 @@ print("* Err: " .. result)
 local result = proxy1.cha("abc ERRO_ESPERADO", 123)
 print("* Err: " .. result)
 
-local result = proxy1.naodefinido("nao existe ERRO_ESPERADO")
+local result = proxy1.naodefinido_erro_esperado("nao existe ERRO_ESPERADO")
 print("* Err: " .. result)
 
 local result = proxy1.hello()
@@ -151,7 +151,7 @@ print("* Err: " .. result)
 local result = proxy2.cha("abc ERRO_ESPERADO", "123")
 print("* Err: " .. result)
 
-local result = proxy2.naodefinido("nao existe ERRO_ESPERADO")
+local result = proxy2.naodefinido_erro_esperado("nao existe ERRO_ESPERADO")
 print("* Err: " .. result)
 
 local result = proxy2.hello()
