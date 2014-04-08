@@ -6,6 +6,8 @@ TODO:
 
 - Como fazer para retornar __ERRORPC se o cliente espera um double?
 O protocolo é baseado na troca de strings ascii. Cada chamada é realizada pelo nome do método seguido da lista de parâmetros in. Entre o nome do método e o primeiro argumento, assim como depois de cada argumento, deve vir um fim de linha. A resposta deve conter o valor resultante seguido dos valores dos argumentos de saída, cada um em uma linha. Caso ocorra algum erro na execução da chamada, o servidor deve responder com uma string iniciada com "___ERRORPC: ", possivelmente seguida de uma descrição mais específica do erro (por exemplo, "função inexistente").
+
+nodef
 ]]
 
 local socket = require("socket")
@@ -93,11 +95,16 @@ function luarpc.decode(param_type, value)
   end
 end
 
-function luarpc.createServant(obj, interface_file)
+function luarpc.createServant(obj, interface_file, server_port)
   print("Setting up servant " .. #servant_list + 1 .. "...")
 
+  local s_port = 0
+  if server_port then
+    s_port = server_port
+  end
+
   -- tcp, bind, listen shortcut.
-  local server, err = socket.bind("*", 0, 2048)
+  local server, err = socket.bind("*", s_port, 2048)
   if err then
     local err_msg = "___ERRONET: Server could not bind: " .. err
     print(err_msg)
@@ -106,7 +113,7 @@ function luarpc.createServant(obj, interface_file)
 
   -- Step by step.
   -- local server = socket.tcp()
-  -- server:bind("*", 0)
+  -- server:bind("*", s_port)
   -- server:listen(2048)
 
   -- Connection options.

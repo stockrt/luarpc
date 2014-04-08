@@ -5,10 +5,12 @@ local luarpc = require("luarpc")
 
 -- Arguments.
 if #arg < 1 then
-  print("Usage: " .. arg[0] .. " <interface_file>")
+  print("Usage: " .. arg[0] .. " <interface_file> [server_port1] [server_port2]")
   os.exit(1)
 end
 local interface_file = arg[1]
+local server_port1 = arg[2]
+local server_port2 = arg[3]
 
 -- Objects.
 local obj1 = {
@@ -90,10 +92,12 @@ local obj2 = {
 }
 
 -- server1/obj1
-local servant1 = luarpc.createServant(obj1, interface_file)
+local servant1 = luarpc.createServant(obj1, interface_file, server_port1)
+-- local servant11 = luarpc.createServant(obj1, interface_file)
 
 -- server2/obj2
-local servant2 = luarpc.createServant(obj2, interface_file)
+local servant2 = luarpc.createServant(obj2, interface_file, server_port2)
+-- local servant21 = luarpc.createServant(obj2, interface_file)
 
 -- Wait for clients.
 luarpc.waitIncoming()
