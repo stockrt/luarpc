@@ -168,13 +168,19 @@ function luarpc.recv_msg(params)
   return status, ret_msg
 end
 
-function luarpc.createServant(obj, interface_file, server_port)
+function luarpc.createServant(obj, interface_file, server_port, pool_size)
   print("Setting up servant " .. #servant_list + 1 .. "...")
 
   -- Dynamic or static port.
   local s_port = 0
   if server_port then
     s_port = server_port
+  end
+
+  -- Default pool size.
+  local p_size = 3
+  if pool_size then
+    p_size = pool_size
   end
 
   -- tcp, bind, listen shortcut.
@@ -250,6 +256,19 @@ function luarpc.waitIncoming()
         local l_ip, l_port = client:getsockname()
         local r_ip, r_port = client:getpeername()
         print("Client " .. r_ip .. ":" .. r_port .. " connected on " .. l_ip .. ":" .. l_port)
+
+        -- Pool size limit.
+        print("Current number os connected clients: " .. #servant.client_list .. "/" .. servant.pool_size)
+        if #servant.client_list > servant.pool_size then
+          print("Pool size of " .. servant.pool_size .. " connections exceeded, discarding old clients.")
+          while #servant.client_list > servant.pool_size do
+            old_client = table.remove(servant.client_list, 1)
+            local l_ip, l_port = old_client:getsockname()
+            local r_ip, r_port = old_client:getpeername()
+            print("Closing old client connection " .. r_ip .. ":" .. r_port .. " on " .. l_ip .. ":" .. l_port)
+            old_client:close()
+          end
+        end
       end
 
       -- Connected client sent some data for this servant.
@@ -328,9 +347,6 @@ function luarpc.waitIncoming()
           else
             luarpc.send_msg{msg="___ERRORPC: Invalid request method \"" .. tostring(rpc_method) .. "\"", client=client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
           end
-
-          -- Terminate connection.
-          client:close()
         end
       end
     end

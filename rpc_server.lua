@@ -11,6 +11,7 @@ end
 local interface_file = arg[1]
 local server_port1 = arg[2]
 local server_port2 = arg[3]
+local pool_size = arg[4]
 
 -- Objects.
 local obj1 = {
@@ -93,11 +94,11 @@ local obj2 = {
 }
 
 -- server1/obj1
-local servant1 = luarpc.createServant(obj1, interface_file, server_port1)
+local servant1 = luarpc.createServant(obj1, interface_file, server_port1, pool_size)
 -- local servant11 = luarpc.createServant(obj1, interface_file)
 
 -- server2/obj2
-local servant2 = luarpc.createServant(obj2, interface_file, server_port2)
+local servant2 = luarpc.createServant(obj2, interface_file, server_port2, pool_size)
 -- local servant21 = luarpc.createServant(obj2, interface_file)
 
 -- Wait for clients.
