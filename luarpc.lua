@@ -367,9 +367,9 @@ function luarpc.createProxy(server_address, server_port, interface_file)
     local arg = {...}
     return function ()
       local rpc_method = arg[2]
-      print()
-      print("* Params passed to proxy object when calling \"" .. tostring(rpc_method) .. "\":")
-      return "___ERRORPC: Invalid request method \"" .. tostring(rpc_method) .. "\""
+      local err_msg = "___ERRORPC: Invalid request method \"" .. tostring(rpc_method) .. "\""
+      print(err_msg)
+      return err_msg
     end
   end}
   setmetatable(pobj, mt)
@@ -380,7 +380,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local arg = {...}
       print()
       print("* Params passed to proxy object when calling \"" .. tostring(rpc_method) .. "\":")
-      for _, v in pairs(arg) do print(v) end
+      for _, v in pairs(arg) do print("- " .. tostring(v)) end
 
       -- Validate request #params.
       local i = 0
