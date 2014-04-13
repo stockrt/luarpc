@@ -285,7 +285,29 @@ function luarpc.waitIncoming()
 
           -- Method receive.
           local status, rpc_method = luarpc.recv_msg{client=client, param_type="string", deserialize=false, err_msg="Receiving request method"}
-          if not status then break end
+
+          if not status then
+            -- Client may have closed the connection.
+            print("Discarding connection closed by client.")
+            client:close()
+
+            -- Current client list.
+            for k, _ in pairs(servant.client_list) do print("Cur cli: " .. k) end
+
+            -- Find and remove closed client.
+            for k, v in pairs(servant.client_list) do
+              if client == v then
+                table.remove(servant.client_list, k)
+              end
+            end
+
+            -- New client list.
+            for k, _ in pairs(servant.client_list) do print("New cli: " .. k) end
+
+            -- Restart the loop.
+            break
+          end
+
           print("< request method: " .. tostring(rpc_method))
 
           -- Validate method name.
