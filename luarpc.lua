@@ -1,13 +1,5 @@
 -- http://www.inf.puc-rio.br/~noemi/sd-14/trab1.html
 
---[[
-TODO:
-- Do ponto de vista de engenharia, algumas chamadas poderiam ser encapsuladas para termos menos linhas de código e menos repetição;
-
-- Como fazer para retornar __ERRORPC se o cliente espera um double e valida retorno?
-O protocolo é baseado na troca de strings ascii. Cada chamada é realizada pelo nome do método seguido da lista de parâmetros in. Entre o nome do método e o primeiro argumento, assim como depois de cada argumento, deve vir um fim de linha. A resposta deve conter o valor resultante seguido dos valores dos argumentos de saída, cada um em uma linha. Caso ocorra algum erro na execução da chamada, o servidor deve responder com uma string iniciada com "___ERRORPC: ", possivelmente seguida de uma descrição mais específica do erro (por exemplo, "função inexistente").
-]]
-
 local socket = require("socket")
 local unpack = unpack or table.unpack
 
@@ -46,26 +38,6 @@ function luarpc.validate_type(param_type, value)
 
   return false
 end
-
---[[
-20.3 – Captures
-http://www.lua.org/pil/20.3.html
-
-20.4 – Tricks of the Trade
-http://www.lua.org/pil/20.4.html
-
-    function code (s)
-      return (string.gsub(s, "\\(.)", function (x)
-                return string.format("\\%03d", string.byte(x))
-              end))
-    end
-
-    function decode (s)
-      return (string.gsub(s, "\\(%d%d%d)", function (d)
-                return "\\" .. string.char(d)
-              end))
-    end
-]]
 
 function luarpc.encode(param_type, value)
   if param_type == "string" then
