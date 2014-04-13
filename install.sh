@@ -49,3 +49,9 @@ echo
 echo
 
 ./lua
+
+# Versão
+sudo update-alternatives --set lua-compiler /usr/bin/luac5.2
+sudo update-alternatives --set lua-interpreter /usr/bin/lua5.2
+sudo update-alternatives --set lua-compiler /usr/bin/luac5.1
+sudo update-alternatives --set lua-interpreter /usr/bin/lua5.1
