@@ -34,6 +34,10 @@ world]]
       assert.same("123", luarpc.encode("double", 123))
     end)
 
+    it("should encode void", function()
+      assert.same("nil", luarpc.encode("void", nil))
+    end)
+
     -- Decode.
     it("should decode chars", function()
       assert.same("a", luarpc.decode("char", "a"))
@@ -62,6 +66,10 @@ world]]
       assert.same(3.1415, luarpc.decode("double", "3.1415"))
       assert.same(1, luarpc.decode("double", "1"))
       assert.same(123, luarpc.decode("double", "123"))
+    end)
+
+    it("should decode void", function()
+      assert.same(nil, luarpc.decode("void", "nil"))
     end)
 
     -- Back to original.
@@ -124,9 +132,17 @@ world]]
       assert.same("\"abc\"", luarpc.serialize("string", "abc"))
     end)
 
+    it("should serialize void", function()
+      assert.same("\"nil\"", luarpc.serialize("void", nil))
+    end)
+
     -- Deserialize.
     it("should deserialize strings", function()
       assert.same("abc", luarpc.deserialize("string", "\"abc\""))
+    end)
+
+    it("should deserialize void", function()
+      assert.same(nil, luarpc.deserialize("void", "\"nil\""))
     end)
   end)
 end)

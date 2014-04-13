@@ -72,6 +72,8 @@ end
 function luarpc.serialize(param_type, value)
   if param_type == "string" then
     value = "\"" .. luarpc.encode(param_type, value) .. "\""
+  elseif param_type == "void" then
+    value = "\"" .. luarpc.encode(param_type, value) .. "\""
   end
 
   return value
@@ -80,6 +82,8 @@ end
 function luarpc.deserialize(param_type, value)
   if param_type == "string" then
     value = luarpc.decode(param_type, value):sub(2, -2)
+  elseif param_type == "void" then
+    value = luarpc.decode(param_type, value)
   end
 
   return value
