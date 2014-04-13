@@ -354,7 +354,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local rpc_method = arg[2]
       print()
       print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
-      for _, v in pairs(local arg) do print(v) end
+      for _, v in pairs(arg) do print(v) end
       return "___ERRORPC: Invalid request method \"" .. rpc_method .. "\""
     end
   end}
@@ -365,7 +365,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
     pobj[rpc_method] = function(...)
       print()
       print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
-      for _, v in pairs(local arg) do print(v) end
+      for _, v in pairs(arg) do print(v) end
 
       -- Validate request types before send.
       local i = 0
