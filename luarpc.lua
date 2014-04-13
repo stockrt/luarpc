@@ -110,6 +110,9 @@ function luarpc.send_msg(params)
     if err then
       ret_msg = "___ERRONET: Sending client ___ERRORPC notification: \"" .. tostring(err_msg) .. "\": " .. tostring(err)
       print(ret_msg)
+
+      -- Discard disconnected client.
+      luarpc.discard_client(params.client, params.client_list)
     end
     status = false
   else
@@ -125,6 +128,10 @@ function luarpc.send_msg(params)
     if err then
       ret_msg = "___ERRONET: " .. tostring(params.err_msg)
       print(ret_msg)
+
+      -- Discard disconnected client.
+      luarpc.discard_client(params.client, params.client_list)
+
       status = false
     end
   end
@@ -144,9 +151,12 @@ function luarpc.recv_msg(params)
   -- Receive.
   local ret_msg, err = params.client:receive("*l")
   if err then
-    ret_msg = "___ERRORPC: " .. tostring(params.err_msg) .. ": " .. tostring(err)
+    ret_msg = "___ERRONET: " .. tostring(params.err_msg) .. ": " .. tostring(err)
     print(ret_msg)
-    luarpc.send_msg{msg=ret_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
+
+    -- Discard disconnected client.
+    luarpc.discard_client(params.client, params.client_list)
+
     status = false
   else
     -- Deserialize / Decode.
@@ -160,7 +170,7 @@ function luarpc.recv_msg(params)
     if not luarpc.validate_type(params.param_type, ret_msg) then
       ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(ret_msg) .. "\" expecting type \"" .. tostring(params.param_type) .. "\""
       print(ret_msg)
-      luarpc.send_msg{msg=ret_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
+      luarpc.send_msg{msg=ret_msg, client=params.client, client_list=params.client_list, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
       status = false
     end
   end
@@ -303,7 +313,7 @@ function luarpc.waitIncoming()
           print("Receiving request data from client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
 
           -- Method receive.
-          local status, rpc_method = luarpc.recv_msg{client_list=servant.client_list, client=client, param_type="string", deserialize=false, err_msg="Receiving request method"}
+          local status, rpc_method = luarpc.recv_msg{client=client, client_list=servant.client_list, param_type="string", deserialize=false, err_msg="Receiving request method"}
           if not status then
             -- Interrupt recv ready clients loop.
             break
@@ -318,7 +328,7 @@ function luarpc.waitIncoming()
             for _, param in pairs(servant.iface.methods[rpc_method].args) do
               if param.direction == "in" or param.direction == "inout" then
                 i = i + 1
-                local status, value = luarpc.recv_msg{client_list=servant.client_list, client=client, param_type=param.type, deserialize=true, err_msg="Receiving request method \"" .. tostring(rpc_method) .. "\" value #" .. i}
+                local status, value = luarpc.recv_msg{client=client, client_list=servant.client_list, param_type=param.type, deserialize=true, err_msg="Receiving request method \"" .. tostring(rpc_method) .. "\" value #" .. i}
                 if not status then
                   -- Do not call method since we have failed to receive the msg.
                   skip = true
@@ -345,10 +355,10 @@ function luarpc.waitIncoming()
               end
 
               if not exec_status then
-                luarpc.send_msg{msg="___ERRORPC: Problem calling method \"" .. tostring(rpc_method) .. "\"", client=client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
+                luarpc.send_msg{msg="___ERRORPC: Problem calling method \"" .. tostring(rpc_method) .. "\"", client=client, client_list=servant.client_list, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
               else
                 -- Result.
-                local status, msg = luarpc.send_msg{msg=packed_result[2], client=client, param_type=servant.iface.methods[rpc_method].resulttype, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[2]) .. "\""}
+                local status, msg = luarpc.send_msg{msg=packed_result[2], client=client, client_list=servant.client_list, param_type=servant.iface.methods[rpc_method].resulttype, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[2]) .. "\""}
 
                 if status then
                   -- Show response value.
@@ -359,7 +369,7 @@ function luarpc.waitIncoming()
                   for _, param in pairs(servant.iface.methods[rpc_method].args) do
                     if param.direction == "out" or param.direction == "inout" then
                       i = i + 1
-                      local status, msg = luarpc.send_msg{msg=packed_result[i], client=client, param_type=param.type, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[i]) .. "\""}
+                      local status, msg = luarpc.send_msg{msg=packed_result[i], client=client, client_list=servant.client_list, param_type=param.type, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[i]) .. "\""}
                       if not status then
                         print(msg)
                         -- Interrupt param extra result send loop.
@@ -376,7 +386,7 @@ function luarpc.waitIncoming()
               end
             end
           else
-            luarpc.send_msg{msg="___ERRORPC: Invalid request method \"" .. tostring(rpc_method) .. "\"", client=client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
+            luarpc.send_msg{msg="___ERRORPC: Invalid request method \"" .. tostring(rpc_method) .. "\"", client=client, client_list=servant.client_list, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
           end
         end
       end
