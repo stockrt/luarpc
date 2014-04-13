@@ -24,7 +24,6 @@ function luarpc.validate_type(param_type, value)
     end
   elseif param_type == "string" then
     if type(value) == "string" then
---    if tostring(value) and value ~= nil then
       return true
     end
   elseif param_type == "double" then
@@ -247,7 +246,7 @@ function luarpc.waitIncoming()
 
         -- Connection info.
         local ip, port = client:getsockname()
-        print("Client connected " .. client:getpeername() .. " on port " .. port)
+        print("Client connected " .. client:getpeername() .. " on " .. ip .. ":" .. port)
       end
 
       -- Connected client sent some data for this servant.
@@ -259,7 +258,7 @@ function luarpc.waitIncoming()
         if type(client) ~= "number" then
           -- Connection info.
           local ip, port = client:getsockname()
-          print("Receiving request data from client " .. client:getpeername() .. " on port " .. port)
+          print("Receiving request data from client " .. client:getpeername() .. " on " .. ip .. ":" .. port)
 
           -- Method receive.
           local status, rpc_method = luarpc.recv_msg{client=client, param_type="string", deserialize=false, err_msg="Receiving request method"}
@@ -392,10 +391,10 @@ function luarpc.createProxy(server_address, server_port, interface_file)
 
       -- Connection info.
       local ip, port = client:getsockname()
-      print("Connected to " .. ip .. " on port " .. port)
+      print("Connected to " .. ip .. ":" .. port)
 
       -- Send request method.
-      local status, msg = luarpc.send_msg{msg=rpc_method, client=client, param_type="string", serialize=false, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\"..."}
+      local status, msg = luarpc.send_msg{msg=rpc_method, client=client, param_type="string", serialize=false, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\""}
       if not status then
         print(msg)
         return msg
@@ -410,7 +409,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
         if param.direction == "in" or param.direction == "inout" then
           i = i + 1
           local value = arg[i]
-          local status, msg = luarpc.send_msg{msg=value, client=client, param_type=param.type, serialize=true, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\" value " .. i .. " \"" .. tostring(value) .. "\""}
+          local status, msg = luarpc.send_msg{msg=value, client=client, param_type=param.type, serialize=true, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\" value #" .. i .. " \"" .. tostring(value) .. "\""}
           if not status then
             print(msg)
             return msg
@@ -436,7 +435,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
         for _, param in pairs(myinterface.methods[rpc_method].args) do
           if param.direction == "out" or param.direction == "inout" then
             i = i + 1
-            local status, value = luarpc.recv_msg{client=client, param_type=param.type, deserialize=true, err_msg="Receiving response method \"" .. tostring(rpc_method) .. "\" extra value " .. i}
+            local status, value = luarpc.recv_msg{client=client, param_type=param.type, deserialize=true, err_msg="Receiving response method \"" .. tostring(rpc_method) .. "\" extra value #" .. i}
             if not status then break end
 
             -- Show response extra value.
