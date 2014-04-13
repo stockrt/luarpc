@@ -194,7 +194,7 @@ function luarpc.createServant(obj, interface_file, server_port)
   server:setoption("keepalive", true)
   server:setoption("linger", {on = false, timeout = 0})
   server:setoption("tcp-nodelay", true)
-  server:settimeout(0.1) -- accept/send/receive timeout
+  --server:settimeout(0.1) -- accept/send/receive timeout
 
   -- Interface.
   dofile(interface_file)
@@ -234,6 +234,7 @@ function luarpc.waitIncoming()
       -- Wait for connection just a few ms.
       servant.server:settimeout(0.1)
       local client = servant.server:accept()
+      servant.server:settimeout(10)
 
       -- Client connected.
       if client then
@@ -395,7 +396,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       client:setoption("keepalive", true)
       client:setoption("linger", {on = false, timeout = 0})
       client:setoption("tcp-nodelay", true)
-      client:settimeout(10) -- send/receive timeout
+      --client:settimeout(10) -- send/receive timeout
 
       -- Connection info.
       local ip, port = client:getsockname()
