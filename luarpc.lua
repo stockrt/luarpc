@@ -223,7 +223,7 @@ function luarpc.createServant(obj, interface_file, server_port, pool_size)
   local file = io.open(port_file, "w")
   file:write(l_port .. "\n")
   file:close()
-  print("Please connect to " .. l_ip .. ":" .. l_port .. " (also, you can script clients reading port number from file " .. port_file .. ")")
+  print("Please connect to " .. tostring(l_ip) .. ":" .. tostring(l_port) .. " (also, you can script clients reading port number from file " .. port_file .. ")")
   print("Pool size: " .. p_size)
   print()
 
@@ -255,7 +255,7 @@ function luarpc.waitIncoming()
         -- Connection info.
         local l_ip, l_port = client:getsockname()
         local r_ip, r_port = client:getpeername()
-        print("Client " .. r_ip .. ":" .. r_port .. " connected on " .. l_ip .. ":" .. l_port)
+        print("Client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " connected on " .. tostring(l_ip) .. ":" .. tostring(l_port))
 
         -- Pool size limit.
         print("Current number os connected clients: " .. #servant.client_list .. "/" .. servant.pool_size)
@@ -265,7 +265,7 @@ function luarpc.waitIncoming()
             old_client = table.remove(servant.client_list, 1)
             local l_ip, l_port = old_client:getsockname()
             local r_ip, r_port = old_client:getpeername()
-            print("Closing old client connection " .. r_ip .. ":" .. r_port .. " on " .. l_ip .. ":" .. l_port)
+            print("Closing old client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
             old_client:close()
           end
         end
@@ -281,7 +281,7 @@ function luarpc.waitIncoming()
           -- Connection info.
           local l_ip, l_port = client:getsockname()
           local r_ip, r_port = client:getpeername()
-          print("Receiving request data from client " .. r_ip .. ":" .. r_port .. " on " .. l_ip .. ":" .. l_port)
+          print("Receiving request data from client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
 
           -- Method receive.
           local status, rpc_method = luarpc.recv_msg{client=client, param_type="string", deserialize=false, err_msg="Receiving request method"}
@@ -412,8 +412,8 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       -- Connection info.
       local l_ip, l_port = client:getsockname()
       local r_ip, r_port = client:getpeername()
-      print("Connected to " .. r_ip .. ":" .. r_port .. " via " .. l_ip .. ":" .. l_port)
-      print("Sending request data to server " .. r_ip .. ":" .. r_port .. " via " .. l_ip .. ":" .. l_port)
+      print("Connected to " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " via " .. tostring(l_ip) .. ":" .. tostring(l_port))
+      print("Sending request data to server " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " via " .. tostring(l_ip) .. ":" .. tostring(l_port))
 
       -- Send request method.
       local status, msg = luarpc.send_msg{msg=rpc_method, client=client, param_type="string", serialize=false, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\""}
