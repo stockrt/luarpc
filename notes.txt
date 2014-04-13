@@ -1,0 +1,13 @@
+# Rodando no shell interativo do interpretador
+
+lua
+
+server_address = "localhost"
+server_port1 = 5001
+server_port2 = 5002
+interface_file = "interface.lua"
+
+luarpc = require("luarpc")
+
+proxy1 = luarpc.createProxy(server_address, server_port1, interface_file)
+proxy2 = luarpc.createProxy(server_address, server_port2, interface_file)
