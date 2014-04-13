@@ -34,5 +34,11 @@ mkdir socket mime
 cp -a mime.so.1.0.3 mime/core.so
 cp -a socket.so.3.0-rc1 socket/core.so
 
+echo
+echo
+pwd
 echo "socket = require('socket')"
+echo
+echo
+
 ./lua
