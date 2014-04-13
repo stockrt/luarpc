@@ -12,6 +12,9 @@ sudo apt-get install luarocks
 sudo luarocks install luasocket
 sudo luarocks install busted
 
+# Sobre timeout não respeitado: Instalar luasocket com luarocks resolveu o
+# problema para 5.1 e 5.2.
+
 # Source
 export LUA_PREFIX="/tmp/lua"
 mkdir -p $LUA_PREFIX
