@@ -367,7 +367,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local i = 0
       for _, param in pairs(myinterface.methods[rpc_method].args) do
         if param.direction == "in" or param.direction == "inout" then
-          i = i + 1
+          if param.type ~= "void" then i = i + 1 end
         end
       end
       if #arg ~= i then
