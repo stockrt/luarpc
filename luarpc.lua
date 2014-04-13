@@ -168,6 +168,25 @@ function luarpc.recv_msg(params)
   return status, ret_msg
 end
 
+function luarpc.discard_client(client, client_list)
+  -- Client may have closed the connection.
+  print("Discarding connection closed by client.")
+  client:close()
+
+  -- Current client list.
+  for k, _ in pairs(client_list) do print("Cur cli: " .. k) end
+
+  -- Find and remove closed client.
+  for k, v in pairs(client_list) do
+    if client == v then
+      table.remove(client_list, k)
+    end
+  end
+
+  -- New client list.
+  for k, _ in pairs(client_list) do print("New cli: " .. k) end
+end
+
 function luarpc.createServant(obj, interface_file, server_port, pool_size)
   print("Setting up servant " .. #servant_list + 1 .. "...")
 
@@ -285,25 +304,9 @@ function luarpc.waitIncoming()
 
           -- Method receive.
           local status, rpc_method = luarpc.recv_msg{client=client, param_type="string", deserialize=false, err_msg="Receiving request method"}
-
           if not status then
-            -- Client may have closed the connection.
-            print("Discarding connection closed by client.")
-            client:close()
-
-            -- Current client list.
-            for k, _ in pairs(servant.client_list) do print("Cur cli: " .. k) end
-
-            -- Find and remove closed client.
-            for k, v in pairs(servant.client_list) do
-              if client == v then
-                table.remove(servant.client_list, k)
-              end
-            end
-
-            -- New client list.
-            for k, _ in pairs(servant.client_list) do print("New cli: " .. k) end
-
+            -- Discard disconnected client.
+            luarpc.discard_client(client, servant.client_list)
             -- Restart the loop.
             break
           end
@@ -320,7 +323,11 @@ function luarpc.waitIncoming()
                 i = i + 1
                 local status, value = luarpc.recv_msg{client=client, param_type=param.type, deserialize=true, err_msg="Receiving request method \"" .. tostring(rpc_method) .. "\" value #" .. i}
                 if not status then
+                  -- Do not call method since we have failed to receive the msg.
                   skip = true
+                  -- Discard disconnected client.
+                  luarpc.discard_client(client, servant.client_list)
+                  -- Restart the loop.
                   break
                 end
 
