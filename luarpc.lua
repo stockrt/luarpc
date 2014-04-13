@@ -303,14 +303,11 @@ function luarpc.waitIncoming()
           print("Receiving request data from client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
 
           -- Method receive.
-          local status, rpc_method = luarpc.recv_msg{client=client, param_type="string", deserialize=false, err_msg="Receiving request method"}
+          local status, rpc_method = luarpc.recv_msg{client_list=servant.client_list, client=client, param_type="string", deserialize=false, err_msg="Receiving request method"}
           if not status then
-            -- Discard disconnected client.
-            luarpc.discard_client(client, servant.client_list)
-            -- Restart the loop.
+            -- Interrupt recv ready clients loop.
             break
           end
-
           print("< request method: " .. tostring(rpc_method))
 
           -- Validate method name.
@@ -321,13 +318,11 @@ function luarpc.waitIncoming()
             for _, param in pairs(servant.iface.methods[rpc_method].args) do
               if param.direction == "in" or param.direction == "inout" then
                 i = i + 1
-                local status, value = luarpc.recv_msg{client=client, param_type=param.type, deserialize=true, err_msg="Receiving request method \"" .. tostring(rpc_method) .. "\" value #" .. i}
+                local status, value = luarpc.recv_msg{client_list=servant.client_list, client=client, param_type=param.type, deserialize=true, err_msg="Receiving request method \"" .. tostring(rpc_method) .. "\" value #" .. i}
                 if not status then
                   -- Do not call method since we have failed to receive the msg.
                   skip = true
-                  -- Discard disconnected client.
-                  luarpc.discard_client(client, servant.client_list)
-                  -- Restart the loop.
+                  -- Interrupt param recv loop.
                   break
                 end
 
@@ -367,6 +362,7 @@ function luarpc.waitIncoming()
                       local status, msg = luarpc.send_msg{msg=packed_result[i], client=client, param_type=param.type, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[i]) .. "\""}
                       if not status then
                         print(msg)
+                        -- Interrupt param extra result send loop.
                         break
                       end
                       -- Show extra response value.
@@ -469,6 +465,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           local status, msg = luarpc.send_msg{msg=value, client=client, param_type=param.type, serialize=true, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\" value #" .. i .. " \"" .. tostring(value) .. "\""}
           if not status then
             print(msg)
+            -- Interrupt param send loop.
             return msg
           end
 
@@ -493,7 +490,10 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           if param.direction == "out" or param.direction == "inout" then
             i = i + 1
             local status, value = luarpc.recv_msg{client=client, param_type=param.type, deserialize=true, err_msg="Receiving response method \"" .. tostring(rpc_method) .. "\" extra value #" .. i}
-            if not status then break end
+            if not status then
+              -- Interrupt param extra result recv loop.
+              break
+            end
 
             -- Show response extra value.
             print("< response extra value: " .. tostring(value))
