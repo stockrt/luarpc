@@ -359,30 +359,18 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
       for _, v in pairs(arg) do print(v) end
 
-      --[[
-      -- Validate request types before send.
+      -- Validate request #params.
       local i = 0
       for _, param in pairs(myinterface.methods[rpc_method].args) do
         if param.direction == "in" or param.direction == "inout" then
-          if param.type ~= "void" then
-            i = i + 1
-            local value = arg[i]
-            if not luarpc.validate_type(param.type, value) then
-              local err_msg = "___ERRORPC: Wrong request type passed for value \"" .. value .. "\" for method \"" .. rpc_method .. "\" expecting type \"" .. param.type .. "\""
-              print(err_msg)
-              return err_msg
-            end
-          end
+          i = i + 1
         end
       end
-
-      -- Validate request #params.
       if #arg ~= i then
         local err_msg = "___ERRORPC: Wrong request number of arguments for method \"" .. rpc_method .. "\" expecting " .. i .. " got " .. #arg
         print(err_msg)
         return err_msg
       end
-      ]]
 
       -- Client connection to server.
       local client, err = socket.connect(server_address, server_port)
