@@ -205,18 +205,19 @@ function luarpc.createServant(obj, interface_file, server_port)
     obj = obj,
     iface = myinterface,
     client_list = {},
+    pool_size = p_size,
   }
 
   -- Servant list.
   table.insert(servant_list, servant)
 
   -- Connection info.
-  local ip, port = server:getsockname()
+  local l_ip, l_port = server:getsockname()
   local port_file = "port" .. #servant_list .. ".txt"
   local file = io.open(port_file, "w")
-  file:write(port .. "\n")
+  file:write(l_port .. "\n")
   file:close()
-  print("Please connect to " .. ip .. ":" .. port .. " (also, you can script clients reading port number from file " .. port_file .. ")")
+  print("Please connect to " .. l_ip .. ":" .. l_port .. " (also, you can script clients reading port number from file " .. port_file .. ")")
   print("Pool size: " .. p_size)
   print()
 
@@ -246,8 +247,9 @@ function luarpc.waitIncoming()
         table.insert(servant.client_list, client)
 
         -- Connection info.
-        local ip, port = client:getsockname()
-        print("Client " .. client:getpeername() .. " connected on " .. ip .. ":" .. port)
+        local l_ip, l_port = client:getsockname()
+        local r_ip, r_port = client:getpeername()
+        print("Client " .. r_ip .. ":" .. r_port .. " connected on " .. l_ip .. ":" .. l_port)
       end
 
       -- Connected client sent some data for this servant.
@@ -258,8 +260,9 @@ function luarpc.waitIncoming()
 
         if type(client) ~= "number" then
           -- Connection info.
-          local ip, port = client:getsockname()
-          print("Receiving request data from client " .. client:getpeername() .. " on " .. ip .. ":" .. port)
+          local l_ip, l_port = client:getsockname()
+          local r_ip, r_port = client:getpeername()
+          print("Receiving request data from client " .. r_ip .. ":" .. r_port .. " on " .. l_ip .. ":" .. l_port)
 
           -- Method receive.
           local status, rpc_method = luarpc.recv_msg{client=client, param_type="string", deserialize=false, err_msg="Receiving request method"}
@@ -335,7 +338,7 @@ function luarpc.waitIncoming()
 end
 
 function luarpc.createProxy(server_address, server_port, interface_file)
-  print("Building proxy object for server " .. server_address .. " on port " .. server_port .. "...")
+  print("Building proxy object for server " .. server_address .. ":" .. server_port .. "...")
 
   -- Proxy object.
   local pobj = {}
@@ -391,8 +394,10 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       client:settimeout(10) -- send/receive timeout
 
       -- Connection info.
-      local ip, port = client:getsockname()
-      print("Connected to " .. server_address .. ":" .. server_port .. " via " .. ip .. ":" .. port)
+      local l_ip, l_port = client:getsockname()
+      local r_ip, r_port = client:getpeername()
+      print("Connected to " .. r_ip .. ":" .. r_port .. " via " .. l_ip .. ":" .. l_port)
+      print("Sending request data to server " .. r_ip .. ":" .. r_port .. " via " .. l_ip .. ":" .. l_port)
 
       -- Send request method.
       local status, msg = luarpc.send_msg{msg=rpc_method, client=client, param_type="string", serialize=false, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\""}
