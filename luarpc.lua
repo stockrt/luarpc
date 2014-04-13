@@ -44,7 +44,7 @@ function luarpc.encode(param_type, value)
     local x = "XXXXXXXXXX"
     local str = value:gsub("\n", x)
     str = str:gsub("\\", "\\\\")
---    str = str:gsub("\"", "\\\"")
+    str = str:gsub("\"", "\\\"")
     str = str:gsub(x, "\\n")
     return str
   else
@@ -57,7 +57,7 @@ function luarpc.decode(param_type, value)
     local x = "XXXXXXXXXX"
     local str = value:gsub("\\n", x)
     str = str:gsub("\\\\", "\\")
---    str = str:gsub("\\\"", "\"")
+    str = str:gsub("\\\"", "\"")
     str = str:gsub(x, "\n")
     return str
   elseif param_type == "double" then

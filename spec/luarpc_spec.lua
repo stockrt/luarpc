@@ -28,6 +28,12 @@ world]]
       assert.same("\\\\\\\\\\\\", luarpc.encode("string", "\\\\\\"))
     end)
 
+    it("should encode quotes", function()
+      assert.same("\\\"", luarpc.encode("string", "\""))
+      assert.same("\\\"\\\"", luarpc.encode("string", "\"\""))
+      assert.same("\\\"\\\"\\\"", luarpc.encode("string", "\"\"\""))
+    end)
+
     it("should encode doubles", function()
       assert.same("3.1415", luarpc.encode("double", 3.1415))
       assert.same("1", luarpc.encode("double", 1))
@@ -60,6 +66,12 @@ world]]
       assert.same("\\", luarpc.decode("string", "\\\\"))
       assert.same("\\\\", luarpc.decode("string", "\\\\\\\\"))
       assert.same("\\\\\\", luarpc.decode("string", "\\\\\\\\\\\\"))
+    end)
+
+    it("should decode quotes", function()
+      assert.same("\"", luarpc.decode("string", "\\\""))
+      assert.same("\"\"", luarpc.decode("string", "\\\"\\\""))
+      assert.same("\"\"\"", luarpc.decode("string", "\\\"\\\"\\\""))
     end)
 
     it("should decode doubles", function()
