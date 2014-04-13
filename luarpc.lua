@@ -119,11 +119,13 @@ function luarpc.send_msg(params)
   end
 
   -- Send.
-  local _, err = params.client:send(msg .. "\n")
-  if err then
-    ret_msg = "___ERRONET: " .. params.err_msg
-    print(ret_msg)
-    status = false
+  if status then
+    local _, err = params.client:send(msg .. "\n")
+    if err then
+      ret_msg = "___ERRONET: " .. params.err_msg
+      print(ret_msg)
+      status = false
+    end
   end
 
   return status, ret_msg
@@ -153,10 +155,7 @@ function luarpc.recv_msg(params)
   -- Validate type after received.
   if not luarpc.validate_type(params.param_type, ret_msg) then
     local err_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(ret_msg) .. "\" expecting type \"" .. params.param_type .. "\""
-    local err, ret_msg = luarpc.send_msg{msg=err_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
-    if err then
-      print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. ret_msg)
-    end
+    luarpc.send_msg{msg=err_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
     status = false
   end
 
