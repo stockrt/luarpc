@@ -99,6 +99,9 @@ function luarpc.send_msg(params)
   -- Info.
   print(params.err_msg)
 
+  -- Config.
+  params.client:settimeout(10)
+
   -- Validate type before send.
   if not luarpc.validate_type(params.param_type, msg) then
     ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(msg) .. "\" expecting type \"" .. params.param_type .. "\""
@@ -136,6 +139,9 @@ function luarpc.recv_msg(params)
 
   -- Info.
   print(params.err_msg)
+
+  -- Config.
+  params.client:settimeout(10)
 
   -- Receive.
   local ret_msg, err = params.client:receive("*l")
@@ -226,6 +232,7 @@ function luarpc.waitIncoming()
     for _, servant in pairs(servant_list) do
       -- Wait for new client connection on this servant.
       -- Wait for connection just a few ms.
+      servant.server:settimeout(0.1)
       local client = servant.server:accept()
 
       -- Client connected.

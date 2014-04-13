@@ -17,16 +17,20 @@ export LUA_PREFIX="/tmp/lua"
 mkdir -p $LUA_PREFIX
 
 cd $LUA_PREFIX
-wget http://www.lua.org/ftp/lua-5.2.3.tar.gz
-tar xzvf lua-5.2.3.tar.gz
-cd lua-5.2.3
+#wget http://www.lua.org/ftp/lua-5.2.3.tar.gz
+wget http://www.lua.org/ftp/lua-5.1.5.tar.gz
+#tar xzvf lua-5.2.3.tar.gz
+tar xzvf lua-5.1.5.tar.gz
+#cd lua-5.2.3
+cd lua-5.1.5
 make linux
 
 cd $LUA_PREFIX
 wget https://github.com/diegonehab/luasocket/archive/v3.0-rc1.tar.gz
 tar xzvf v3.0-rc1.tar.gz
 cd luasocket-3.0-rc1
-cp -a $LUA_PREFIX/lua-5.2.3/src/* src/
+#cp -a $LUA_PREFIX/lua-5.2.3/src/* src/
+cp -a $LUA_PREFIX/lua-5.1.5/src/* src/
 make
 
 cd src
