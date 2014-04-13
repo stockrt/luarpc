@@ -23,7 +23,7 @@ function luarpc.validate_type(param_type, value)
       return true
     end
   elseif param_type == "string" then
-    if tostring(value) then
+    if tostring(value) and value ~= nil then
       return true
     end
   elseif param_type == "double" then
@@ -44,6 +44,7 @@ function luarpc.encode(param_type, value)
     local x = "XXXXXXXXXX"
     local str = value:gsub("\n", x)
     str = str:gsub("\\", "\\\\")
+--    str = str:gsub("\"", "\\\"")
     str = str:gsub(x, "\\n")
     return str
   else
@@ -56,6 +57,7 @@ function luarpc.decode(param_type, value)
     local x = "XXXXXXXXXX"
     local str = value:gsub("\\n", x)
     str = str:gsub("\\\\", "\\")
+--    str = str:gsub("\\\"", "\"")
     str = str:gsub(x, "\n")
     return str
   elseif param_type == "double" then
@@ -97,16 +99,9 @@ function luarpc.send_msg(params)
   -- Info.
   print(params.err_msg)
 
-  -- Serialize / Encode.
-  if params.serialize then
-    msg = luarpc.serialize(params.param_type, msg)
-  else
-    msg = luarpc.encode(params.param_type, msg)
-  end
-
   -- Validate type before send.
   if not luarpc.validate_type(params.param_type, msg) then
-    ret_msg = "___ERRORPC: Wrong type for msg \"" .. msg .. "\" expecting type \"" .. params.param_type .. "\""
+    ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(msg) .. "\" expecting type \"" .. params.param_type .. "\""
     print(ret_msg)
     local _, err = params.client:send(luarpc.serialize("string", ret_msg) .. "\n")
     if err then
@@ -114,14 +109,21 @@ function luarpc.send_msg(params)
       print(ret_msg)
     end
     status = false
+  end
+
+  -- Serialize / Encode.
+  if params.serialize then
+    msg = luarpc.serialize(params.param_type, msg)
   else
-    -- Send.
-    local _, err = params.client:send(msg .. "\n")
-    if err then
-      ret_msg = "___ERRONET: " .. params.err_msg
-      print(ret_msg)
-      status = false
-    end
+    msg = luarpc.encode(params.param_type, msg)
+  end
+
+  -- Send.
+  local _, err = params.client:send(msg .. "\n")
+  if err then
+    ret_msg = "___ERRONET: " .. params.err_msg
+    print(ret_msg)
+    status = false
   end
 
   return status, ret_msg
@@ -150,7 +152,7 @@ function luarpc.recv_msg(params)
 
   -- Validate type after received.
   if not luarpc.validate_type(params.param_type, ret_msg) then
-    local err_msg = "___ERRORPC: Wrong type for msg \"" .. ret_msg .. "\" expecting type \"" .. params.param_type .. "\""
+    local err_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(ret_msg) .. "\" expecting type \"" .. params.param_type .. "\""
     local err, ret_msg = luarpc.send_msg{msg=err_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
     if err then
       print("___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. ret_msg)
@@ -252,7 +254,6 @@ function luarpc.waitIncoming()
           print("Receiving request data from client " .. client:getpeername() .. " on port " .. port)
 
           -- Method receive.
-          print("Receiving request method...")
           local status, rpc_method = luarpc.recv_msg{client=client, param_type="string", deserialize=false, err_msg="Receiving request method"}
           if not status then break end
           print("< request method: " .. tostring(rpc_method))
@@ -286,10 +287,8 @@ function luarpc.waitIncoming()
 
               -- XXX Void result placeholder.
               if servant.iface.methods[rpc_method].resulttype == "void" then
-                table.insert(packed_result, 2, "nil")
+                table.insert(packed_result, 2, nil)
               end
-
-              for _, v in pairs(packed_result) do print(v) end
 
               if not status then
                 luarpc.send_msg{msg="___ERRORPC: Problem calling method \"" .. tostring(rpc_method) .. "\"", client=client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
@@ -340,7 +339,6 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local rpc_method = arg[2]
       print()
       print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
-      for _, v in pairs(arg) do print(v) end
       return "___ERRORPC: Invalid request method \"" .. rpc_method .. "\""
     end
   end}
