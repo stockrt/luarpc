@@ -3,12 +3,12 @@
 function SaveTable(Table)
   local savedTables = {} -- Used to record tables that have been saved, so that we do not go into an infinite recursion.
   local outFuncs = {
-    ["string"] = function(value) return string.format("%q", value) end
-    ["boolean"] = function(value) if (value) then return "true" else return "false" end end
-    ["number"] = function(value) return string.format("%f", value) end
+    ["string"] = function(value) return string.format("%q", value) end;
+    ["boolean"] = function(value) if (value) then return "true" else return "false" end end;
+    ["number"] = function(value) return string.format("%f", value) end;
   }
   local outFuncsMeta = {
-    __index = function(t, k) error("Invalid Type For SaveTable: " .. k) end
+    __index = function(t, k) error("Invalid Type For SaveTable: " .. k) end;
   }
   setmetatable(outFuncs, outFuncsMeta)
   local tableOut = function(value)
