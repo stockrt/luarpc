@@ -106,6 +106,7 @@ function luarpc.send_msg(params)
   if not luarpc.validate_type(params.param_type, msg) then
     ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(msg) .. "\" expecting type \"" .. tostring(params.param_type) .. "\""
     print(ret_msg)
+
     local _, err = params.client:send(luarpc.serialize("string", ret_msg) .. "\n")
     if err then
       ret_msg = "___ERRONET: Sending client ___ERRORPC notification: \"" .. tostring(err_msg) .. "\": " .. tostring(err)
@@ -114,6 +115,7 @@ function luarpc.send_msg(params)
       -- Discard disconnected client.
       luarpc.discard_client(params.client, params.client_list)
     end
+
     status = false
   else
     -- Serialize / Encode.
@@ -170,7 +172,9 @@ function luarpc.recv_msg(params)
     if not luarpc.validate_type(params.param_type, ret_msg) then
       ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(ret_msg) .. "\" expecting type \"" .. tostring(params.param_type) .. "\""
       print(ret_msg)
+
       luarpc.send_msg{msg=ret_msg, client=params.client, client_list=params.client_list, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
+
       status = false
     end
   end
