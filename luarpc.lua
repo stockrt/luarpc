@@ -145,7 +145,7 @@ function luarpc.recv_msg(params)
   -- Receive.
   local ret_msg, err = params.client:receive("*l")
   if err then
-    local ret_msg = "___ERRORPC: " .. params.err_msg .. ": " .. err
+    ret_msg = "___ERRORPC: " .. params.err_msg .. ": " .. err
     print(ret_msg)
     luarpc.send_msg{msg=ret_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
     status = false
@@ -291,18 +291,18 @@ function luarpc.waitIncoming()
             if not skip then
               -- Separate result and extra results for multisend.
               local packed_result = {pcall(servant.obj[rpc_method], unpack(values))}
-              local status = packed_result[1]
+              local exec_status = packed_result[1]
 
               -- XXX Void result placeholder.
               if servant.iface.methods[rpc_method].resulttype == "void" then
                 table.insert(packed_result, 2, nil)
               end
 
-              if not status then
+              if not exec_status then
                 luarpc.send_msg{msg="___ERRORPC: Problem calling method \"" .. tostring(rpc_method) .. "\"", client=client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
               else
                 -- Result.
-                local status = luarpc.send_msg{msg=packed_result[2], client=client, param_type=servant.iface.methods[rpc_method].resulttype, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[2]) .. "\""}
+                luarpc.send_msg{msg=packed_result[2], client=client, param_type=servant.iface.methods[rpc_method].resulttype, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[2]) .. "\""}
                 -- Show response value.
                 print("> response result: " .. tostring(packed_result[2]))
 
@@ -311,8 +311,11 @@ function luarpc.waitIncoming()
                 for _, param in pairs(servant.iface.methods[rpc_method].args) do
                   if param.direction == "out" or param.direction == "inout" then
                     i = i + 1
-                    local status = luarpc.send_msg{msg=packed_result[i], client=client, param_type=param.type, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[i]) .. "\""}
-                    if not status then break end
+                    local status, msg = luarpc.send_msg{msg=packed_result[i], client=client, param_type=param.type, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[i]) .. "\""}
+                    if not status then
+                      print(msg)
+                      break
+                    end
                     -- Show extra response value.
                     print("> response extra result: " .. tostring(packed_result[i]))
                   end
@@ -393,7 +396,10 @@ function luarpc.createProxy(server_address, server_port, interface_file)
 
       -- Send request method.
       local status, msg = luarpc.send_msg{msg=rpc_method, client=client, param_type="string", serialize=false, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\"..."}
-      if not status then return msg end
+      if not status then
+        print(msg)
+        return msg
+      end
 
       -- Show request method.
       print("> request method: " .. tostring(rpc_method))
@@ -405,7 +411,10 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           i = i + 1
           local value = arg[i]
           local status, msg = luarpc.send_msg{msg=value, client=client, param_type=param.type, serialize=true, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\" value " .. i .. " \"" .. tostring(value) .. "\""}
-          if not status then return msg end
+          if not status then
+            print(msg)
+            return msg
+          end
 
           -- Show request value.
           print("> request value: " .. tostring(value))
@@ -416,23 +425,25 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local values = {}
       local status, value = luarpc.recv_msg{client=client, param_type=myinterface.methods[rpc_method].resulttype, deserialize=true, err_msg="Receiving response method \"" .. tostring(rpc_method) .. "\" value"}
 
-      -- Show response value.
-      print("< response value: " .. tostring(value))
-      -- Results to be returned from proxied object.
-      table.insert(values, value)
+      if status then
+        -- Show response value.
+        print("< response value: " .. tostring(value))
+        -- Results to be returned from proxied object.
+        table.insert(values, value)
 
-      -- Receive extra results.
-      local i = 0
-      for _, param in pairs(myinterface.methods[rpc_method].args) do
-        if param.direction == "out" or param.direction == "inout" then
-          i = i + 1
-          local status, value = luarpc.recv_msg{client=client, param_type=param.type, deserialize=true, err_msg="Receiving response method \"" .. tostring(rpc_method) .. "\" extra value " .. i}
-          if status == false then break end
+        -- Receive extra results.
+        local i = 0
+        for _, param in pairs(myinterface.methods[rpc_method].args) do
+          if param.direction == "out" or param.direction == "inout" then
+            i = i + 1
+            local status, value = luarpc.recv_msg{client=client, param_type=param.type, deserialize=true, err_msg="Receiving response method \"" .. tostring(rpc_method) .. "\" extra value " .. i}
+            if not status then break end
 
-          -- Show response extra value.
-          print("< response extra value: " .. tostring(value))
-          -- Results to be returned from proxied object.
-          table.insert(values, value)
+            -- Show response extra value.
+            print("< response extra value: " .. tostring(value))
+            -- Results to be returned from proxied object.
+            table.insert(values, value)
+          end
         end
       end
 
