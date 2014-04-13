@@ -216,7 +216,8 @@ function luarpc.createServant(obj, interface_file, server_port)
   local file = io.open(port_file, "w")
   file:write(port .. "\n")
   file:close()
-  print("Please connect on port " .. port .. " (also, you can script clients reading port number from file " .. port_file .. ")")
+  print("Please connect to " .. ip .. ":" .. port .. " (also, you can script clients reading port number from file " .. port_file .. ")")
+  print("Pool size: " .. p_size)
   print()
 
   return servant
@@ -246,7 +247,7 @@ function luarpc.waitIncoming()
 
         -- Connection info.
         local ip, port = client:getsockname()
-        print("Client connected " .. client:getpeername() .. " on " .. ip .. ":" .. port)
+        print("Client " .. client:getpeername() .. " connected on " .. ip .. ":" .. port)
       end
 
       -- Connected client sent some data for this servant.
@@ -391,7 +392,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
 
       -- Connection info.
       local ip, port = client:getsockname()
-      print("Connected to " .. ip .. ":" .. port)
+      print("Connected to " .. server_address .. ":" .. server_port .. " via " .. ip .. ":" .. port)
 
       -- Send request method.
       local status, msg = luarpc.send_msg{msg=rpc_method, client=client, param_type="string", serialize=false, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\""}
