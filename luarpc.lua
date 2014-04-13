@@ -105,11 +105,11 @@ function luarpc.send_msg(params)
 
   -- Validate type before send.
   if not luarpc.validate_type(params.param_type, msg) then
-    ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(msg) .. "\" expecting type \"" .. params.param_type .. "\""
+    ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(msg) .. "\" expecting type \"" .. tostring(params.param_type) .. "\""
     print(ret_msg)
     local _, err = params.client:send(luarpc.serialize("string", ret_msg) .. "\n")
     if err then
-      ret_msg = "___ERRONET: Sending client ___ERRORPC notification: \"" .. err_msg .. "\": " .. err
+      ret_msg = "___ERRONET: Sending client ___ERRORPC notification: \"" .. tostring(err_msg) .. "\": " .. tostring(err)
       print(ret_msg)
     end
     status = false
@@ -124,7 +124,7 @@ function luarpc.send_msg(params)
     -- Send.
     local _, err = params.client:send(msg .. "\n")
     if err then
-      ret_msg = "___ERRONET: " .. params.err_msg
+      ret_msg = "___ERRONET: " .. tostring(params.err_msg)
       print(ret_msg)
       status = false
     end
@@ -145,7 +145,7 @@ function luarpc.recv_msg(params)
   -- Receive.
   local ret_msg, err = params.client:receive("*l")
   if err then
-    ret_msg = "___ERRORPC: " .. params.err_msg .. ": " .. err
+    ret_msg = "___ERRORPC: " .. tostring(params.err_msg) .. ": " .. tostring(err)
     print(ret_msg)
     luarpc.send_msg{msg=ret_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
     status = false
@@ -159,7 +159,7 @@ function luarpc.recv_msg(params)
 
     -- Validate type after received.
     if not luarpc.validate_type(params.param_type, ret_msg) then
-      ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(ret_msg) .. "\" expecting type \"" .. params.param_type .. "\""
+      ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(ret_msg) .. "\" expecting type \"" .. tostring(params.param_type) .. "\""
       print(ret_msg)
       luarpc.send_msg{msg=ret_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
       status = false
@@ -181,7 +181,7 @@ function luarpc.createServant(obj, interface_file, server_port)
   -- tcp, bind, listen shortcut.
   local server, err = socket.bind("*", s_port, 2048)
   if err then
-    local err_msg = "___ERRONET: Server could not bind: " .. err
+    local err_msg = "___ERRONET: Server could not bind: " .. tostring(err)
     print(err_msg)
     return err_msg
   end
@@ -349,8 +349,8 @@ function luarpc.createProxy(server_address, server_port, interface_file)
     return function ()
       local rpc_method = arg[2]
       print()
-      print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
-      return "___ERRORPC: Invalid request method \"" .. rpc_method .. "\""
+      print("* Params passed to proxy object when calling \"" .. tostring(rpc_method) .. "\":")
+      return "___ERRORPC: Invalid request method \"" .. tostring(rpc_method) .. "\""
     end
   end}
   setmetatable(pobj, mt)
@@ -360,7 +360,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
     pobj[rpc_method] = function(...)
       local arg = {...}
       print()
-      print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
+      print("* Params passed to proxy object when calling \"" .. tostring(rpc_method) .. "\":")
       for _, v in pairs(arg) do print(v) end
 
       -- Validate request #params.
@@ -371,7 +371,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
         end
       end
       if #arg ~= i then
-        local err_msg = "___ERRORPC: Wrong request number of arguments for method \"" .. rpc_method .. "\" expecting " .. i .. " got " .. #arg
+        local err_msg = "___ERRORPC: Wrong request number of arguments for method \"" .. tostring(rpc_method) .. "\" expecting " .. i .. " got " .. #arg
         print(err_msg)
         return err_msg
       end
@@ -379,7 +379,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       -- Client connection to server.
       local client, err = socket.connect(server_address, server_port)
       if err then
-        local err_msg = "___ERRONET: Could not connect to " .. server_address .. " on port " .. server_port .. ": " .. err
+        local err_msg = "___ERRONET: Could not connect to " .. server_address .. " on port " .. server_port .. ": " .. tostring(err)
         print(err_msg)
         return err_msg
       end
