@@ -118,5 +118,15 @@ world]]
       local x = 123
       assert.same(x, luarpc.decode("double", luarpc.encode("double", x)))
     end)
+
+    -- Serialize.
+    it("should serialize strings", function()
+      assert.same("\"abc\"", luarpc.serialize("string", "abc"))
+    end)
+
+    -- Deserialize.
+    it("should deserialize strings", function()
+      assert.same("abc", luarpc.deserialize("string", "\"abc\""))
+    end)
   end)
 end)

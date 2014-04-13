@@ -67,6 +67,22 @@ function luarpc.decode(param_type, value)
   return value
 end
 
+function luarpc.serialize(param_type, value)
+  if param_type == "string" then
+    value = "\"" .. luarpc.encode(param_type, value) .. "\""
+  end
+
+  return value
+end
+
+function luarpc.deserialize(param_type, value)
+  if param_type == "string" then
+    value = luarpc.decode(param_type, value):sub(2, -2)
+  end
+
+  return value
+end
+
 function luarpc.createServant(obj, interface_file, server_port)
   print("Setting up servant " .. #servant_list + 1 .. "...")
 
