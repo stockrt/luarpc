@@ -23,7 +23,8 @@ function luarpc.validate_type(param_type, value)
       return true
     end
   elseif param_type == "string" then
-    if tostring(value) and value ~= nil then
+    if type(value) == "string" then
+--    if tostring(value) and value ~= nil then
       return true
     end
   elseif param_type == "double" then
