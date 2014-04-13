@@ -112,17 +112,15 @@ function luarpc.send_msg(params)
       print(ret_msg)
     end
     status = false
-  end
-
-  -- Serialize / Encode.
-  if params.serialize then
-    msg = luarpc.serialize(params.param_type, msg)
   else
-    msg = luarpc.encode(params.param_type, msg)
-  end
+    -- Serialize / Encode.
+    if params.serialize then
+      msg = luarpc.serialize(params.param_type, msg)
+    else
+      msg = luarpc.encode(params.param_type, msg)
+    end
 
-  -- Send.
-  if status then
+    -- Send.
     local _, err = params.client:send(msg .. "\n")
     if err then
       ret_msg = "___ERRONET: " .. params.err_msg
@@ -146,23 +144,25 @@ function luarpc.recv_msg(params)
   -- Receive.
   local ret_msg, err = params.client:receive("*l")
   if err then
-    local err_msg = "___ERRORPC: " .. params.err_msg .. ": " .. err
-    luarpc.send_msg{msg=err_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
+    local ret_msg = "___ERRORPC: " .. params.err_msg .. ": " .. err
+    print(ret_msg)
+    luarpc.send_msg{msg=ret_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
     status = false
-  end
-
-  -- Deserialize / Decode.
-  if params.deserialize then
-    ret_msg = luarpc.deserialize(params.param_type, ret_msg)
   else
-    ret_msg = luarpc.decode(params.param_type, ret_msg)
-  end
+    -- Deserialize / Decode.
+    if params.deserialize then
+      ret_msg = luarpc.deserialize(params.param_type, ret_msg)
+    else
+      ret_msg = luarpc.decode(params.param_type, ret_msg)
+    end
 
-  -- Validate type after received.
-  if not luarpc.validate_type(params.param_type, ret_msg) then
-    local err_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(ret_msg) .. "\" expecting type \"" .. params.param_type .. "\""
-    luarpc.send_msg{msg=err_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
-    status = false
+    -- Validate type after received.
+    if not luarpc.validate_type(params.param_type, ret_msg) then
+      local err_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(ret_msg) .. "\" expecting type \"" .. params.param_type .. "\""
+      print(err_msg)
+      luarpc.send_msg{msg=err_msg, client=params.client, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
+      status = false
+    end
   end
 
   return status, ret_msg
