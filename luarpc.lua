@@ -109,7 +109,7 @@ function luarpc.send_msg(params)
 
     local _, err = params.client:send(luarpc.serialize("string", ret_msg) .. "\n")
     if err then
-      ret_msg = "___ERRONET: Sending client ___ERRORPC notification: \"" .. tostring(err_msg) .. "\": " .. tostring(err)
+      ret_msg = "___ERRONET: Sending client ___ERRORPC notification: \"" .. tostring(err_msg) .. "\" - " .. tostring(err)
       print(ret_msg)
 
       -- Discard disconnected client.
@@ -153,7 +153,7 @@ function luarpc.recv_msg(params)
   -- Receive.
   local ret_msg, err = params.client:receive("*l")
   if err then
-    ret_msg = "___ERRONET: " .. tostring(params.err_msg) .. ": " .. tostring(err)
+    ret_msg = "___ERRONET: " .. tostring(params.err_msg) .. " - " .. tostring(err)
     print(ret_msg)
 
     -- Discard disconnected client.
@@ -219,7 +219,7 @@ function luarpc.createServant(obj, interface_file, server_port, pool_size)
   -- tcp, bind, listen shortcut.
   local server, err = socket.bind("*", s_port, 2048)
   if err then
-    local err_msg = "___ERRONET: Server could not bind: " .. tostring(err)
+    local err_msg = "___ERRONET: Server could not bind to *:" .. s_port .. " - " .. tostring(err)
     print(err_msg)
     return err_msg
   end
@@ -443,7 +443,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       -- Client connection to server.
       local client, err = socket.connect(server_address, server_port)
       if err then
-        local err_msg = "___ERRONET: Could not connect to " .. server_address .. " on port " .. server_port .. ": " .. tostring(err)
+        local err_msg = "___ERRONET: Could not connect to " .. server_address .. ":" .. server_port .. " - " .. tostring(err)
         print(err_msg)
         return err_msg
       end
