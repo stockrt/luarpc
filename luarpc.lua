@@ -174,7 +174,7 @@ function luarpc.discard_client(client, client_list)
   client:close()
 
   -- Current client list.
-  for k, _ in pairs(client_list) do print("Cur cli: " .. k) end
+  for k, _ in pairs(client_list) do print("- Current client count: " .. k) end
 
   -- Find and remove closed client.
   for k, v in pairs(client_list) do
@@ -184,7 +184,7 @@ function luarpc.discard_client(client, client_list)
   end
 
   -- New client list.
-  for k, _ in pairs(client_list) do print("New cli: " .. k) end
+  for k, _ in pairs(client_list) do print("+ New client count: " .. k) end
 end
 
 function luarpc.createServant(obj, interface_file, server_port, pool_size)
