@@ -350,6 +350,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
 
   -- Catch all not defined methods and throw an error.
   local mt = {__index = function (...)
+    local arg = {...}
     return function ()
       local rpc_method = arg[2]
       print()
@@ -363,6 +364,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
   -- Proxied methods builder.
   for rpc_method, method in pairs(myinterface.methods) do
     pobj[rpc_method] = function(...)
+      local arg = {...}
       print()
       print("* Params passed to proxy object when calling \"" .. rpc_method .. "\":")
       for _, v in pairs(arg) do print(v) end
@@ -384,8 +386,8 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       end
 
       -- Validate request #params.
-      if arg.n ~= i then
-        local err_msg = "___ERRORPC: Wrong request number of arguments for method \"" .. rpc_method .. "\" expecting " .. i .. " got " .. arg.n
+      if #arg ~= i then
+        local err_msg = "___ERRORPC: Wrong request number of arguments for method \"" .. rpc_method .. "\" expecting " .. i .. " got " .. #arg
         print(err_msg)
         return err_msg
       end
