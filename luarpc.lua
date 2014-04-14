@@ -305,16 +305,20 @@ function luarpc.waitIncoming()
         local r_ip, r_port = client:getpeername()
         print("Client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " connected on " .. tostring(l_ip) .. ":" .. tostring(l_port))
 
-        -- Pool size limit.
-        print("Current number os connected clients: " .. #servant.client_list .. "/" .. servant.pool_size)
-        if #servant.client_list > servant.pool_size then
-          print("Pool size of " .. servant.pool_size .. " connections exceeded, discarding old clients.")
-          while #servant.client_list > servant.pool_size do
-            old_client = table.remove(servant.client_list, 1)
-            local l_ip, l_port = old_client:getsockname()
-            local r_ip, r_port = old_client:getpeername()
-            print("Closing old client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
-            old_client:close()
+        -- Only manage connection pool if pool_size if configured for more than
+        -- 0 clients.
+        if servant.pool_size > 0 then
+          -- Pool size limit.
+          print("Current number os connected clients: " .. #servant.client_list .. "/" .. servant.pool_size)
+          if #servant.client_list > servant.pool_size then
+            print("Pool size of " .. servant.pool_size .. " connections exceeded, discarding old clients.")
+            while #servant.client_list > servant.pool_size do
+              old_client = table.remove(servant.client_list, 1)
+              local l_ip, l_port = old_client:getsockname()
+              local r_ip, r_port = old_client:getpeername()
+              print("Closing old client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
+              old_client:close()
+            end
           end
         end
       end
@@ -406,6 +410,15 @@ function luarpc.waitIncoming()
             end
           else
             luarpc.send_msg{msg="___ERRORPC: Invalid request method \"" .. tostring(rpc_method) .. "\"", client=client, client_list=servant.client_list, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
+          end
+
+          -- Close connection after serving if pool_size is configured for 0 or
+          -- less clients.
+          if servant.pool_size <= 0 then
+            local l_ip, l_port = client:getsockname()
+            local r_ip, r_port = client:getpeername()
+            print("Closing current client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
+            luarpc.discard_client(client, servant.client_list)
           end
         end
       end
