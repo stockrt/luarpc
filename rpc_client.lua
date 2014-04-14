@@ -49,7 +49,7 @@ print("* Concat1: " .. result)
 local result = proxy1.cha("a", "b")
 print("* Str: " .. result)
 
-local result = proxy2.cha(3, 4)
+local result = proxy1.cha(3, 4)
 print("* Str: " .. result)
 
 local result = proxy1.hello("Rogerio proxy1")
