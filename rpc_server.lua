@@ -11,7 +11,7 @@ end
 local interface_file = arg[1]
 local server_port1 = arg[2]
 local server_port2 = arg[3]
-local pool_size = arg[4]
+local pool_size = tonumber(arg[4])
 
 -- Objects.
 local obj1 = {
