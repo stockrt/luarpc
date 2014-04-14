@@ -40,7 +40,8 @@ print(result)
 local result = proxy.men(1)
 print(result)
 
--- Table serialize.
+-- Table serialize. Em um rpc_server a tabela não é deserializada, em outro ela
+-- é deserializada.
 local t = {}
 local result = proxy.tbl(SaveTable(t))
 print(result)
