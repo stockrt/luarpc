@@ -43,5 +43,10 @@ print(result)
 -- Table serialize. Em um rpc_server a tabela não é deserializada, em outro ela
 -- é deserializada.
 local t = {}
+for i = 1, 100 do
+  local x = "x" .. i
+  t[x] = 3.1415 + i
+end
+for k, v in pairs(t) do print("- " .. k .. v) end
 local result = proxy.tbl(SaveTable(t))
 print(result)
