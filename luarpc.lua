@@ -466,7 +466,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           end
         end
 
-        -- Give up.
+        -- Another option is to fail and don't try to fix user's input, just give up.
         -- return err_msg
       end
 
