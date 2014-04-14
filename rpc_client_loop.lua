@@ -93,12 +93,12 @@ print("men took " .. os.difftime(tend, tini) .. " seconds for server " .. server
 -- Table serialize. Em um rpc_server a tabela não é deserializada, em outro ela
 -- é deserializada.
 local t = {}
-for i = 1, 1000 do
+for i = 1, 3000 do
   local x = "x" .. i
   t[x] = 3.1415 + i
 end
 print()
-print("+ Table with 1000 doubles")
+print("+ Table with 3000 doubles")
 for k, v in pairs(t) do print("- " .. k .. " " .. v) end
 
 local result = proxy.tbl(SaveTable(t))
