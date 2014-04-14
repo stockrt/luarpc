@@ -8,7 +8,7 @@ local luarpc = {}
 
 -- Lists.
 local servant_list = {} -- {server, obj, iface, client_list}
-local pclient_list = {} -- {rpc_method = client}
+local pclient_list = {} -- {rpc_method .. server_port = client}
 
 -- Global namespace.
 myinterface = {}
@@ -484,7 +484,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       end
 
       -- Test client connection to server.
-      local client = pclient_list[rpc_method]
+      local client = pclient_list[rpc_method .. server_port]
       if client then
         client:settimeout(0.1)
         local _, err = client:receive(0)
@@ -492,7 +492,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
         if err == "closed" then
           -- Close and remove client connection.
           client:close()
-          pclient_list[rpc_method] = nil
+          pclient_list[rpc_method .. server_port] = nil
           print("Cached connection was closed by server for method \"" .. tostring(rpc_method) .. "\"")
         else
           print("Cached connection seems ok for method \"" .. tostring(rpc_method) .. "\"")
@@ -502,7 +502,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       end
 
       -- Try and cache connection to server.
-      if not pclient_list[rpc_method] then
+      if not pclient_list[rpc_method .. server_port] then
         -- Estabilish client connection to server.
         print("Trying to estabilish and cache connection for method \"" .. tostring(rpc_method) .. "\"")
         local client, err = socket.connect(server_address, server_port)
@@ -512,12 +512,12 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           return err_msg
         else
           print("Caching connection for method \"" .. tostring(rpc_method) .. "\"")
-          pclient_list[rpc_method] = client
+          pclient_list[rpc_method .. server_port] = client
         end
       end
 
       -- Use cached connection to server.
-      local client = pclient_list[rpc_method]
+      local client = pclient_list[rpc_method .. server_port]
       if not client then
         local err_msg = "___ERRONET: Could not retrieve cached connection to " .. server_address .. ":" .. server_port
         print(err_msg)
