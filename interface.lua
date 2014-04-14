@@ -20,6 +20,12 @@ interface {
         {direction = "out", type = "string"},
       },
     },
+    oid = {
+      resulttype = "void",
+      args = {
+        {direction = "in", type = "void"},
+      },
+    },
     boo = {
       resulttype = "void",
       args = {
@@ -44,6 +50,12 @@ interface {
       args = {
         {direction = "in", type = "char"},
         {direction = "in", type = "char"},
+      },
+    },
+    tbl = {
+      resulttype = "double",
+      args = {
+        {direction = "in", type = "string"},
       },
     },
     hello = {
