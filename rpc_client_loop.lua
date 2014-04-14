@@ -32,7 +32,7 @@ local result = proxy.min("R")
 print(result)
 
 -- 10240 bytes de ida e 10240 bytes de volta.
-local result = proxy.min(string.rep('R', 10240))
+local result = proxy.min(string.rep("R", 10240))
 print(result)
 
 -- Requer o mínimo de tráfego de rede. É melhor do que void pois em nosso
@@ -48,6 +48,7 @@ for i = 1, 100 do
   local x = "x" .. i
   t[x] = 3.1415 + i
 end
+print("+ Table with 100 doubles.")
 for k, v in pairs(t) do print("- " .. k .. v) end
 local result = proxy.tbl(SaveTable(t))
 print(result)
