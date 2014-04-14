@@ -114,9 +114,6 @@ function luarpc.send_msg(params)
   -- Info.
   print(params.err_msg)
 
-  -- Config.
-  params.client:settimeout(10)
-
   -- Validate type before send.
   if not luarpc.validate_type(params.param_type, msg) then
     ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(msg) .. "\" expecting type \"" .. tostring(params.param_type) .. "\""
@@ -128,7 +125,9 @@ function luarpc.send_msg(params)
       print(ret_msg)
 
       -- Discard disconnected client.
-      luarpc.discard_client(params.client, params.client_list)
+      if err == "closed" then
+        luarpc.discard_client(params.client, params.client_list)
+      end
     end
 
     status = false
@@ -147,7 +146,9 @@ function luarpc.send_msg(params)
       print(ret_msg)
 
       -- Discard disconnected client.
-      luarpc.discard_client(params.client, params.client_list)
+      if err == "closed" then
+        luarpc.discard_client(params.client, params.client_list)
+      end
 
       status = false
     end
@@ -162,9 +163,6 @@ function luarpc.recv_msg(params)
   -- Info.
   print(params.err_msg)
 
-  -- Config.
-  params.client:settimeout(10)
-
   -- Receive.
   local ret_msg, err = params.client:receive("*l")
   if err then
@@ -172,7 +170,9 @@ function luarpc.recv_msg(params)
     print(ret_msg)
 
     -- Discard disconnected client.
-    luarpc.discard_client(params.client, params.client_list)
+    if err == "closed" then
+      luarpc.discard_client(params.client, params.client_list)
+    end
 
     status = false
   else
@@ -295,45 +295,49 @@ function luarpc.waitIncoming()
   while true do
     for _, servant in pairs(servant_list) do
       -- Wait for new client connection on this servant.
-      -- Wait for connection just a few ms.
-      servant.server:settimeout(0)
-      local client = servant.server:accept()
-      servant.server:settimeout(10)
+      local server_accept_ready_list, _, err = socket.select({servant.server}, nil, 0)
+      for _, server in pairs(server_accept_ready_list) do
+        if type(server) ~= "number" then
+          local client = server:accept()
 
-      -- Client connected.
-      if client then
-        -- Connection options.
-        client:settimeout(10) -- send/receive timeout (line inactivity).
+          -- Client connected.
+          if client then
+            -- Connection options.
+            client:setoption("keepalive", true)
+            client:setoption("linger", {on = false, timeout = 0})
+            client:setoption("tcp-nodelay", true)
+            client:settimeout(10) -- send/receive timeout (line inactivity).
 
-        -- Client list.
-        table.insert(servant.client_list, client)
+            -- Client list.
+            table.insert(servant.client_list, client)
 
-        -- Connection info.
-        local l_ip, l_port = client:getsockname()
-        local r_ip, r_port = client:getpeername()
-        print("Client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " connected on " .. tostring(l_ip) .. ":" .. tostring(l_port))
+            -- Connection info.
+            local l_ip, l_port = client:getsockname()
+            local r_ip, r_port = client:getpeername()
+            print("Client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " connected on " .. tostring(l_ip) .. ":" .. tostring(l_port))
 
-        -- Only manage connection pool if pool_size if configured for more than
-        -- 0 clients.
-        if servant.pool_size > 0 then
-          -- Pool size limit.
-          print("Current number os connected clients: " .. #servant.client_list .. "/" .. servant.pool_size)
-          if #servant.client_list > servant.pool_size then
-            print("Pool size of " .. servant.pool_size .. " connections exceeded, discarding old clients.")
-            while #servant.client_list > servant.pool_size do
-              old_client = table.remove(servant.client_list, 1)
-              local l_ip, l_port = old_client:getsockname()
-              local r_ip, r_port = old_client:getpeername()
-              print("Closing old client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
-              old_client:close()
+            -- Only manage connection pool if pool_size if configured for more than
+            -- 0 clients.
+            if servant.pool_size > 0 then
+              -- Pool size limit.
+              print("Current number os connected clients: " .. #servant.client_list .. "/" .. servant.pool_size)
+              if #servant.client_list > servant.pool_size then
+                print("Pool size of " .. servant.pool_size .. " connections exceeded, discarding old clients.")
+                while #servant.client_list > servant.pool_size do
+                  old_client = table.remove(servant.client_list, 1)
+                  local l_ip, l_port = old_client:getsockname()
+                  local r_ip, r_port = old_client:getpeername()
+                  print("Closing old client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
+                  old_client:close()
+                end
+              end
             end
           end
         end
       end
 
       -- Connected client sent some data for this servant.
-      -- Wait for activity just a few ms.
-      local client_recv_ready_list, _, err = socket.select(servant.client_list, nil, 0.1)
+      local client_recv_ready_list, _, err = socket.select(servant.client_list, nil, 0)
       for _, client in pairs(client_recv_ready_list) do
         skip = false
 
@@ -494,6 +498,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       -- Test client connection to server.
       local client = pclient_list[rpc_method .. server_port]
       if client then
+        -- Non-blocking connection closed test.
         client:settimeout(0)
         local _, err = client:receive(0)
         client:settimeout(10)
@@ -519,6 +524,12 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           print(err_msg)
           return err_msg
         else
+          -- Connection options.
+          client:setoption("keepalive", true)
+          client:setoption("linger", {on = false, timeout = 0})
+          client:setoption("tcp-nodelay", true)
+          client:settimeout(10) -- send/receive timeout
+
           print("Caching connection for method \"" .. tostring(rpc_method) .. "\"")
           pclient_list[rpc_method .. server_port] = client
         end
@@ -533,12 +544,6 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       else
         print("Found cached connection for method \"" .. tostring(rpc_method) .. "\", reusing it.")
       end
-
-      -- Connection options.
-      client:setoption("keepalive", true)
-      client:setoption("linger", {on = false, timeout = 0})
-      client:setoption("tcp-nodelay", true)
-      client:settimeout(10) -- send/receive timeout
 
       -- Connection info.
       local l_ip, l_port = client:getsockname()
