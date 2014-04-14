@@ -26,6 +26,24 @@ interface {
         {direction = "in", type = "void"},
       },
     },
+    min = {
+      resulttype = "double",
+      args = {
+        {direction = "in", type = "string"},
+      },
+    },
+    men = {
+      resulttype = "double",
+      args = {
+        {direction = "in", type = "double"},
+      },
+    },
+    tbl = {
+      resulttype = "double",
+      args = {
+        {direction = "in", type = "string"},
+      },
+    },
     boo = {
       resulttype = "void",
       args = {
@@ -50,12 +68,6 @@ interface {
       args = {
         {direction = "in", type = "char"},
         {direction = "in", type = "char"},
-      },
-    },
-    tbl = {
-      resulttype = "double",
-      args = {
-        {direction = "in", type = "string"},
       },
     },
     hello = {

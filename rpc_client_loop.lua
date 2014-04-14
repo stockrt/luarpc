@@ -25,19 +25,19 @@ print(msg)
 local result = proxy.oid()
 print(result)
 
--- Requer o mínimo de tráfego de rede. É melhor do que void pois em nosso
--- protocolo o void significa "nil" (5 bytes), já este double significa 1
--- (apenas 1 byte).
-local result = proxy.boo(1)
-print(result)
-
 -- 1 byte de ida e 1 byte de volta + encoding com wrapping de string "".
 -- Total 3 bytes de ida e 3 bytes de volta.
-local result = proxy.baz("R")
+local result = proxy.min("R")
 print(result)
 
 -- 10240 bytes de ida e 10240 bytes de volta.
-local result = proxy.baz(string.rep('R', 10240))
+local result = proxy.min(string.rep('R', 10240))
+print(result)
+
+-- Requer o mínimo de tráfego de rede. É melhor do que void pois em nosso
+-- protocolo o void significa "nil" (5 bytes), já este double significa 1
+-- (apenas 1 byte).
+local result = proxy.men(1)
 print(result)
 
 -- Table serialize.

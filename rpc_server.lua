@@ -21,6 +21,15 @@ local obj1 = {
   oid = function ()
     return nil
   end,
+  min = function (str)
+    return 1
+  end,
+  men = function (n)
+    return n
+  end,
+  tbl = function (str)
+    return 0
+  end,
   boo = function (n)
     return n
   end,
@@ -32,9 +41,6 @@ local obj1 = {
   end,
   cha = function (c1, c2)
     return "echo char concat1: " .. c1 .. c2
-  end,
-  tbl = function (str)
-    return "no decode"
   end,
   hello = function (str)
     return "Greetings from obj1, " .. str .. "!"
@@ -66,6 +72,16 @@ local obj2 = {
   oid = function ()
     return nil
   end,
+  min = function (str)
+    return 1
+  end,
+  men = function (n)
+    return n
+  end,
+  tbl = function (str)
+    local x = LoadTable(str)
+    return 1
+  end,
   boo = function (n)
     return 1
   end,
@@ -77,10 +93,6 @@ local obj2 = {
   end,
   cha = function (c1, c2)
     return "echo char concat2: " .. c1 .. c2
-  end,
-  tbl = function (str)
-    local x = LoadTable(str)
-    return "ok decode"
   end,
   hello = function (str)
     return "Greetings from obj2, " .. str .. "!"
