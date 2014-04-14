@@ -18,6 +18,20 @@ function interface(iface)
   myinterface = iface
 end
 
+function luarpc.default_value_by_type(param_type)
+  if param_type == "char" then
+    return "R"
+  elseif param_type == "string" then
+    return "PUC-Rio"
+  elseif param_type == "double" then
+    return 3.1415
+  elseif param_type == "void" then
+    return nil
+  else
+    return nil
+  end
+end
+
 function luarpc.validate_type(param_type, value)
   if param_type == "char" then
     if #tostring(value) == 1 then
@@ -438,7 +452,22 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       if #arg ~= i then
         local err_msg = "___ERRORPC: Wrong request number of arguments for method \"" .. tostring(rpc_method) .. "\" expecting " .. i .. " got " .. #arg
         print(err_msg)
-        return err_msg
+
+        -- Try to fix things with defaults values for each missing param,
+        -- according to it's type.
+        print("Trying to fix things for method \"" .. rpc_method .. "\" passing default values for missing parameters.")
+        local j = 0
+        for _, param in pairs(myinterface.methods[rpc_method].args) do
+          if param.direction == "in" or param.direction == "inout" then
+            j = j + 1
+            if not arg[j] then
+              arg[j] = luarpc.default_value_by_type(param.type)
+            end
+          end
+        end
+
+        -- Give up.
+        -- return err_msg
       end
 
       -- Test client connection to server.
