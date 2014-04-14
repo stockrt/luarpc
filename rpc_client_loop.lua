@@ -31,7 +31,7 @@ for x = 1, runs do
   local result, msg = proxy.foo(5, 3)
 end
 tend = os.time()
-print("foo took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port)
+print("foo took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
 
 
 
@@ -44,7 +44,7 @@ for x = 1, runs do
   local result = proxy.oid()
 end
 tend = os.time()
-print("oid took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port)
+print("oid took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
 
 
 
@@ -58,7 +58,7 @@ for x = 1, runs do
   local result = proxy.min("R")
 end
 tend = os.time()
-print("min took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port)
+print("min took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
 
 
 
@@ -71,7 +71,7 @@ for x = 1, runs do
   local result = proxy.min(string.rep("R", 10240))
 end
 tend = os.time()
-print("min 10k took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port)
+print("min 10k took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
 
 
 
@@ -86,7 +86,7 @@ for x = 1, runs do
   local result = proxy.men(1)
 end
 tend = os.time()
-print("men took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port)
+print("men took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
 
 
 
@@ -109,4 +109,4 @@ for x = 1, runs do
   local result = proxy.tbl(SaveTable(t))
 end
 tend = os.time()
-print("tbl took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port)
+print("tbl took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
