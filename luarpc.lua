@@ -124,7 +124,7 @@ function luarpc.send_msg(params)
       ret_msg = "___ERRONET: Sending client ___ERRORPC notification: \"" .. tostring(err_msg) .. "\" - " .. tostring(err)
       print(ret_msg)
 
-      -- Discard disconnected client.
+      -- Discard disconnected peer.
       if err == "closed" then
         luarpc.discard_client(params.client, params.client_list)
       end
@@ -145,7 +145,7 @@ function luarpc.send_msg(params)
       ret_msg = "___ERRONET: " .. tostring(params.err_msg)
       print(ret_msg)
 
-      -- Discard disconnected client.
+      -- Discard disconnected peer.
       if err == "closed" then
         luarpc.discard_client(params.client, params.client_list)
       end
@@ -169,7 +169,7 @@ function luarpc.recv_msg(params)
     ret_msg = "___ERRONET: " .. tostring(params.err_msg) .. " - " .. tostring(err)
     print(ret_msg)
 
-    -- Discard disconnected client.
+    -- Discard disconnected peer.
     if err == "closed" then
       luarpc.discard_client(params.client, params.client_list)
     end
@@ -198,29 +198,31 @@ function luarpc.recv_msg(params)
 end
 
 function luarpc.discard_client(client, client_list)
-  -- Client may have closed the connection.
-  print("Discarding connection closed by client.")
+  -- Peer may have closed the connection.
+  print("Discarding connection closed by peer.")
   client:close()
 
-  -- Current client list.
-  if #client_list == 0 then
-    print("- Current client count: 0")
-  else
-    for k, _ in pairs(client_list) do print("- Current client count: " .. k) end
-  end
-
-  -- Find and remove closed client.
-  for k, v in pairs(client_list) do
-    if client == v then
-      table.remove(client_list, k)
+  if client_list then
+    -- Current client list.
+    if #client_list == 0 then
+      print("- Current client count: 0")
+    else
+      for k, _ in pairs(client_list) do print("- Current client count: " .. k) end
     end
-  end
 
-  -- New client list.
-  if #client_list == 0 then
-    print("+ New client count: 0")
-  else
-    for k, _ in pairs(client_list) do print("+ New client count: " .. k) end
+    -- Find and remove closed client.
+    for k, v in pairs(client_list) do
+      if client == v then
+        table.remove(client_list, k)
+      end
+    end
+
+    -- New client list.
+    if #client_list == 0 then
+      print("+ New client count: 0")
+    else
+      for k, _ in pairs(client_list) do print("+ New client count: " .. k) end
+    end
   end
 end
 
