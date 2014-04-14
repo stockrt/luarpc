@@ -6,7 +6,7 @@ require("tableser")
 
 -- Arguments.
 if #arg < 1 then
-  print("Usage: " .. arg[0] .. " <interface_file> [server_port1] [server_port2]")
+  print("Usage: " .. arg[0] .. " <interface_file> [server_port1] [server_port2] [pool_size]")
   os.exit(1)
 end
 local interface_file = arg[1]
