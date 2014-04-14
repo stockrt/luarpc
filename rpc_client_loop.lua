@@ -4,7 +4,7 @@
 local luarpc = require("luarpc")
 
 -- Arguments.
-if #arg < 4 then
+if #arg < 3 then
   print("Usage: " .. arg[0] .. " <interface_file> <server_address> <server_port>")
   os.exit(1)
 end
