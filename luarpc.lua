@@ -322,7 +322,7 @@ function luarpc.waitIncoming()
             -- 0 clients.
             if servant.pool_size > 0 then
               -- Pool size limit.
-              print("Current number os connected clients: " .. #servant.client_list .. "/" .. servant.pool_size)
+              print("Current number of connected clients: " .. #servant.client_list .. "/" .. servant.pool_size)
               if #servant.client_list > servant.pool_size then
                 print("Pool size of " .. servant.pool_size .. " connections exceeded, discarding old clients.")
                 while #servant.client_list > servant.pool_size do
