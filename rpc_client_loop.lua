@@ -68,10 +68,10 @@ print(result)
 
 tini = os.time()
 for x = 1, runs do
-  local result = proxy.min(string.rep("R", 10240))
+  local result = proxy.min(string.rep("R", 1048576))
 end
 tend = os.time()
-print("min 10k took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
+print("min 1MB took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
 
 
 
@@ -93,13 +93,13 @@ print("men took " .. os.difftime(tend, tini) .. " seconds for server " .. server
 -- Table serialize. Em um rpc_server a tabela não é deserializada, em outro ela
 -- é deserializada.
 local t = {}
-for i = 1, 100 do
+for i = 1, 1000 do
   local x = "x" .. i
   t[x] = 3.1415 + i
 end
 print()
-print("+ Table with 100 doubles")
-for k, v in pairs(t) do print("- " .. k .. v) end
+print("+ Table with 1000 doubles")
+for k, v in pairs(t) do print("- " .. k .. " " .. v) end
 
 local result = proxy.tbl(SaveTable(t))
 print(result)
