@@ -1,0 +1,12 @@
+Diferença de tempo de entre chamadas sem persistência e com persistência de
+conexão.
+
+Cliente com loop de chamadas para alguns métodos especiais de teste, com maior
+e menor overhead de rede e de encoding.
+
+Servidor com pool de três conexões.
+Como se comporta com apenas um cliente?
+Como se comporta com três clientes?
+Como se comporta com dez clientes?
+Como se comporta cada caso com diferentes servidores, o que mantém e o que não
+mantém pool de conexões?
