@@ -5,13 +5,14 @@ local luarpc = require("luarpc")
 require("tableser")
 
 -- Arguments.
-if #arg < 3 then
-  print("Usage: " .. arg[0] .. " <interface_file> <server_address> <server_port>")
+if #arg < 4 then
+  print("Usage: " .. arg[0] .. " <interface_file> <server_address> <server_port> <runs>")
   os.exit(1)
 end
 local interface_file = arg[1]
 local server_address = arg[2]
 local server_port = arg[3]
+local runs = tonumber(arg[4])
 
 
 
@@ -26,7 +27,7 @@ print(result)
 print(msg)
 
 tini = os.time()
-for x = 1,1000 do
+for x = 1, runs do
   local result, msg = proxy.foo(5, 3)
 end
 tend = os.time()
@@ -39,7 +40,7 @@ local result = proxy.oid()
 print(result)
 
 tini = os.time()
-for x = 1,1000 do
+for x = 1, runs do
   local result = proxy.oid()
 end
 tend = os.time()
@@ -53,7 +54,7 @@ local result = proxy.min("R")
 print(result)
 
 tini = os.time()
-for x = 1,1000 do
+for x = 1, runs do
   local result = proxy.min("R")
 end
 tend = os.time()
@@ -66,7 +67,7 @@ local result = proxy.min(string.rep("R", 10240))
 print(result)
 
 tini = os.time()
-for x = 1,1000 do
+for x = 1, runs do
   local result = proxy.min(string.rep("R", 10240))
 end
 tend = os.time()
@@ -81,7 +82,7 @@ local result = proxy.men(1)
 print(result)
 
 tini = os.time()
-for x = 1,1000 do
+for x = 1, runs do
   local result = proxy.men(1)
 end
 tend = os.time()
@@ -104,7 +105,7 @@ local result = proxy.tbl(SaveTable(t))
 print(result)
 
 tini = os.time()
-for x = 1,1000 do
+for x = 1, runs do
   local result = proxy.tbl(SaveTable(t))
 end
 tend = os.time()
