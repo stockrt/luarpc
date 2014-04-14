@@ -48,7 +48,7 @@ for i = 1, 100 do
   local x = "x" .. i
   t[x] = 3.1415 + i
 end
-print("+ Table with 100 doubles.")
+print("+ Table with 100 doubles")
 for k, v in pairs(t) do print("- " .. k .. v) end
 local result = proxy.tbl(SaveTable(t))
 print(result)
