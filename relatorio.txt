@@ -199,6 +199,10 @@ men took 23 seconds for server 5002 for 50000 runs
 tbl took 60 seconds for server 5002 for 50000 runs
 
 # Table apenas
+tbl_only serialize took 4 seconds for 10000 runs
+tbl_only deserialize took 2 seconds for 10000 runs
+tbl_only serialize/deserialize took 6 seconds for 10000 runs
+
 tbl_only serialize took 22 seconds for 50000 runs
 tbl_only deserialize took 7 seconds for 50000 runs
 tbl_only serialize/deserialize took 32 seconds for 50000 runs
