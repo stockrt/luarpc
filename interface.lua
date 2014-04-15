@@ -76,6 +76,14 @@ interface {
         {direction = "in", type = "string"},
       },
     },
+    falta = {
+      resulttype = "string",
+      args = {
+        {direction = "in", type = "string"},
+        {direction = "in", type = "string"},
+        {direction = "out", type = "string"},
+      },
+    },
     capabilities = {
       resulttype = "string",
       args = {

@@ -46,6 +46,9 @@ local obj1 = {
   hello = function (str)
     return "Greetings from obj1, " .. str .. "!"
   end,
+  falta = function (str1, str2)
+    return "deve faltar um param no request e um no response: " .. str1 .. " | " .. str2
+  end,
   capabilities = function ()
     local caps = ""
     for rpc_method, method in pairs(myinterface.methods) do
@@ -98,8 +101,10 @@ local obj2 = {
   hello = function (str)
     return "Greetings from obj2, " .. str .. "!"
   end,
+  falta = function (str1, str2)
+    return "deve faltar um param no request e um no response: " .. str1 .. " | " .. str2
+  end,
   capabilities = function ()
-    -- TODO: Extra results and types.
     local caps = ""
     for rpc_method, method in pairs(myinterface.methods) do
       local cap = method.resulttype .. " " .. rpc_method .. "("

@@ -65,27 +65,32 @@ print("- Chamadas mal comportadas, ERRO_ESPERADO.")
 print("############################################")
 print()
 
-local result = proxy1.bar("tipo errado ERRO_ESPERADO")
+local result = proxy1.bar("tipo errado - ERRO_ESPERADO")
 print("* Err: " .. result)
 
-local result = proxy1.bar("quantia errada ERRO_ESPERADO", "tudo errado ERRO_ESPERADO")
+local result = proxy1.bar("quantia errada - ERRO_ESPERADO", "tudo errado - ERRO_ESPERADO")
 print("* Err: " .. result)
 
-local result = proxy1.cha("abc ERRO_ESPERADO", 123)
+local result = proxy1.cha("abc - ERRO_ESPERADO", 123)
 print("* Err: " .. result)
 
-local result = proxy1.naodefinido_erro_esperado("nao existe ERRO_ESPERADO")
+local result = proxy1.naodefinido_erro_esperado("nao existe - ERRO_ESPERADO")
 print("* Err: " .. result)
 
 local result = proxy1.hello()
 print("* Err: " .. result)
-print("ERRO_ESPERADO deveria passar algum valor para hello ERRO_ESPERADO")
+print("ERRO_ESPERADO - deveria passar algum valor para hello - ERRO_ESPERADO")
 
 local result = proxy1.hello(1)
 print("* Err: " .. result)
-print("ERRO_ESPERADO deveria string para hello ERRO_ESPERADO")
+print("ERRO_ESPERADO - deveria string para hello - ERRO_ESPERADO")
 
-local result = proxy1.capabilities("nao deveria passar param ERRO_ESPERADO")
+local result, msg = proxy1.falta("mandei1")
+print("* ErrRes: " .. result)
+print("* ErrMsg: " .. msg)
+print("ERRO_ESPERADO - deveria passar duas strings para falta e retornar duas - ERRO_ESPERADO")
+
+local result = proxy1.capabilities("nao deveria passar param - ERRO_ESPERADO")
 print("* Err: " .. result)
 
 local result = proxy1.capabilities(1, 2, "ERRO_ESPERADO")
@@ -146,27 +151,32 @@ print("- Chamadas mal comportadas, ERRO_ESPERADO.")
 print("############################################")
 print()
 
-local result = proxy2.bar("tipo errado ERRO_ESPERADO")
+local result = proxy2.bar("tipo errado - ERRO_ESPERADO")
 print("* Err: " .. result)
 
-local result = proxy2.bar("quantia errada ERRO_ESPERADO", "tudo errado ERRO_ESPERADO")
+local result = proxy2.bar("quantia errada - ERRO_ESPERADO", "tudo errado - ERRO_ESPERADO")
 print("* Err: " .. result)
 
-local result = proxy2.cha("abc ERRO_ESPERADO", "123")
+local result = proxy2.cha("abc - ERRO_ESPERADO", "123")
 print("* Err: " .. result)
 
-local result = proxy2.naodefinido_erro_esperado("nao existe ERRO_ESPERADO")
+local result = proxy2.naodefinido_erro_esperado("nao existe - ERRO_ESPERADO")
 print("* Err: " .. result)
 
 local result = proxy2.hello()
 print("* Err: " .. result)
-print("ERRO_ESPERADO deveria passar algum valor para hello ERRO_ESPERADO")
+print("ERRO_ESPERADO - deveria passar algum valor para hello - ERRO_ESPERADO")
 
 local result = proxy2.hello(1)
 print("* Err: " .. result)
-print("ERRO_ESPERADO deveria string para hello ERRO_ESPERADO")
+print("ERRO_ESPERADO - deveria string para hello - ERRO_ESPERADO")
 
-local result = proxy2.capabilities("nao deveria passar param ERRO_ESPERADO")
+local result, msg = proxy2.falta()
+print("* ErrRes: " .. result)
+print("* ErrMsg: " .. msg)
+print("ERRO_ESPERADO - deveria passar duas strings para falta e retornar duas - ERRO_ESPERADO")
+
+local result = proxy2.capabilities("nao deveria passar param - ERRO_ESPERADO")
 print("* Err: " .. result)
 
 local result = proxy2.capabilities(1, 2, "ERRO_ESPERADO")

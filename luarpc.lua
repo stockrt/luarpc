@@ -385,35 +385,68 @@ function luarpc.waitIncoming()
               -- Separate result and extra results for multisend.
               local packed_result = {pcall(servant.obj[rpc_method], unpack(values))}
               local exec_status = packed_result[1]
+              for _, v in pairs(packed_result) do print("- Packed result: " .. tostring(v)) end
 
-              -- XXX Void result placeholder.
+              -- Void result placeholder.
               if servant.iface.methods[rpc_method].resulttype == "void" then
-                table.insert(packed_result, 2, nil)
+                packed_result[1] = nil
+              else
+                table.remove(packed_result, 1)
               end
+              for _, v in pairs(packed_result) do print("+ Packed result: " .. tostring(v)) end
+
+              -- Validate response #params.
+              local i = 1
+              for _, param in pairs(servant.iface.methods[rpc_method].args) do
+                if param.direction == "out" or param.direction == "inout" then
+                  i = i + 1
+                end
+              end
+              if #packed_result ~= i then
+                local err_msg = "___ERRORPC: Wrong response number of arguments for method \"" .. tostring(rpc_method) .. "\" expecting " .. i .. " got " .. #packed_result
+                print(err_msg)
+
+                -- Try to fix things with defaults values for each missing param,
+                -- according to it's type.
+                print("Trying to fix things for method \"" .. rpc_method .. "\" returning default values for missing responses.")
+                local j = 1
+                for _, param in pairs(servant.iface.methods[rpc_method].args) do
+                  if param.direction == "out" or param.direction == "inout" then
+                    j = j + 1
+                    if not packed_result[j] then
+                      packed_result[j] = luarpc.default_value_by_type(param.type)
+                    end
+                  end
+                end
+
+                -- Another option is to fail and don't try to fix server's output, just give up.
+                -- break
+              end
+              for _, v in pairs(packed_result) do print("= Packed result: " .. tostring(v)) end
 
               if not exec_status then
                 luarpc.send_msg{msg="___ERRORPC: Problem calling method \"" .. tostring(rpc_method) .. "\"", client=client, client_list=servant.client_list, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
               else
                 -- Result.
-                local status, msg = luarpc.send_msg{msg=packed_result[2], client=client, client_list=servant.client_list, param_type=servant.iface.methods[rpc_method].resulttype, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[2]) .. "\""}
-
+                local status, msg = luarpc.send_msg{msg=packed_result[1], client=client, client_list=servant.client_list, param_type=servant.iface.methods[rpc_method].resulttype, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[1]) .. "\""}
                 if status then
                   -- Show response value.
-                  print("> response result: " .. tostring(packed_result[2]))
+                  print("> response result: " .. tostring(packed_result[1]))
 
                   -- Extra results.
-                  local i = 2
+                  local i = 1
                   for _, param in pairs(servant.iface.methods[rpc_method].args) do
                     if param.direction == "out" or param.direction == "inout" then
                       i = i + 1
-                      local status, msg = luarpc.send_msg{msg=packed_result[i], client=client, client_list=servant.client_list, param_type=param.type, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[i]) .. "\""}
-                      if not status then
+                      local status, msg = luarpc.send_msg{msg=packed_result[i], client=client, client_list=servant.client_list, param_type=param.type, serialize=true, err_msg="Sending extra response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[i]) .. "\""}
+                      if status then
+                        -- Show extra response value.
+                        print("> response extra result: " .. tostring(packed_result[i]))
+                      else
                         print(msg)
                         -- Interrupt param extra result send loop.
                         break
                       end
-                      -- Show extra response value.
-                      print("> response extra result: " .. tostring(packed_result[i]))
                     end
                   end
                 else
