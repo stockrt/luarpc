@@ -219,7 +219,6 @@ men took 33 seconds for server 5002 for 10000 runs
 tbl took 56 seconds for server 5002 for 10000 runs
 
 
-
 # Table apenas
 tbl_only serialize took 4 seconds for 10000 runs
 tbl_only deserialize took 2 seconds for 10000 runs
@@ -228,3 +227,19 @@ tbl_only serialize/deserialize took 6 seconds for 10000 runs
 tbl_only serialize took 22 seconds for 50000 runs
 tbl_only deserialize took 7 seconds for 50000 runs
 tbl_only serialize/deserialize took 32 seconds for 50000 runs
+
+
+# 1 cliente - close connection
+02:23:45 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
+foo took 4 seconds for server 5001 for 10000 runs
+oid took 4 seconds for server 5001 for 10000 runs
+min took 4 seconds for server 5001 for 10000 runs
+min 10KB took 21 seconds for server 5001 for 10000 runs
+men took 4 seconds for server 5001 for 10000 runs
+tbl took 10 seconds for server 5001 for 10000 runs
+foo took 5 seconds for server 5002 for 10000 runs
+oid took 4 seconds for server 5002 for 10000 runs
+min took 4 seconds for server 5002 for 10000 runs
+min 10KB took 21 seconds for server 5002 for 10000 runs
+men took 4 seconds for server 5002 for 10000 runs
+tbl took 11 seconds for server 5002 for 10000 runs
