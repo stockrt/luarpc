@@ -103,26 +103,6 @@ os.execute("./stats-collect.sh >> " .. file_name)
 
 
 
--- 1048576 bytes de ida e 1048576 bytes de volta.
-local result = proxy.min(string.rep("R", 1048576))
-print(result)
-
-os.execute("./stats-zero.sh")
-tini = os.time()
-for x = 1, runs do
-  local result = proxy.min(string.rep("R", 1048576))
-end
-tend = os.time()
-local res = "min 1MB took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
-print(res)
-local file_name = "rel/min1mb.txt"
-local file_handler = io.open(file_name, "a+")
-file_handler:write("\n\n" .. res .. "\n")
-file_handler:close()
-os.execute("./stats-collect.sh >> " .. file_name)
-
-
-
 -- Requer o mínimo de tráfego de rede. É melhor do que void pois em nosso
 -- protocolo o void significa "nil" (5 bytes), já este double significa 1
 -- (apenas 1 byte).
