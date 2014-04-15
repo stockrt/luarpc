@@ -79,7 +79,7 @@ for x = 1, runs do
 end
 tend = os.time()
 print("min 1KB took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
-os.execute("./stats-collect.sh >> min1mb.txt")
+os.execute("./stats-collect.sh >> min10k.txt")
 
 
 
