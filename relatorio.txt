@@ -123,8 +123,6 @@ men took 10 seconds for server 5001 for 10000 runs
 tbl took 16 seconds for server 5001 for 10000 runs
 foo took 9 seconds for server 5002 for 10000 runs
 oid took 17 seconds for server 5002 for 10000 runs
-iptables: No chain/target/match by that name.
-iptables: No chain/target/match by that name.
 min took 18 seconds for server 5002 for 10000 runs
 min 10KB took 33 seconds for server 5002 for 10000 runs
 men took 6 seconds for server 5002 for 10000 runs
@@ -243,3 +241,19 @@ min took 4 seconds for server 5002 for 10000 runs
 min 10KB took 21 seconds for server 5002 for 10000 runs
 men took 4 seconds for server 5002 for 10000 runs
 tbl took 11 seconds for server 5002 for 10000 runs
+
+
+# 3 clientes - close connection
+02:33:17 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $  ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
+foo took 5 seconds for server 5001 for 10000 runs
+oid took 7 seconds for server 5001 for 10000 runs
+min took 8 seconds for server 5001 for 10000 runs
+min 10KB took 32 seconds for server 5001 for 10000 runs
+men took 10 seconds for server 5001 for 10000 runs
+tbl took 17 seconds for server 5001 for 10000 runs
+foo took 10 seconds for server 5002 for 10000 runs
+oid took 9 seconds for server 5002 for 10000 runs
+min took 8 seconds for server 5002 for 10000 runs
+min 10KB took 35 seconds for server 5002 for 10000 runs
+men took 6 seconds for server 5002 for 10000 runs
+tbl took 19 seconds for server 5002 for 10000 runs
