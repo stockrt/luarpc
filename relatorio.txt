@@ -26,3 +26,8 @@ min 10KB took 112 seconds for server 5002 for 50000 runs
 men took 8 seconds for server 5002 for 50000 runs
 tbl took 40 seconds for server 5002 for 50000 runs
 
+
+tbl_only serialize took 22 seconds for 50000 runs
+tbl_only deserialize took 7 seconds for 50000 runs
+tbl_only serialize/deserialize took 32 seconds for 50000 runs
+
