@@ -8,7 +8,7 @@ local luarpc = {}
 
 -- Lists.
 local servant_list = {} -- {server, obj, iface, client_list}
-local pclient_list = {} -- {rpc_method .. server_port = client}
+local pclient_list = {} -- {server_address .. server_port = client}
 
 -- Global namespace.
 myinterface = {}
