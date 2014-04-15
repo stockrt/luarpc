@@ -484,7 +484,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
   dofile(interface_file)
 
   -- Catch all not defined methods and throw an error.
-  local mt = {__index = function (...)
+  local catch_undef_method = {__index = function (...)
     local arg = {...}
     return function ()
       local rpc_method = arg[2]
@@ -493,7 +493,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       return err_msg
     end
   end}
-  setmetatable(pobj, mt)
+  setmetatable(pobj, catch_undef_method)
 
   -- Proxied methods builder.
   for rpc_method, method in pairs(myinterface.methods) do
