@@ -431,7 +431,7 @@ function luarpc.waitIncoming()
           if servant.pool_size <= 0 then
             local l_ip, l_port = client:getsockname()
             local r_ip, r_port = client:getpeername()
-            print("Closing current client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
+            print("No connection pool configured, closing current client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
             luarpc.discard_client(client, servant.client_list)
           end
         end
