@@ -11,7 +11,8 @@ Como se comporta com dez clientes?
 Como se comporta cada caso com diferentes servidores, o que mantém e o que não
 mantém pool de conexões?
 
-# 1 cliente
+
+# 1 cliente - persist
 01:46:24 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
 foo took 2 seconds for server 5001 for 10000 runs
 oid took 2 seconds for server 5001 for 10000 runs
@@ -39,6 +40,7 @@ min took 2 seconds for server 5002 for 10000 runs
 min 10KB took 20 seconds for server 5002 for 10000 runs
 men took 2 seconds for server 5002 for 10000 runs
 tbl took 9 seconds for server 5002 for 10000 runs
+
 
 00:04:18 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master %) $ ./rpc_client_loop.lua interface.lua localhost 5001 50000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 50000 | grep took
 foo took 11 seconds for server 5001 for 50000 runs
@@ -68,7 +70,8 @@ min 10KB took 106 seconds for server 5002 for 50000 runs
 men took 9 seconds for server 5002 for 50000 runs
 tbl took 41 seconds for server 5002 for 50000 runs
 
-# 3 clientes
+
+# 3 clientes - persist
 01:50:06 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
 foo took 4 seconds for server 5001 for 10000 runs
 oid took 3 seconds for server 5001 for 10000 runs
@@ -197,6 +200,7 @@ min took 57 seconds for server 5002 for 50000 runs
 min 10KB took 135 seconds for server 5002 for 50000 runs
 men took 23 seconds for server 5002 for 50000 runs
 tbl took 60 seconds for server 5002 for 50000 runs
+
 
 # Table apenas
 tbl_only serialize took 4 seconds for 10000 runs
