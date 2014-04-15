@@ -26,12 +26,14 @@ local result, msg = proxy.foo(5, 3)
 print(result)
 print(msg)
 
+os.execute("./stats-zero.sh")
 tini = os.time()
 for x = 1, runs do
   local result, msg = proxy.foo(5, 3)
 end
 tend = os.time()
 print("foo took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
+os.execute("./stats-collect.sh >> foo.txt")
 
 
 
@@ -39,12 +41,14 @@ print("foo took " .. os.difftime(tend, tini) .. " seconds for server " .. server
 local result = proxy.oid()
 print(result)
 
+os.execute("./stats-zero.sh")
 tini = os.time()
 for x = 1, runs do
   local result = proxy.oid()
 end
 tend = os.time()
 print("oid took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
+os.execute("./stats-collect.sh >> oid.txt")
 
 
 
@@ -53,12 +57,14 @@ print("oid took " .. os.difftime(tend, tini) .. " seconds for server " .. server
 local result = proxy.min("R")
 print(result)
 
+os.execute("./stats-zero.sh")
 tini = os.time()
 for x = 1, runs do
   local result = proxy.min("R")
 end
 tend = os.time()
 print("min took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
+os.execute("./stats-collect.sh >> min.txt")
 
 
 
@@ -66,12 +72,14 @@ print("min took " .. os.difftime(tend, tini) .. " seconds for server " .. server
 local result = proxy.min(string.rep("R", 10240))
 print(result)
 
+os.execute("./stats-zero.sh")
 tini = os.time()
 for x = 1, runs do
   local result = proxy.min(string.rep("R", 10240))
 end
 tend = os.time()
 print("min 1KB took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
+os.execute("./stats-collect.sh >> min1mb.txt")
 
 
 
@@ -81,12 +89,14 @@ print("min 1KB took " .. os.difftime(tend, tini) .. " seconds for server " .. se
 local result = proxy.men(1)
 print(result)
 
+os.execute("./stats-zero.sh")
 tini = os.time()
 for x = 1, runs do
   local result = proxy.men(1)
 end
 tend = os.time()
 print("men took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
+os.execute("./stats-collect.sh >> men.txt")
 
 
 
@@ -104,9 +114,11 @@ for k, v in pairs(t) do print("- " .. k .. " " .. v) end
 local result = proxy.tbl(SaveTable(t))
 print(result)
 
+os.execute("./stats-zero.sh")
 tini = os.time()
 for x = 1, runs do
   local result = proxy.tbl(SaveTable(t))
 end
 tend = os.time()
 print("tbl took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
+os.execute("./stats-collect.sh >> tbl.txt")
