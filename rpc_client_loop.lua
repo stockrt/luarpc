@@ -32,8 +32,13 @@ for x = 1, runs do
   local result, msg = proxy.foo(5, 3)
 end
 tend = os.time()
-print("foo took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
-os.execute("./stats-collect.sh >> foo.txt")
+local res = "foo took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
+print(res)
+local file_name = "foo.txt"
+local file_handler = io.open(file_name, "a+")
+file_handler:write("\n\n\n" .. res .. "\n")
+file_handler:close()
+os.execute("./stats-collect.sh >> " .. file_name)
 
 
 
@@ -47,8 +52,13 @@ for x = 1, runs do
   local result = proxy.oid()
 end
 tend = os.time()
-print("oid took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
-os.execute("./stats-collect.sh >> oid.txt")
+local res = "oid took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
+print(res)
+local file_name = "oid.txt"
+local file_handler = io.open(file_name, "a+")
+file_handler:write("\n\n\n" .. res .. "\n")
+file_handler:close()
+os.execute("./stats-collect.sh >> " .. file_name)
 
 
 
@@ -63,8 +73,13 @@ for x = 1, runs do
   local result = proxy.min("R")
 end
 tend = os.time()
-print("min took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
-os.execute("./stats-collect.sh >> min.txt")
+local res = "min took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
+print(res)
+local file_name = "min.txt"
+local file_handler = io.open(file_name, "a+")
+file_handler:write("\n\n\n" .. res .. "\n")
+file_handler:close()
+os.execute("./stats-collect.sh >> " .. file_name)
 
 
 
@@ -78,8 +93,33 @@ for x = 1, runs do
   local result = proxy.min(string.rep("R", 10240))
 end
 tend = os.time()
-print("min 1KB took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
-os.execute("./stats-collect.sh >> min10k.txt")
+local res = "min 10KB took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
+print(res)
+local file_name = "min10kb.txt"
+local file_handler = io.open(file_name, "a+")
+file_handler:write("\n\n\n" .. res .. "\n")
+file_handler:close()
+os.execute("./stats-collect.sh >> " .. file_name)
+
+
+
+-- 1048576 bytes de ida e 1048576 bytes de volta.
+local result = proxy.min(string.rep("R", 1048576))
+print(result)
+
+os.execute("./stats-zero.sh")
+tini = os.time()
+for x = 1, runs do
+  local result = proxy.min(string.rep("R", 1048576))
+end
+tend = os.time()
+local res = "min 1MB took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
+print(res)
+local file_name = "min1mb.txt"
+local file_handler = io.open(file_name, "a+")
+file_handler:write("\n\n\n" .. res .. "\n")
+file_handler:close()
+os.execute("./stats-collect.sh >> " .. file_name)
 
 
 
@@ -95,8 +135,13 @@ for x = 1, runs do
   local result = proxy.men(1)
 end
 tend = os.time()
-print("men took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
-os.execute("./stats-collect.sh >> men.txt")
+local res = "men took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
+print(res)
+local file_name = "men.txt"
+local file_handler = io.open(file_name, "a+")
+file_handler:write("\n\n\n" .. res .. "\n")
+file_handler:close()
+os.execute("./stats-collect.sh >> " .. file_name)
 
 
 
@@ -120,5 +165,10 @@ for x = 1, runs do
   local result = proxy.tbl(SaveTable(t))
 end
 tend = os.time()
-print("tbl took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs")
-os.execute("./stats-collect.sh >> tbl.txt")
+local res = "tbl took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
+print(res)
+local file_name = "tbl.txt"
+local file_handler = io.open(file_name, "a+")
+file_handler:write("\n\n\n" .. res .. "\n")
+file_handler:close()
+os.execute("./stats-collect.sh >> " .. file_name)
