@@ -1,14 +1,14 @@
 
 
-tbl took 32 seconds for server 5001 for 50000 runs
-  100001 105150052            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+tbl took 7 seconds for server 5001 for 10000 runs
+   20001 21030052            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
        0        0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
-  100000  5300000            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+   20000  1060000            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
        0        0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
 
 
-tbl took 40 seconds for server 5002 for 50000 runs
+tbl took 11 seconds for server 5002 for 10000 runs
        0        0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
-  100001 105150052            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+   20001 21030052            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
        0        0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
-  100000  5300000            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+   20000  1060000            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
