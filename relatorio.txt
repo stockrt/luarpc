@@ -11,7 +11,35 @@ Como se comporta com dez clientes?
 Como se comporta cada caso com diferentes servidores, o que mantém e o que não
 mantém pool de conexões?
 
-# 1 cli
+# 1 cliente
+01:46:24 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
+foo took 2 seconds for server 5001 for 10000 runs
+oid took 2 seconds for server 5001 for 10000 runs
+min took 2 seconds for server 5001 for 10000 runs
+min 10KB took 17 seconds for server 5001 for 10000 runs
+men took 3 seconds for server 5001 for 10000 runs
+tbl took 8 seconds for server 5001 for 10000 runs
+foo took 3 seconds for server 5002 for 10000 runs
+oid took 2 seconds for server 5002 for 10000 runs
+min took 2 seconds for server 5002 for 10000 runs
+min 10KB took 20 seconds for server 5002 for 10000 runs
+men took 2 seconds for server 5002 for 10000 runs
+tbl took 9 seconds for server 5002 for 10000 runs
+
+01:47:39 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
+foo took 2 seconds for server 5001 for 10000 runs
+oid took 2 seconds for server 5001 for 10000 runs
+min took 2 seconds for server 5001 for 10000 runs
+min 10KB took 20 seconds for server 5001 for 10000 runs
+men took 2 seconds for server 5001 for 10000 runs
+tbl took 8 seconds for server 5001 for 10000 runs
+foo took 3 seconds for server 5002 for 10000 runs
+oid took 2 seconds for server 5002 for 10000 runs
+min took 2 seconds for server 5002 for 10000 runs
+min 10KB took 20 seconds for server 5002 for 10000 runs
+men took 2 seconds for server 5002 for 10000 runs
+tbl took 9 seconds for server 5002 for 10000 runs
+
 00:04:18 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master %) $ ./rpc_client_loop.lua interface.lua localhost 5001 50000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 50000 | grep took
 foo took 11 seconds for server 5001 for 50000 runs
 oid took 7 seconds for server 5001 for 50000 runs
@@ -41,6 +69,93 @@ men took 9 seconds for server 5002 for 50000 runs
 tbl took 41 seconds for server 5002 for 50000 runs
 
 # 3 clientes
+01:50:06 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
+foo took 4 seconds for server 5001 for 10000 runs
+oid took 3 seconds for server 5001 for 10000 runs
+min took 3 seconds for server 5001 for 10000 runs
+min 10KB took 22 seconds for server 5001 for 10000 runs
+men took 23 seconds for server 5001 for 10000 runs
+tbl took 12 seconds for server 5001 for 10000 runs
+foo took 10 seconds for server 5002 for 10000 runs
+oid took 5 seconds for server 5002 for 10000 runs
+min took 5 seconds for server 5002 for 10000 runs
+min 10KB took 27 seconds for server 5002 for 10000 runs
+men took 18 seconds for server 5002 for 10000 runs
+tbl took 19 seconds for server 5002 for 10000 runs
+
+01:50:35 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
+foo took 6 seconds for server 5001 for 10000 runs
+oid took 7 seconds for server 5001 for 10000 runs
+min took 13 seconds for server 5001 for 10000 runs
+min 10KB took 28 seconds for server 5001 for 10000 runs
+men took 10 seconds for server 5001 for 10000 runs
+tbl took 12 seconds for server 5001 for 10000 runs
+foo took 7 seconds for server 5002 for 10000 runs
+oid took 9 seconds for server 5002 for 10000 runs
+min took 15 seconds for server 5002 for 10000 runs
+min 10KB took 31 seconds for server 5002 for 10000 runs
+men took 14 seconds for server 5002 for 10000 runs
+tbl took 15 seconds for server 5002 for 10000 runs
+
+01:50:36 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
+foo took 7 seconds for server 5001 for 10000 runs
+oid took 8 seconds for server 5001 for 10000 runs
+min took 18 seconds for server 5001 for 10000 runs
+min 10KB took 27 seconds for server 5001 for 10000 runs
+men took 9 seconds for server 5001 for 10000 runs
+tbl took 11 seconds for server 5001 for 10000 runs
+foo took 8 seconds for server 5002 for 10000 runs
+oid took 15 seconds for server 5002 for 10000 runs
+min took 17 seconds for server 5002 for 10000 runs
+min 10KB took 31 seconds for server 5002 for 10000 runs
+men took 5 seconds for server 5002 for 10000 runs
+tbl took 14 seconds for server 5002 for 10000 runs
+
+01:54:44 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
+foo took 7 seconds for server 5001 for 10000 runs
+oid took 10 seconds for server 5001 for 10000 runs
+min took 21 seconds for server 5001 for 10000 runs
+min 10KB took 31 seconds for server 5001 for 10000 runs
+men took 10 seconds for server 5001 for 10000 runs
+tbl took 16 seconds for server 5001 for 10000 runs
+foo took 9 seconds for server 5002 for 10000 runs
+oid took 17 seconds for server 5002 for 10000 runs
+iptables: No chain/target/match by that name.
+iptables: No chain/target/match by that name.
+min took 18 seconds for server 5002 for 10000 runs
+min 10KB took 33 seconds for server 5002 for 10000 runs
+men took 6 seconds for server 5002 for 10000 runs
+tbl took 12 seconds for server 5002 for 10000 runs
+
+01:54:45 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
+foo took 7 seconds for server 5001 for 10000 runs
+oid took 7 seconds for server 5001 for 10000 runs
+min took 16 seconds for server 5001 for 10000 runs
+min 10KB took 30 seconds for server 5001 for 10000 runs
+men took 13 seconds for server 5001 for 10000 runs
+tbl took 15 seconds for server 5001 for 10000 runs
+foo took 9 seconds for server 5002 for 10000 runs
+oid took 7 seconds for server 5002 for 10000 runs
+min took 16 seconds for server 5002 for 10000 runs
+min 10KB took 29 seconds for server 5002 for 10000 runs
+men took 15 seconds for server 5002 for 10000 runs
+tbl took 16 seconds for server 5002 for 10000 runs
+
+01:54:46 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 10000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 10000 | grep took
+foo took 4 seconds for server 5001 for 10000 runs
+oid took 5 seconds for server 5001 for 10000 runs
+min took 4 seconds for server 5001 for 10000 runs
+min 10KB took 26 seconds for server 5001 for 10000 runs
+men took 25 seconds for server 5001 for 10000 runs
+tbl took 17 seconds for server 5001 for 10000 runs
+foo took 11 seconds for server 5002 for 10000 runs
+oid took 7 seconds for server 5002 for 10000 runs
+min took 6 seconds for server 5002 for 10000 runs
+min 10KB took 25 seconds for server 5002 for 10000 runs
+men took 16 seconds for server 5002 for 10000 runs
+tbl took 20 seconds for server 5002 for 10000 runs
+
+
 00:30:35 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master *%) $ ./rpc_client_loop.lua interface.lua localhost 5001 50000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 50000 | grep took
 foo took 16 seconds for server 5001 for 50000 runs
 oid took 16 seconds for server 5001 for 50000 runs
