@@ -10,3 +10,19 @@ Como se comporta com três clientes?
 Como se comporta com dez clientes?
 Como se comporta cada caso com diferentes servidores, o que mantém e o que não
 mantém pool de conexões?
+
+
+00:04:18 stockrt@jackbauer ~/Dropbox/stockrt/Roger/mestrado/sd/luarpc (master %) $ ./rpc_client_loop.lua interface.lua localhost 5001 50000 | grep took ; ./rpc_client_loop.lua interface.lua localhost 5002 50000 | grep took
+foo took 11 seconds for server 5001 for 50000 runs
+oid took 7 seconds for server 5001 for 50000 runs
+min took 8 seconds for server 5001 for 50000 runs
+min 10KB took 110 seconds for server 5001 for 50000 runs
+men took 7 seconds for server 5001 for 50000 runs
+tbl took 32 seconds for server 5001 for 50000 runs
+foo took 10 seconds for server 5002 for 50000 runs
+oid took 8 seconds for server 5002 for 50000 runs
+min took 9 seconds for server 5002 for 50000 runs
+min 10KB took 112 seconds for server 5002 for 50000 runs
+men took 8 seconds for server 5002 for 50000 runs
+tbl took 40 seconds for server 5002 for 50000 runs
+
