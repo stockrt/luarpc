@@ -220,6 +220,7 @@ function luarpc.discard_client(client, client_list)
     -- Find and remove closed client.
     for k, v in pairs(client_list) do
       if client == v then
+        print("Found and removed client: " .. k)
         table.remove(client_list, k)
       end
     end
