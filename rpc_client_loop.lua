@@ -34,7 +34,7 @@ end
 tend = os.time()
 local res = "foo took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
 print(res)
-local file_name = "foo.txt"
+local file_name = "rel/foo.txt"
 local file_handler = io.open(file_name, "a+")
 file_handler:write("\n\n\n" .. res .. "\n")
 file_handler:close()
@@ -54,7 +54,7 @@ end
 tend = os.time()
 local res = "oid took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
 print(res)
-local file_name = "oid.txt"
+local file_name = "rel/oid.txt"
 local file_handler = io.open(file_name, "a+")
 file_handler:write("\n\n\n" .. res .. "\n")
 file_handler:close()
@@ -75,7 +75,7 @@ end
 tend = os.time()
 local res = "min took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
 print(res)
-local file_name = "min.txt"
+local file_name = "rel/min.txt"
 local file_handler = io.open(file_name, "a+")
 file_handler:write("\n\n\n" .. res .. "\n")
 file_handler:close()
@@ -95,7 +95,7 @@ end
 tend = os.time()
 local res = "min 10KB took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
 print(res)
-local file_name = "min10kb.txt"
+local file_name = "rel/min10kb.txt"
 local file_handler = io.open(file_name, "a+")
 file_handler:write("\n\n\n" .. res .. "\n")
 file_handler:close()
@@ -115,7 +115,7 @@ end
 tend = os.time()
 local res = "min 1MB took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
 print(res)
-local file_name = "min1mb.txt"
+local file_name = "rel/min1mb.txt"
 local file_handler = io.open(file_name, "a+")
 file_handler:write("\n\n\n" .. res .. "\n")
 file_handler:close()
@@ -137,7 +137,7 @@ end
 tend = os.time()
 local res = "men took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
 print(res)
-local file_name = "men.txt"
+local file_name = "rel/men.txt"
 local file_handler = io.open(file_name, "a+")
 file_handler:write("\n\n\n" .. res .. "\n")
 file_handler:close()
@@ -167,7 +167,7 @@ end
 tend = os.time()
 local res = "tbl took " .. os.difftime(tend, tini) .. " seconds for server " .. server_port .. " for " .. runs .. " runs"
 print(res)
-local file_name = "tbl.txt"
+local file_name = "rel/tbl.txt"
 local file_handler = io.open(file_name, "a+")
 file_handler:write("\n\n\n" .. res .. "\n")
 file_handler:close()
