@@ -1,4 +1,11 @@
--- http://www.inf.puc-rio.br/~noemi/sd-14/trab1.html
+--[[
+http://www.inf.puc-rio.br/~noemi/sd-14/trab1.html
+
+TODO:
+- Usar metatable para limitar connection pool. Será que entra em loop?
+- Close client / deref client.
+- Close no server / deref no server (leak?).
+]]
 
 local socket = require("socket")
 local unpack = unpack or table.unpack
