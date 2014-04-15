@@ -498,7 +498,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       end
 
       -- Test client connection to server.
-      local client = pclient_list[rpc_method .. server_port]
+      local client = pclient_list[server_address .. server_port]
       if client then
         -- Non-blocking connection closed test.
         client:settimeout(0)
@@ -507,22 +507,22 @@ function luarpc.createProxy(server_address, server_port, interface_file)
         if err == "closed" then
           -- Close and remove client connection.
           client:close()
-          pclient_list[rpc_method .. server_port] = nil
-          print("Cached connection was closed by server for method \"" .. tostring(rpc_method) .. "\"")
+          pclient_list[server_address .. server_port] = nil
+          print("Cached connection was closed by server " .. tostring(server_address) .. ":" .. tostring(server_port))
         else
-          print("Cached connection seems ok for method \"" .. tostring(rpc_method) .. "\"")
+          print("Cached connection seems ok for server " .. tostring(server_address) .. ":" .. tostring(server_port))
         end
       else
-        print("No cached connection found for method \"" .. tostring(rpc_method) .. "\"")
+        print("No cached connection found for server " .. tostring(server_address) .. ":" .. tostring(server_port))
       end
 
       -- Try and cache connection to server.
-      if not pclient_list[rpc_method .. server_port] then
+      if not pclient_list[server_address .. server_port] then
         -- Estabilish client connection to server.
-        print("Trying to estabilish and cache connection for method \"" .. tostring(rpc_method) .. "\"")
+        print("Trying to estabilish and cache connection for server " .. tostring(server_address) .. ":" .. tostring(server_port))
         local client, err = socket.connect(server_address, server_port)
         if err then
-          local err_msg = "___ERRONET: Could not connect to " .. server_address .. ":" .. server_port .. " - " .. tostring(err)
+          local err_msg = "___ERRONET: Could not connect to " .. tostring(server_address) .. ":" .. tostring(server_port) .. " - " .. tostring(err)
           print(err_msg)
           return err_msg
         else
@@ -532,19 +532,19 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           client:setoption("tcp-nodelay", true)
           client:settimeout(10) -- send/receive timeout
 
-          print("Caching connection for method \"" .. tostring(rpc_method) .. "\"")
-          pclient_list[rpc_method .. server_port] = client
+          print("Caching connection for server " .. tostring(server_address) .. ":" .. tostring(server_port))
+          pclient_list[server_address .. server_port] = client
         end
       end
 
       -- Use cached connection to server.
-      local client = pclient_list[rpc_method .. server_port]
+      local client = pclient_list[server_address .. server_port]
       if not client then
-        local err_msg = "___ERRONET: Could not retrieve cached connection to " .. server_address .. ":" .. server_port
+        local err_msg = "___ERRONET: Could not retrieve cached connection to " .. tostring(server_address) .. ":" .. tostring(server_port)
         print(err_msg)
         return err_msg
       else
-        print("Found cached connection for method \"" .. tostring(rpc_method) .. "\", reusing it.")
+        print("Found cached connection for server " .. tostring(server_address) .. ":" .. tostring(server_port) .. ", reusing it.")
       end
 
       -- Connection info.
