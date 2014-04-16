@@ -325,7 +325,7 @@ o método \textit{foo}, levando apenas 2 segundos para executar 10000 operaçõe
 de soma de dois doubles e de devolução da resposta em conjunto com um string
 pequeno.
 
-\begin{lstlisting}[label={melhorias},language=C,caption=Connection Pool
+\begin{lstlisting}[label={ifacefoo},language=C,caption=Interface foo
     foo = {
       resulttype = "double",
       args = {
@@ -360,9 +360,10 @@ linha de comando, no \textit{start} do processo, e quando configurado para
 \textit{pool} de tamanho 0 ou menor atua sem persistência de conexão, forçando o
 fechamento após atender cada requisição.
 
-\$ ./rpc\_server.lua
-Usage: ./rpc\_server.lua <interface\_file> [server\_port1] [server\_port2]
-[pool\_size]
+\begin{lstlisting}[label={commandline},language=C,caption=Linha de comando
+$ ./rpc\_server.lua
+Usage: ./rpc\_server.lua <interface\_file> [server\_port1] [server\_port2] [pool\_size]
+\end{lstlisting}
 
 \subsection{Gargalos identificados}\label{subsec:bottle}
 
@@ -431,7 +432,7 @@ totalmente o idioma da linguagem Lua para tanto. A sugestão é utilizar o
 \textit{metamethod} \textit{__newindex} para tratar novos índices na tabela que
 lista os clientes de um servidor.
 
-\begin{lstlisting}[label={melhorias},language=C,caption=Connection Pool
+\begin{lstlisting}[label={connpool},language=C,caption=Connection Pool
 em C \textit{PPH} em $O(n^2)$ com \textit{array}]
 -- Pool size limit.
 if #servant.client_list > servant.pool_size then
