@@ -12,3 +12,17 @@ foo took 3 seconds for server 5002 for 10000 runs
    40001  2160052            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
        0        0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
    30000  1660000            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+foo took 2 seconds for server 5001 for 10000 runs
+40001 2160K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+30000 1680K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+foo took 4 seconds for server 5002 for 10000 runs
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+40001 2160K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+30000 1660K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002

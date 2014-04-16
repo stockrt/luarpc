@@ -12,3 +12,17 @@ min 10KB took 22 seconds for server 5002 for 10000 runs
    30001 104030052            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
        0        0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
    20000  1060000            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+min 10KB took 21 seconds for server 5001 for 10000 runs
+30001  104M            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+20000 1060K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+min 10KB took 21 seconds for server 5002 for 10000 runs
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+30001  104M            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+20000 1060K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
