@@ -253,7 +253,7 @@ osugerido no roteiro de testes do enuncido do trabalho, obtivemos um total de
 duração de 21 segundos para 10000 requisições. O string enviado era grande,
 continha 10k bytes.
 
-\begin{lstlisting}[label={ifacemin},language=C,caption=Interface min
+\begin{lstlisting}[label={ifacemin},language=C,caption=Interface min]
     min = {
       resulttype = "double",
       args = {
@@ -298,7 +298,7 @@ Como resultado obtivemos um total de 21M bytes enviados e 1060K bytes recebidos 
 cliente com um tempo total de duração de 8 segundos sem deserialização e 9
 segundos com deserialização no lado do servidor para 10000 requisições.
 
-\begin{lstlisting}[label={ifacetbl},language=C,caption=Interface tbl
+\begin{lstlisting}[label={ifacetbl},language=C,caption=Interface tbl]
     tbl = {
       resulttype = "double",
       args = {
@@ -325,7 +325,7 @@ o método \textit{foo}, levando apenas 2 segundos para executar 10000 operaçõe
 de soma de dois doubles e de devolução da resposta em conjunto com um string
 pequeno.
 
-\begin{lstlisting}[label={ifacefoo},language=C,caption=Interface foo
+\begin{lstlisting}[label={ifacefoo},language=C,caption=Interface foo]
     foo = {
       resulttype = "double",
       args = {
@@ -360,9 +360,9 @@ linha de comando, no \textit{start} do processo, e quando configurado para
 \textit{pool} de tamanho 0 ou menor atua sem persistência de conexão, forçando o
 fechamento após atender cada requisição.
 
-\begin{lstlisting}[label={commandline},language=C,caption=Linha de comando
-$ ./rpc\_server.lua
-Usage: ./rpc\_server.lua <interface\_file> [server\_port1] [server\_port2] [pool\_size]
+\begin{lstlisting}[label={commandline},language=C,caption=Linha de comando]
+    $ ./rpc\_server.lua
+    Usage: ./rpc\_server.lua <interface\_file> [server\_port1] [server\_port2] [pool\_size]
 \end{lstlisting}
 
 \subsection{Gargalos identificados}\label{subsec:bottle}
@@ -429,10 +429,10 @@ alterar o tratamento de \textit{pool} utilizando uma
 se o limite de conexões foi atingido e poderia liberar as conexões mais
 antigas. A implementação atual tem exatamente o mesmo efeito, mas não usa
 totalmente o idioma da linguagem Lua para tanto. A sugestão é utilizar o
-\textit{metamethod} \textit{__newindex} para tratar novos índices na tabela que
+\textit{metamethod} \textit{\_\_newindex} para tratar novos índices na tabela que
 lista os clientes de um servidor.
 
-\begin{lstlisting}[label={connpool},language=C,caption=Connection Pool
+\begin{lstlisting}[label={connpool},language=C,caption=Connection Pool]
 em C \textit{PPH} em $O(n^2)$ com \textit{array}]
 -- Pool size limit.
 if #servant.client_list > servant.pool_size then
