@@ -356,22 +356,22 @@ foo = {
 
 Na segunda execução, com 3 clientes, a concorrência já causou impacto no tempo
 de execução, mas mesmo assim todos os clientes ainda estavam podendo manter as
-suas conexões abertas o tempo todo, sem necessidade de reconexão.  Neste perfil
+suas conexões abertas o tempo todo, sem necessidade de reconexão. Neste perfil
 o tempo subiu para 7 segundos em cada cliente.
 
-aqui
-
-O último perfil sugerido, com 10 clientes para forçar a reconexão sequencial de
-todos de tempos em tempos, não pode ser executado até o final por um provável
-erro de implementação na biblioteca. O consumo de memória, possivelmente devido
-ao grande número de reconexões, impediu que o perfil completasse a execução
-antes de travar o \textit{hardware} dos testes. Mais detalhes sobre o problema
-são informados na seção \ref{subsec:bottle}. A suspeita é que de alguma forma o
+O último perfil sugerido, com 10 clientes e \textit{pool} de 3 conexões, para
+forçar a reconexão sequencial de todos de tempos em tempos, não pode ser
+executado até o final. A causa é um provável erro na implementação da
+biblioteca \textit{luarpc}. O consumo de memória, possivelmente devido ao
+grande número de reconexões, impediu que o perfil completasse a execução antes
+de travar o \textit{hardware} dos testes. Mais detalhes sobre o problema são
+informados na seção \ref{subsec:bottle}. A suspeita é que, de alguma forma, o
 \textit{garbage collector} ficou impedido de coletar os \textit{sockets}
-antigos, possivelmente devido a maneira de manter uma lista de \textit{sockets}
-em uma tabela (uma referência, portanto) a qual não deve estar sendo
-corretamente limpa para desreferenciar os \textit{sockets} antigos, para que
-possam finalmente ser coletados e ter a memória liberada.
+antigos. Possivelmente, devido a maneira de manter uma lista de
+\textit{sockets} em uma tabela (uma referência, portanto), a memória ocupada
+pelos \textit{sockets} e por suas entradas na tabela de controle não deve estar
+sendo corretamente desreferenciada, impedindo que as entradas sejam coletadas
+para liberação de memória.
 
 O mesmo cliente foi usado em todos os testes. A implementação do cliente e do
 servidor é resistente a desconexão da outra ponta e pode tratar da reconexão
