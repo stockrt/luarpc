@@ -1,3 +1,3 @@
 #!/bin/bash
 
-sudo iptables -L -vxn | grep pt:500
+sudo iptables -L -v -n | grep pt:500
