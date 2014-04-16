@@ -58,103 +58,166 @@ Professora: & Noemi Rodriguez
 \end{center}
 
 \begin{abstract}
-Relatório da implementação e testes realizados na biblioteca \textit{luarpc}.
+Relatório da implementação e testes realizados na biblioteca \textit{luarpc}
+para a disciplina de Sistemas Distribuídos do Departamento de Informática da PUC-Rio.
+A linguagem Lua foi utilizada na implementação da biblioteca.
 \end{abstract}
 
 \doublespacing
 
 \section{Introdução}\label{sec:introduction}
 
-Desenvolvemos uma biblioteca para auxílio a chamadas remotas de
-procedimentos, \gls{rpc}, com o objetivo de enfrentar e resolver os problemas
+Desenvolvemos uma biblioteca para auxílio a chamada remota de
+procedimento, \gls{rpc}, com o objetivo de enfrentar e resolver alguns dos problemas
 de comunicação de rede em sistemas distribuídos. A programação de servidor e
 cliente \gls{rpc} também serviu de exercício na definição, entendimento e
-implementação de um protocolo de comunicação. Uma lista de discussão por
-\textit{e-mail} for arranjada de forma que as propostas de protocolo fossem
-comentadas pelos participantes do consórcio que patrocinaria o desenvolvimento
-da biblioteca. Uma \gls{rfc} foi definida na lista de discussão e após algumas
-rodadas de interação o consórcio chegou a um entendimento quanto ao protocolo a
-ser implementado.
+implementação de um protocolo de comunicação.
 
 A biblioteca consiste no arquivo \textit{luarpc.lua}, que depende da
 definição de um arquivo de interface, normalmente chamado de
-\textit{interface.lua}. A biblioteca deve ser usada por diferentes
+\textit{interface.lua}. A biblioteca deve poder ser reutilizada por diferentes
 implementações de servidor e cliente, para tanto, um contrato foi firmado entre
-os desenvolvedores (os alunos da disciplina) de maneira a seguirem uma \gls{api}
+os desenvolvedores (os alunos da disciplina) de maneira a seguir uma \gls{api}
 comum a todas as implementações da biblioteca \textit{luarpc}. Da mesma forma,
 foi necessário entrar em acordo quanto ao protocolo de comunicação de rede e de
-codificação/decodificação a ser utilizado. A implementação desta
+codificação/decodificação de mensagens a ser utilizado. A implementação desta
 biblioteca \gls{rpc} segue as linhas gerais definidas no enunciado do trabalho
 \cite{trab1}.
 
 A \gls{api} utilizada foi aquela do enunciado do trabalho, com os métodos
 \textit{luarpc.createServant}, \textit{luarpc.waitIncoming} e
 \textit{luarpc.createProxy} com exatamente o mesmo número e tipo de parâmetros
-sugeridos pelo enunciado original. O protocolo sofreu pequenas alterações,
+sugeridos pelo texto original. O protocolo sofreu pequenas alterações,
 principalmente no que diz respeito a forma de codificação e decodificação do
-conteúdo das mensagens enviadas. Particularmente, a regra definida para o
-protocolo foi a seguinte:
+conteúdo das mensagens enviadas.
+
+Durante a evolução da definição do protocolo, uma lista de discussão por
+\textit{e-mail} for arranjada de forma que as propostas fossem
+comentadas pelos participantes do consórcio que patrocinaria o desenvolvimento
+da biblioteca. Uma \gls{rfc} foi definida na lista de discussão e após algumas
+rodadas de comentários o consórcio chegou a um entendimento quanto
+ao protocolo a ser implementado.
+
+\section{Uma biblioteca \gls{rpc}}\label{sec:rpc}
+
+Uma boa especificação de uma biblioteca de auxílio a chamada remota de
+procedimento funciona da seguinte maneira: A sua \gls{api} sugerida deve ser
+clara e consistente, no sentido de que diferentes implementações possam se
+comportar de maneira idêntica quando estiverem se comunicando com recursos
+externos. Para clarificar, uma biblioteca deve manter um comportamento
+consistente ao interagir com o arquivo de interface e ao receber chamadas de
+criação e tratamento de \textit{servant} e de \textit{proxy} para procedimentos remotos.
+A biblioteca deve,
+portanto, fornecer um conjunto padronizado de métodos de criação e configuração
+de servidores e clientes, e deve interpretar de maneira correta um arquivo de
+interface escrito seguindo a \gls{api} especificada.
+
+Na prática, a proposta de especificação e implementação consistente de uma
+biblioteca \gls{rpc} espera que os usuários/programadores possam intercambiar
+seus diferentes servidores e clientes, desde que todos sigam uma mesma definição
+de interface. Uma vez de posse da interface, um cliente qualquer pode,
+utilizando a biblioteca proposta \textit{luarpc}, fazer requisições a um
+servidor qualquer, para tanto basta que ambos cliente e servidor respeitem e
+implementem o correto tratamento do arquivo de interface.
+
+\subsection{O protocolo}\label{subsec:proto}
+
+Particularmente, a regra definida para o protocolo e codificação de mensagens
+neste trabalho foi a seguinte:
 
 \begin{itemize}
 \item
 Nomes de métodos chamados pelo cliente são enviados sem delimitadores;
 \item
-Parâmetros string são enviados com delimitadores "" envolvendo o texto
-transmitido;
+Parâmetros do tipo \textit{char} ou \textit{string} são enviados com delimitadores
+\textit{""} envolvendo o texto transmitido;
 \item
-Parâmetros void são transformados na nil e são enviados com delimitadores "" envolvendo o texto
-transmitido. Resulta no envio de "nil";
+Parâmetros do tipo \textit{double} são enviados sem transformação.
 \item
+Parâmetros do tipo \textit{void} são transformados em \textit{nil} e são enviados
+com delimitadores \textit{""} envolvendo o texto transmitido. Resulta no envio
+de \textit{"nil"};
 \end{itemize}
 
-Ao se transmitir o conteúdo é necessário serializar o mesmo, codificando
+Ao transmitir conteúdo é necessário que ele seja serializado, codificando
 conforme o seguinte acordo, no transmissor:
+
 \begin{itemize}
 \item
-Usar sequência de escape para \, transformando em \\;
+Usar sequência de escape para \textit{\}, transformando em \textit{\\};
 \item
-Usar sequência de escape para \n, transformando em \\n;
+Usar sequência de escape para \textit{\n}, transformando em \textit{\\n};
 \item
-Usar sequência de escape para ", transformando em \";
+Usar sequência de escape para \textit{"}, transformando em \textit{\"};
 \item
 O processo inverso, de decodificação, deve ser feito no receptor.
-\item
-Os tipos válidos, \textit{char}, \textit{string}, \textit{double} e
+\end{itemize}
+
+Os tipos válidos \textit{char}, \textit{string}, \textit{double} e
 \textit{void} tem o seguinte protocolo de
 codificação/decodificação:
+
+\begin{itemize}
 \item
 \textit{char}: restrito a um caracter
-codificação no transmissor: envolto em ""
-exemplo: "a"
-decodificação no receptor: remove ""
-exemplo: a
+codificação no transmissor: envolto em \textit{""}
+exemplo: \textit{"a"}
+decodificação no receptor: remove \textit{""}
+exemplo: \textit{a}
 \item
 \textit{string}: sem restrição
-codificação no transmissor: envolto em ""
-exemplo: "abc"
-decodificação no receptor: remove ""
-exemplo: abc
+codificação no transmissor: envolto em \textit{""}
+exemplo: \textit{"abc"}
+decodificação no receptor: remove \textit{""}
+exemplo: \textit{abc}
 \item
 \textit{double}: apenas números inteiros ou de ponto flutuante
 codificação no transmissor: não há
-exemplo: 3.1415
+exemplo: \textit{3.1415}
 decodificação no receptor: não há
-exemplo: 3.1415
+exemplo: \textit{3.1415}
 \item
-\textit{void}: transformado em nil, envolto em ""
-codificação no transmissor: nil e ""
-exemplo: "nil"
-decodificação no receptor: remove ""
-exemplo: nil
+\textit{void}: transformado em nil, envolto em \textit{""}
+codificação no transmissor: nil e \textit{""}
+exemplo: \textit{"nil"}
+decodificação no receptor: remove \textit{""}
+exemplo: \textit{nil}
 \item
 Todos os tipos devem ser enviados em apenas uma chamada de \textit{socket:send}
 e recebidos em apenas uma chamada \textit{socket:receive}, desta maneira, o
-correto escape de \textit{string} com quebras de linha (\n) é muito importante.
+correto escape de \textit{string} com quebras de linha (\textit{\n}) é muito importante.
+\end{itemize}
+
+O papel do receptor é desfazer a codificação aplicada, seguindo a sequência
+inversa de passos, de forma a obter valor e tipo originais transmitidos na
+mensagem. Uma saída adotada por alguns desenvolvedores para fazer o escape
+inverso de \textit{string}, por exemplo, foi o uso de uma chamada
+\textit{return} no conteúdo recebido, o que faz com que alguns escapes sejam
+decodificados transparentemente, evitando a necessidade de tratar manualmente,
+por exemplo, a remoção de delimitadores \textit{""} no início e fim da linha recebida. Da
+mesma forma as contra-barras de sequência de escape também são removidas
+automaticamente. De forma contrária, como outras implementações sugeriram,
+utilizar esse tipo de artifício pode facilitar a vida do programador mas ao mesmo
+tempo introduz uma falha de segurança que permite que uma mensagem trocada
+entre cliente e servidor, quando decodificada, tenha seu \textit{payload}
+executado como código Lua, abrindo uma brecha para execução remota de código não
+desejado. Para evitar este problema, foi utilizada a alternativa de tratamento
+manual do conteúdo, fazendo uso de técnica de \textit{search and replace} dos
+carateres codificados \textit{\"}, \textit{\\n} e delimitadores \textit{""}. As funções
+\textit{string.gsub()} e \textit{string.sub(2,-2)} foram utilizadas para
+decodificar \textit{\"} em \textit{"}, \textit{\\n} em \textit{\n} e remover os
+delimitadores \textit{""}.
 
 Ao perceber um erro no lado do cliente ou do servidor, o protocolo deve enviar
 uma mensagem iniciada por "___ERRORPC:" contendo, possivelmente, a causa do
-erro.
-\end{itemize}
+erro. Em alguns casos especiais de erro no modo de uso, a biblioteca deve tentar evitar
+o envio da mensagem de erro e deve tentar corrigir o número e tipo de parâmetros chamados no
+cliente ou respondidos pelo servidor. Para tanto, a biblioteca utiliza valores default como
+alternativa à falta de parâmetros nas chamadas do cliente e nas respostas do
+servidor. O objetivo é prover uma construção o mais limpa possível da sequência
+de mensagens a trafegar no canal de comunicação de rede, tentando sempre respeitar o
+protocolo definido quanto a tipos, quantidade, codificação e sequência de
+parâmetros esperados no transporte entre cliente e servidor, ida e volta.
 
 \section{Gargalos identificados}\label{sec:bottle}
 
