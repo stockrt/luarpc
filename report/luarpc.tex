@@ -219,9 +219,108 @@ de mensagens a trafegar no canal de comunicação de rede, tentando sempre respe
 protocolo definido quanto a tipos, quantidade, codificação e sequência de
 parâmetros esperados no transporte entre cliente e servidor, ida e volta.
 
-\section{Gargalos identificados}\label{sec:bottle}
+\section{Testes de performance realizados}\label{sec:perf}
+
+Foram executadas baterias de teste segundo a sugestão do enunciado do trabalho.
+Para cada configuração de cenário segue abaixo um parecer e algumas informações
+adicionais.
+
+Um cliente especial foi criado para a execução dos testes. Este cliente tem
+capacidade de medir o tempo que leva para executar uma série de chamadas em
+sequência e também consegue medir o quanto consumiu de tráfego de rede para a
+série de chamadas. Em todas as baterias foram executadas 10000 (dez mil)
+chamadas a cada método. Os métodos chamados no laço de teste também foram
+especialmente implementados e escolhidos para terem diferentes comportamentos
+quanto ao custo de tráfego de rede (mensagens pequenas, mensagens grandes) e
+custo de processamento (tempo de CPU). Também foram realizadas medições isoladas
+para determinar qual o custo de tempo imposto pela biblioteca \textit{luarpc} e
+qual o custo imposto pela implementação presente no cliente e no servidor.
+
+\paragraph{Tamanho de string muito pequeno e muito grande}
+
+Neste teste foi utilizado o método chamado \textit{min}, que recebe um string e
+devolve apenas um double. Este perfil de teste demonstra o impacto do aumento
+do tráfego de dados no desempenho da aplicação.
+
+Como resultado otivemos 
+
+    min = {
+      resulttype = "double",
+      args = {
+        {direction = "in", type = "string"},
+      },
+    },
+
+    foo = {
+      resulttype = "double",
+      args = {
+        {direction = "in", type = "double"},
+        {direction = "in", type = "double"},
+        {direction = "out", type = "string"},
+      },
+    },
+
+    oid = {
+      resulttype = "void",
+      args = {
+        {direction = "in", type = "void"},
+      },
+    },
+
+
+    men = {
+      resulttype = "double",
+      args = {
+        {direction = "in", type = "double"},
+      },
+    },
+
+    tbl = {
+      resulttype = "double",
+      args = {
+        {direction = "in", type = "string"},
+      },
+    },
+
+\subsection{Gargalos identificados}\label{subsec:bottle}
+
+Na configuração de teste que determina o uso de mais clientes do que o
+\textit{pool} de conexões comporta, foi possível observar um comportamento que
+evitou a execução da bateria de testes até o final. Na implementação atual do
+\textit{servant}, que é a parte da biblioteca \textit{luarpc} que instancia
+um servidor, deve existir algum erro de programação ainda não identificado que
+faz com que a memória do servidor cresça rapidamente, impedindo a execução da
+bateria até o final.
+
+Aparentemente não está sendo liberada a memória após o
+fechamento e descarte dos \textit{sockets} antigos. Talvez a manipulação da
+tabela que memoriza a lista de clientes não esteja liberando corretamente as
+entradas antigas para que o \textit{garbage collector} possa de fato fazer a
+limpeza das entradas descartadas. Esta tabela que memoriza as conexões dos
+clientes dentro do intervalo definido para o \textit{pool} de conexões funciona
+como uma lista circular limitada, na qual o limite de seu tamanho é o tamanho do
+\textit{pool} e ao atingir o limite, as entradas excedentes (e mais antigas) são
+descartadas logo após uma chamada \textit{socket:close} na conexão em vias de
+ser descartada.
+
+O problema fica mais evidente quando o servidor é configurado para não persistir
+conexão e sempre desconectar o cliente assim que o pedido for atendido. Isto dá
+a entender que o ciclo completo e repetido nas listas circulares de conexões
+consome de alguma forma bastante memória, a qual não é reclamada em tempo pelo
+coletor de lixo.
 
 \section{Melhorias futuras}\label{sec:future}
+
+
+
+
+
+
+
+
+
+
+
 
 Diferença de tempo de entre chamadas sem persistência e com persistência de
 conexão.
