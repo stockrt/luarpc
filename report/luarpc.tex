@@ -39,6 +39,8 @@
 
 % GLOSSARIES
 \makeglossaries
+\newacronym{api}{API}{Application Programming Interface}
+\newacronym{rfc}{RFC}{Request for Comments}
 \newacronym{rpc}{RPC}{Remote Procedure Calls}
 
 % DOCUMENT
@@ -97,7 +99,7 @@ da biblioteca. Uma \gls{rfc} foi definida na lista de discussão e após algumas
 rodadas de comentários o consórcio chegou a um entendimento quanto
 ao protocolo a ser implementado.
 
-\section{Uma biblioteca \gls{rpc}}\label{sec:rpc}
+\section{Uma biblioteca RPC}\label{sec:rpc}
 
 Uma boa especificação de uma biblioteca de auxílio a chamada remota de
 procedimento funciona da seguinte maneira: A sua \gls{api} sugerida deve ser
@@ -251,12 +253,14 @@ osugerido no roteiro de testes do enuncido do trabalho, obtivemos um total de
 duração de 21 segundos para 10000 requisições. O string enviado era grande,
 continha 10k bytes.
 
+\begin{lstlisting}[label={ifacemin},language=C,caption=Interface min
     min = {
       resulttype = "double",
       args = {
         {direction = "in", type = "string"},
       },
     },
+\end{lstlisting}
 
 \subsection{Conexão persistente contra conexão sem reuso}\label{subsec:persist}
 
@@ -294,12 +298,14 @@ Como resultado obtivemos um total de 21M bytes enviados e 1060K bytes recebidos 
 cliente com um tempo total de duração de 8 segundos sem deserialização e 9
 segundos com deserialização no lado do servidor para 10000 requisições.
 
+\begin{lstlisting}[label={ifacetbl},language=C,caption=Interface tbl
     tbl = {
       resulttype = "double",
       args = {
         {direction = "in", type = "string"},
       },
     },
+\end{lstlisting}
 
 Ainda sobre a tabela, medimos a execução isolada de serialização e
 deserialização da tabela sem o envolvimento de cliente e servidor \gls{rpc}. As
@@ -319,6 +325,7 @@ o método \textit{foo}, levando apenas 2 segundos para executar 10000 operaçõe
 de soma de dois doubles e de devolução da resposta em conjunto com um string
 pequeno.
 
+\begin{lstlisting}[label={melhorias},language=C,caption=Connection Pool
     foo = {
       resulttype = "double",
       args = {
@@ -327,6 +334,7 @@ pequeno.
         {direction = "out", type = "string"},
       },
     },
+\end{lstlisting}
 
 Na segunda execução, com três clientes, a concorrência já causou impacto no
 tempo de execução, mas mesmo assim todos os clientes ainda estavam podendo
@@ -423,13 +431,45 @@ totalmente o idioma da linguagem Lua para tanto. A sugestão é utilizar o
 \textit{metamethod} \textit{__newindex} para tratar novos índices na tabela que
 lista os clientes de um servidor.
 
+\begin{lstlisting}[label={melhorias},language=C,caption=Connection Pool
+em C \textit{PPH} em $O(n^2)$ com \textit{array}]
 -- Pool size limit.
 if #servant.client_list > servant.pool_size then
-while #servant.client_list > servant.pool_size do
-old_client = table.remove(servant.client_list, 1)
-old_client:close()
+    while #servant.client_list > servant.pool_size do
+        old_client = table.remove(servant.client_list, 1)
+        old_client:close()
+    end
 end
-end
+\end{lstlisting}
+
+\renewcommand{\arraystretch}{2}
+\begin{table}
+\begin{center}
+{\footnotesize \begin{tabular}{p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm}}
+\hline
+\multicolumn{5}{c}{Comparativo de sistemas de arquivos distribuídos} \\ \hline
+~ & Tahoe & Ivy & Coda & Ceph \\ \hline
+Modelo de comunicação & \textit{peer-to-peer} & \textit{peer-to-peer} & cliente-servidor & cliente-servidor \\
+Escalabilidade & média & alta & alta & alta \\
+Replicação e redundância & rebalanceamento manual & automática & automática pelo cliente & automática no servidor \\
+Concorrência e integridade & consenso e criptografia & perda silenciosa & garantida por callbacks & garantida por sincronia \\
+Identificação e resolução de conflitos & não trata & manual com ferramentas & exposição de versões & conflitos inexistentes \\
+Detecção e correção de erros & \textit{erasure coding} & \textit{merkle trees} & não possui & versão mais recente \\
+Semãntica de consistência & \textit{close-to-open} & \textit{close-to-open} & \textit{close-to-open} & \textit{close-to-open} \\
+Operação desconectada & não & não & cópia cacheada com \textit{replay} & não \\ 
+Migração & re-réplica manual com ferramenta & transparente & transparente & transparente \\
+Performance & baixa & média & alta & alta \\
+Suporte a redes móveis & não & não & sim & não \\
+\hline
+\end{tabular}}
+\caption{Tabela comparativa de sistemas de arquivos distribuídos}
+\label{tab:compare}
+\end{center}
+\end{table}
+
+\section{Conclusão}\label{sec:conclusion}
+
+oi
 
 % BIB
 \bibliographystyle{abnt-puc-rio}
