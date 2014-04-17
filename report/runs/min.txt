@@ -26,3 +26,45 @@ min took 8 seconds for server 5002 for 10000 runs
 35741 1980K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
     0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
 26036 1405K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+min took 13 seconds for server 5001 for 10000 runs
+43971 2462K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+43958 2330K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+min took 21 seconds for server 5001 for 10000 runs
+13941   23M            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+11656  618K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+min took 29 seconds for server 5001 for 10000 runs
+ 9642   27M            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+ 7043  373K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+min took 11 seconds for server 5002 for 10000 runs
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+ 6859  384K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+ 6766  359K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+min took 31 seconds for server 5002 for 10000 runs
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+37657   63M            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+31630 1676K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+min took 57 seconds for server 5002 for 10000 runs
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+ 8687   14M            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+ 7358  390K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
