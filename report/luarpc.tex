@@ -335,7 +335,7 @@ Deserialização & Local & - & - & 2s \\
 Serialização / deserialização & Local & - & - & 10s \\
 \hline
 \end{tabular}}
-\caption{Tabela com custos para execução de 10000 chamadas em \textit{loop}}
+\caption{Tabela com custos de execução para 10000 chamadas em \textit{loop}}
 \label{tab:perfsize}
 \end{center}
 \end{table}
@@ -449,16 +449,16 @@ dados de performance se encontram na tabela \ref{tab:perfpool}.
 \renewcommand{\arraystretch}{2}
 \begin{table}
 \begin{center}
-{\footnotesize \begin{tabular}{p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm}}
+{\footnotesize \begin{tabular}{p{2.5cm} p{2.5cm} p{2.5cm}}
 \hline
 \multicolumn{3}{c}{Número variado de clientes e pool fixo em 3 no servidor} \\ \hline
 ~ & Conexão & Tempo \\ \hline
 1 cliente & Persistente & 7s \\
-3 clientes & Persistente & & 16s \\
+3 clientes & Persistente & 16s \\
 10 clientes & Persistente & N/A \\
 \hline
 \end{tabular}}
-\caption{Tabela com custos para conexão de 10000 chamadas em \textit{loop}}
+\caption{Tabela com custos de conexão para 10000 chamadas em \textit{loop}}
 \label{tab:perfpool}
 \end{center}
 \end{table}
