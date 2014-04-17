@@ -562,8 +562,8 @@ function luarpc.createProxy(server_address, server_port, interface_file)
 
       -- Try and cache connection to server.
       if not pclient_list[server_address .. server_port] then
-        -- Estabilish client connection to server.
-        print("Trying to estabilish and cache connection for server " .. tostring(server_address) .. ":" .. tostring(server_port))
+        -- Establish client connection to server.
+        print("Trying to establish and cache connection for server " .. tostring(server_address) .. ":" .. tostring(server_port))
         local client, err = socket.connect(server_address, server_port)
         if err then
           local err_msg = "___ERRONET: Could not connect to " .. tostring(server_address) .. ":" .. tostring(server_port) .. " - " .. tostring(err)
