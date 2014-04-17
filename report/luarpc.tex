@@ -290,7 +290,7 @@ tempo imposto pela implementação presente no cliente e no servidor.
 
 \subsection{Tamanho de string muito pequeno e muito grande}\label{subsec:stringsize}
 
-Neste teste foi utilizado o método chamado \textit{min}\ref{ifacemin}, que
+Neste teste foi utilizado o método chamado \textit{min} \ref{ifacemin}, que
 recebe um \textit{string} e devolve apenas um \textit{double}. Este perfil de
 teste demonstra o impacto do aumento do tráfego de dados no desempenho da
 aplicação.
@@ -318,7 +318,7 @@ min = {
 
 Foram realizados dois outros testes interessantes, que demonstram o custo da
 conexão do cliente com o servidor. O método utilizado também foi o
-\textit{min}\ref{ifacemin} por oferecer duas visões diferentes, uma delas com
+\textit{min} \ref{ifacemin} por oferecer duas visões diferentes, uma delas com
 pouco tráfego de dados e outra com grande tráfego de dados (e portanto com
 conexões que duram mais tempo, até que os dados todos sejam trafegados de um
 lado para o outro).
@@ -340,7 +340,7 @@ representa uma parte significativa do tempo total da execução do teste.
 Outro perfil executado foi o sugerido de serializar uma tabela com 100
 \textit{doubles}. A serialização transforma uma tabela em um \textit{string} e
 envia este \textit{string} para o servidor em uma chamada de tipo nativo
-simples, chamada aqui de \textit{tbl}\ref{ifacetbl}, e que recebe um
+simples, chamada aqui de \textit{tbl} \ref{ifacetbl}, e que recebe um
 \textit{string} e devolve um \textit{double}. Para este teste foram usados dois
 servidores, um que apenas responde "0" e que não faz deserialização da tabela, e
 outro que responde "1" logo após fazer a deserialização da tabela.
@@ -376,7 +376,7 @@ do servidor foi configurada com tamanho 3.
 
 Em um primeiro perfil apenas um cliente se conectou ao servidor, sem gerar
 concorrência com outros clientes. Neste caso o atendimento foi satisfatório para
-o método \textit{foo}\ref{ifacefoo}, levando apenas 7 segundos para executar
+o método \textit{foo} \ref{ifacefoo}, levando apenas 7 segundos para executar
 10000 operações de soma de dois \textit{doubles} e de devolução da resposta em
 conjunto com um \textit{string} pequeno.
 
@@ -413,7 +413,7 @@ memória.
 O mesmo cliente foi usado em todos os testes. A implementação do cliente e do
 servidor é resistente a desconexão da outra ponta e pode tratar da reconexão
 quando necessário. O servidor tem o tamanho do \textit{pool} configurável por
-linha de comando\ref{commandline}, no \textit{start} do processo, e quando
+linha de comando \ref{commandline}, no \textit{start} do processo, e quando
 configurado para \textit{pool} de tamanho 0 ou menor passa a atuar sem
 persistência de conexão, forçando o fechamento após atender cada requisição.
 
