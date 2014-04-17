@@ -162,7 +162,7 @@ neste trabalho foi a seguinte:
 \item
 
     Parâmetros do tipo \textit{char} ou \textit{string} são enviados com
-    delimitadores \textit{""} envolvendo o texto transmitido;
+    delimitadores \textit{"..."} envolvendo o texto transmitido;
 
 \item
 
@@ -171,7 +171,7 @@ neste trabalho foi a seguinte:
 \item
 
     Parâmetros do tipo \textit{void} são transformados em \textit{nil} e são
-    enviados com delimitadores \textit{""} envolvendo o texto transmitido.
+    enviados com delimitadores \textit{"..."} envolvendo o texto transmitido.
     Resulta no envio de \textit{"nil"};
 
 \end{itemize}
@@ -207,15 +207,15 @@ Os tipos válidos \textit{char}, \textit{string}, \textit{double} e
 \begin{itemize}
 \item
 \textit{char}: restrito a um caracter \\
-codificação no transmissor: envolto em \textit{""} \\
+codificação no transmissor: envolto em \textit{"..."} \\
 exemplo: \textit{"a"} \\
-decodificação no receptor: remove \textit{""} \\
+decodificação no receptor: remove \textit{"..."} \\
 exemplo: \textit{a}
 \item
 \textit{string}: sem restrição \\
-codificação no transmissor: envolto em \textit{""} \\
+codificação no transmissor: envolto em \textit{"..."} \\
 exemplo: \textit{"abc"} \\
-decodificação no receptor: remove \textit{""} \\
+decodificação no receptor: remove \textit{"..."} \\
 exemplo: \textit{abc}
 \item
 \textit{double}: apenas números inteiros ou de ponto flutuante \\
@@ -224,10 +224,10 @@ exemplo: \textit{3.1415} \\
 decodificação no receptor: não há \\
 exemplo: \textit{3.1415}
 \item
-\textit{void}: transformado em nil, envolto em \textit{""} \\
-codificação no transmissor: nil e \textit{""} \\
+\textit{void}: transformado em nil, envolto em \textit{"..."} \\
+codificação no transmissor: nil e \textit{"..."} \\
 exemplo: \textit{"nil"} \\
-decodificação no receptor: remove \textit{""} \\
+decodificação no receptor: remove \textit{"..."} \\
 exemplo: \textit{nil}
 \item
 Todos os tipos devem ser enviados em apenas uma chamada de
@@ -240,9 +240,9 @@ O papel do receptor é desfazer a codificação aplicada, seguindo a sequência
 inversa de passos, de forma a obter valor e tipo originais transmitidos na
 mensagem. Uma saída adotada por alguns desenvolvedores para fazer o escape
 inverso de \textit{string}, por exemplo, foi o uso de uma chamada
-\textit{loadstring("return " .. content)} no conteúdo recebido, o que faz com
+"\textit{loadstring("return " .. content)}" no conteúdo recebido, o que faz com
 que alguns escapes sejam decodificados transparentemente, evitando a necessidade
-de tratar manualmente, por exemplo, a remoção de delimitadores \textit{""} no
+de tratar manualmente, por exemplo, a remoção de delimitadores \textit{"..."} no
 início e fim da linha recebida. Da mesma forma as contra-barras de sequência de
 escape também são removidas automaticamente. De forma contrária, como outras
 implementações sugeriram, utilizar esse tipo de artifício pode facilitar a vida
@@ -253,11 +253,11 @@ remota de código não desejado (alheio ao definido na interface). Para evitar
 este problema, foi utilizada a alternativa de tratamento manual do conteúdo,
 fazendo uso de técnica de \textit{search and replace} dos caracteres codificados
 \textit{\textbackslash{}"}, \textit{\textbackslash{}\textbackslash{}n} e
-delimitadores \textit{""}. As funções \textit{string.gsub()} e
+delimitadores \textit{"..."}. As funções \textit{string.gsub()} e
 \textit{string.sub(2,-2)} foram utilizadas para decodificar
 \textit{\textbackslash{}"} em \textit{"},
 \textit{\textbackslash{}\textbackslash{}n} em \textit{\textbackslash{}n} e
-remover os delimitadores \textit{""}.
+remover os delimitadores \textit{"..."}.
 
 Ao perceber um erro no lado do cliente ou do servidor, o protocolo deve enviar
 uma mensagem iniciada por "\_\_\_ERRORPC:" contendo, possivelmente, a causa do
@@ -275,7 +275,8 @@ entre cliente e servidor, ida e volta.
 
 Foram executadas baterias de teste segundo a sugestão do enunciado do trabalho.
 Para cada configuração de cenário segue abaixo um parecer e algumas informações
-adicionais.
+adicionais. Os dados de performance da tabela \ref{tab:perf} serão discutidos
+a seguir.
 
 Um cliente especial foi criado para a execução dos testes. Este cliente tem
 capacidade de medir o tempo que leva para executar uma série de chamadas em
@@ -419,7 +420,7 @@ persistência de conexão, forçando o fechamento após atender cada requisiçã
 
 \begin{lstlisting}[label={commandline},language=sh,caption=Linha de comando]
 $ ./rpc_server.lua
-Usage: ./rpc_server.lua <interface_file> [server_port1] [server_port2] [pool_size]
+Usage: ./rpc_server.lua <iface_file> [port1] [port2] [pool_size]
 \end{lstlisting}
 
 \renewcommand{\arraystretch}{2}
@@ -443,7 +444,7 @@ Serialização/deserialização de tabela & Local & - & - & 10s \\
 \hline
 \end{tabular}}
 \caption{Tabela com custos para execução de 10000 chamadas em \textit{loop}}
-\label{tab:compare}
+\label{tab:perf}
 \end{center}
 \end{table}
 
