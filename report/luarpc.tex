@@ -61,8 +61,8 @@ Professora: & Noemi Rodriguez
 
 \begin{abstract}
 Relatório da implementação e testes realizados na biblioteca \textit{luarpc}
-para a disciplina de Sistemas Distribuídos do Departamento de Informática da PUC-Rio.
-A linguagem Lua foi utilizada na implementação da biblioteca.
+para a disciplina de Sistemas Distribuídos do Departamento de Informática da
+PUC-Rio. A linguagem Lua foi utilizada na implementação da biblioteca.
 \end{abstract}
 
 \doublespacing
@@ -124,12 +124,30 @@ biblioteca \textit{luarpc}, fazer requisições a um servidor qualquer, para
 tanto basta que ambos cliente e servidor respeitem e implementem o correto
 tratamento do arquivo de interface.
 
-XXXXXXXXXXXXXXXXXXXXXXX
-Um \textit{servant} é um servidor instanciado pela biblioteca de \gls{rpc}, o qual atende a requisições em uma porta determinada.
-A biblioteca trata 
+Um \textit{servant} é um servidor instanciado pela biblioteca de \gls{rpc}, o
+qual atende a requisições em rede e repassa as chamadas para a implementação
+local dos métodos. A biblioteca trata de todos os detalhes da comunicação de
+rede, e o programador de um servidor precisa apenas se preocupar com a
+implementação dos métodos que deseja expôr via \gls{rpc}, assim como precisa
+disponibilizar um arquivo de interface equivalente.
 
-\textit{proxy}
-XXXXXXXXXXXXXXXXXXXXXXXXX
+Um \textit{proxy} para métodos remotos é o lado cliente, também disponibilizado
+pela biblioteca. Trata-se de uma visão local do cliente, um objeto, que não tem
+acesso direto à implementação dos métodos, acesso este que se dá remotamente com
+o uso da comunicação em rede com o servidor. Da mesma forma que no servidor,
+toda a comunicação, protocolo, codificação de mensagens e demais detalhes são
+transparentes para o programador. Basta que utilize no cliente um arquivo de
+interface equivalente e, sem ter conhecimento local prévio da implementação, o
+cliente pode acessar os métodos remotos.
+
+Dadas as definições de \textit{servant} e \textit{proxy} é interessante observar
+que o cliente não precisa ser alterado para que uma modificação na implementação
+dos métodos seja feita. Como os métodos são remotos, a única alteração de código
+se daria no servidor, mantendo o cliente agnóstico à implementação. Não há,
+portanto, necessidade de alteração local de código no cliente para que o novo
+código do método tenha efeito. Claro que para não haver quebras no funcionamento
+o contrato deve ser mantido, a \gls{api} e o protocolo de rede devem ser
+preservados e a interface não deve ser alterada.
 
 \subsection{O protocolo}\label{subsec:proto}
 
