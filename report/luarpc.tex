@@ -275,8 +275,7 @@ entre cliente e servidor, ida e volta.
 
 Foram executadas baterias de teste segundo a sugestão do enunciado do trabalho.
 Para cada configuração de cenário segue abaixo um parecer e algumas informações
-adicionais. Os dados de performance da tabela \ref{tab:perf} serão discutidos
-a seguir.
+adicionais.
 
 Um cliente especial foi criado para a execução dos testes. Este cliente tem
 capacidade de medir o tempo que leva para executar uma série de chamadas em
@@ -322,7 +321,8 @@ conexão do cliente com o servidor. O método utilizado também foi o
 \textit{min} \ref{lst:ifacemin} por oferecer duas visões diferentes, uma delas com
 pouco tráfego de dados e outra com grande tráfego de dados (e portanto com
 conexões que duram mais tempo, até que os dados todos sejam trafegados de um
-lado para o outro).
+lado para o outro). Os dados de performance se encontram na tabela
+\ref{tab:perfpool}.
 
 O perfil mencionado no teste de \textit{string} pequeno e grande, na seção
 \ref{subsec:stringsize}, foi realizado usando conexão persistente e tinha
@@ -335,6 +335,23 @@ tempo, o que pode ser explicado pela menor importância do custo de conexão per
 do custo de tráfego de rede para o perfil de \textit{string} grande. Para o
 perfil de \textit{string} pequeno é possível perceber que o tempo de conexão
 representa uma parte significativa do tempo total da execução do teste.
+
+\renewcommand{\arraystretch}{2}
+\begin{table}
+\begin{center}
+{\footnotesize \begin{tabular}{p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm}}
+\hline
+\multicolumn{3}{c}{Número variado de clientes e pool fixo em 3 no servidor} \\ \hline
+~ & Conexão & Tempo \\ \hline
+1 cliente & Persistente & 7s \\
+3 clientes & Persistente & & 16s \\
+10 clientes (N/A) & Persistente & - \\
+\hline
+\end{tabular}}
+\caption{Tabela com custos para conexão de 10000 chamadas em \textit{loop}}
+\label{tab:perfpool}
+\end{center}
+\end{table}
 
 \subsection{Serializando e deserializando uma tabela grande}\label{subsec:serdeser}
 
@@ -416,7 +433,8 @@ servidor é resistente a desconexão da outra ponta e pode tratar da reconexão
 quando necessário. O servidor tem o tamanho do \textit{pool} configurável por
 linha de comando \ref{lst:commandline}, no \textit{start} do processo, e quando
 configurado para \textit{pool} de tamanho 0 ou menor passa a atuar sem
-persistência de conexão, forçando o fechamento após atender cada requisição.
+persistência de conexão, forçando o fechamento após atender cada requisição. Os
+dados de performance se encontram na tabela \ref{tab:perfsize}.
 
 \begin{lstlisting}[caption={Linha de comando},label={lst:commandline}]
 $ ./rpc_server.lua
@@ -444,7 +462,7 @@ Serialização / deserialização & Local & - & - & 10s \\
 \hline
 \end{tabular}}
 \caption{Tabela com custos para execução de 10000 chamadas em \textit{loop}}
-\label{tab:perf}
+\label{tab:perfsize}
 \end{center}
 \end{table}
 
