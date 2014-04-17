@@ -508,9 +508,9 @@ mencionadas a cada iteração do laço principal e tinha um \textit{timeout}
 configurado de 100ms para cada chamada. O tempo de 100ms pode parecer pouco, mas
 quando somado a cada iteração do laço principal, ele tem um efeito muito grande
 na performance geral do servidor. Como comparação de desempenho, vale notar que
-usando valores baixos de \textit{timeout} o servidor conseguia atender até 4
+usando valores baixos de \textit{timeout} o servidor conseguia atender até 3
 requisições por segundo. Na versão final, sem \textit{timeout} configurado (ou
-seja, sem bloqueio) a capacidade de atendimento do servidor passou para 1600
+seja, sem bloqueio) a capacidade de atendimento do servidor passou para 2000
 requisições por segundo. A principal mudança foi fazer um \textit{select} nos
 \textit{sockets} dos servidores antes do chamar \textit{accept}, assim a chamada
 de \textit{accept} só será feita se já houver algum cliente interessado em abrir
@@ -521,7 +521,41 @@ o servidor ficasse bem mais interessante do ponto de vista da performance,
 mantendo a estabilidade. Para as etapas de envio e consumo de dados
 (\textit{send} e \textit{receive}) ainda existe um \textit{timeout} grande
 configurado, de 10 segundos, para permitir interação humana em console de
-depuração (\textit{telnet}).
+depuração (\textit{telnet}). A tabela \ref{tab:perftout} mostra um comparativo
+de vazão de requisições por segundo (\textit{throughput}) para cada cenário, com
+e sem \textit{timeout}.
+
+As chamadas com \textit{timeout} e em modo não persistente são mais rápidas do
+que as persistentes pois elas geram evento mais rapidamente no \textit{select} e
+\textit{accept} de entrada de conexão, consumindo portanto menos tempo de
+espera. O evento de nova conexão ocorre antes de vencer o \textit{timeout}, por
+isso é mais rápido do que o cenário de conexão persistente. Interessante
+observar que normalmente se poderia pensar que um cenário de conexão persistente
+sempre deveria ser mais rápido do que um cenário onde as conexões são fechadas a
+cada iteração.
+
+\renewcommand{\arraystretch}{2}
+\begin{table}
+\begin{center}
+{\footnotesize \begin{tabular}{p{3.5cm} p{2.5cm} p{2.5cm}}
+\hline
+\multicolumn{3}{c}{Vazão de requisições} \\ \hline
+~ & Conexão & Req/s \\ \hline
+Sem timeout & Persistente & 2000 \\
+Sem timeout & Close & 1400 \\
+accept(0.1) & Persistente & 2000 \\
+accept(0.1) & Close & 1400 \\
+select(0.1) & Persistente & 3 \\
+select(0.1) & Close & 5 \\
+accept(0.1) e select(0.1) & Persistente & 3 \\
+accept(0.1) e select(0.1) & Close & 5 \\
+\hline
+\end{tabular}}
+\caption{Tabela com \textit{throughput} para chamadas em \textit{loop} ao método
+\textit{min}}
+\label{tab:perfpool}
+\end{center}
+\end{table}
 
 \section{Melhorias futuras}\label{sec:future}
 
