@@ -46,7 +46,7 @@
 % DOCUMENT
 \begin{document}
 
-\title{Disciplina de Sistemas Distrbuídos [INF 2545] \\ Biblioteca RPC -
+\title{Disciplina de Sistemas Distribuídos [INF 2545] \\ Biblioteca RPC -
 Trabalho 1}
 \author{Rogério Carvalho Schneider}
 \date{Abril 2014}
@@ -206,7 +206,7 @@ Os tipos válidos \textit{char}, \textit{string}, \textit{double} e
 
 \begin{itemize}
 \item
-\textit{char}: restrito a um caracter \\
+\textit{char}: restrito a um caractere \\
 codificação no transmissor: envolto em \textit{"..."} \\
 exemplo: \textit{"a"} \\
 decodificação no receptor: remove \textit{"..."} \\
@@ -243,7 +243,7 @@ inverso de \textit{string}, por exemplo, foi o uso de uma chamada
 "\textit{loadstring("return " .. content)}" no conteúdo recebido, o que faz com
 que alguns escapes sejam decodificados transparentemente, evitando a necessidade
 de tratar manualmente, por exemplo, a remoção de delimitadores \textit{"..."} no
-início e fim da linha recebida. Da mesma forma as contra-barras de sequência de
+início e fim da linha recebida. Da mesma forma as contra barras de sequência de
 escape também são removidas automaticamente. De forma contrária, como outras
 implementações sugeriram, utilizar esse tipo de artifício pode facilitar a vida
 do programador mas ao mesmo tempo introduz uma falha de segurança que permite
@@ -309,7 +309,7 @@ cliente com um tempo total de duração de 6 segundos para 10000 requisições. 
 \textit{string} enviado era mínimo no primeiro teste, apenas um \textit{byte}.
 
 No segundo teste, usando o mesmo método mas agora com um \textit{string} muito
-grande, como sugerido no roteiro de testes do enuncido do trabalho, obtivemos um
+grande, como sugerido no roteiro de testes do enunciado do trabalho, obtivemos um
 total de 104MB enviados e 1060KB recebidos pelo cliente com um tempo total de
 duração de 34 segundos para 10000 requisições. O \textit{string} enviado neste
 teste era grande, continha 10KB. Os dados de performance se encontram na tabela
