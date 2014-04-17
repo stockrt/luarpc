@@ -286,9 +286,9 @@ function luarpc.createServant(obj, interface_file, server_port, pool_size)
   -- Connection info.
   local l_ip, l_port = server:getsockname()
   local port_file = "port" .. #servant_list .. ".txt"
-  local file = io.open(port_file, "w")
-  file:write(l_port .. "\n")
-  file:close()
+  local file_handler = io.open(port_file, "w")
+  file_handler:write(l_port .. "\n")
+  file_handler:close()
   print("Please connect to " .. tostring(l_ip) .. ":" .. tostring(l_port) .. " (also, you can script clients reading port number from file " .. port_file .. ")")
   print("Pool size: " .. p_size)
   print()
