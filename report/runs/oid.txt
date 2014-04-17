@@ -1,0 +1,28 @@
+
+
+oid took 6 seconds for server 5001 for 10000 runs
+20001 1140K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+20000 1100K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+oid took 5 seconds for server 5002 for 10000 runs
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+20001 1140K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+20000 1100K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+oid took 7 seconds for server 5001 for 10000 runs
+35801 2003K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+26121 1431K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002
+
+
+oid took 7 seconds for server 5002 for 10000 runs
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5001
+35741 2000K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp dpt:5002
+    0     0            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5001
+26037 1426K            tcp  --  *      *       0.0.0.0/0            127.0.0.1            tcp spt:5002

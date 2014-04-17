@@ -1,0 +1,3 @@
+tbl_only serialize took 8 seconds for 10000 runs
+tbl_only deserialize took 2 seconds for 10000 runs
+tbl_only serialize/deserialize took 10 seconds for 10000 runs
