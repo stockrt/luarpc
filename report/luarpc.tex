@@ -430,17 +430,17 @@ Usage: ./rpc_server.lua <iface_file> [port1] [port2] [pool_size]
 \hline
 \multicolumn{5}{c}{Testes de cliente e servidor} \\ \hline
 ~ & Conexão & Enviados & Recebidos & Tempo \\ \hline
-String pequena (1B) & Persistente & 1120KB & 1060KB & 6s \\
-String grande (10KB) & Persistente & 104MB & 1060KB & 34s \\
-String pequena (1B) & Close & 1120KB & 1060KB & 8s \\
-String grande (10KB) & Close & 104MB & 1060KB & 34s \\
-Serialização de tabela & Persistente & 21MB & 1060KB & 16s \\
-Serialização/deserialização de tabela & Persistente & 21MB & 1060KB & 19s \\
-Serialização de tabela & Close & 21MB & 1060KB & 20s \\
-Serialização/deserialização de tabela & Close & 21MB & 1060KB & 21s \\
-Serialização de tabela & Local & - & - & 8s \\
-Deserialização de tabela & Local & - & - & 2s \\
-Serialização/deserialização de tabela & Local & - & - & 10s \\
+String 1B & Persistente & 1120KB & 1060KB & 6s \\
+String 10KB & Persistente & 104MB & 1060KB & 34s \\
+String 1B & Close & 1120KB & 1060KB & 8s \\
+String 10KB & Close & 104MB & 1060KB & 34s \\
+Serialização & Persistente & 21MB & 1060KB & 16s \\
+Serialização / deserialização & Persistente & 21MB & 1060KB & 19s \\
+Serialização & Close & 21MB & 1060KB & 20s \\
+Serialização / deserialização & Close & 21MB & 1060KB & 21s \\
+Serialização & Local & - & - & 8s \\
+Deserialização & Local & - & - & 2s \\
+Serialização / deserialização & Local & - & - & 10s \\
 \hline
 \end{tabular}}
 \caption{Tabela com custos para execução de 10000 chamadas em \textit{loop}}
