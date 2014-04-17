@@ -291,7 +291,7 @@ tempo imposto pela implementação presente no cliente e no servidor.
 
 \subsection{Tamanho de string muito pequeno e muito grande}\label{subsec:stringsize}
 
-Neste teste foi utilizado o método chamado \textit{min} \ref{ifacemin}, que
+Neste teste foi utilizado o método chamado \textit{min} \ref{lst:ifacemin}, que
 recebe um \textit{string} e devolve apenas um \textit{double}. Este perfil de
 teste demonstra o impacto do aumento do tráfego de dados no desempenho da
 aplicação.
@@ -306,7 +306,7 @@ total de 104MB enviados e 1060KB recebidos pelo cliente com um tempo total de
 duração de 34 segundos para 10000 requisições. O \textit{string} enviado neste
 teste era grande, continha 10KB.
 
-\begin{lstlisting}[label={ifacemin},language=Ruby,caption=Interface min]
+\begin{lstlisting}[caption={Interface min},label={lst:ifacemin}]
 min = {
   resulttype = "double",
   args = {
@@ -319,7 +319,7 @@ min = {
 
 Foram realizados dois outros testes interessantes, que demonstram o custo da
 conexão do cliente com o servidor. O método utilizado também foi o
-\textit{min} \ref{ifacemin} por oferecer duas visões diferentes, uma delas com
+\textit{min} \ref{lst:ifacemin} por oferecer duas visões diferentes, uma delas com
 pouco tráfego de dados e outra com grande tráfego de dados (e portanto com
 conexões que duram mais tempo, até que os dados todos sejam trafegados de um
 lado para o outro).
@@ -341,7 +341,7 @@ representa uma parte significativa do tempo total da execução do teste.
 Outro perfil executado foi o sugerido de serializar uma tabela com 100
 \textit{doubles}. A serialização transforma uma tabela em um \textit{string} e
 envia este \textit{string} para o servidor em uma chamada de tipo nativo
-simples, chamada aqui de \textit{tbl} \ref{ifacetbl}, e que recebe um
+simples, chamada aqui de \textit{tbl} \ref{lst:ifacetbl}, e que recebe um
 \textit{string} e devolve um \textit{double}. Para este teste foram usados dois
 servidores, um que apenas responde "0" e que não faz deserialização da tabela, e
 outro que responde "1" logo após fazer a deserialização da tabela.
@@ -354,7 +354,7 @@ Como resultado obtivemos um total de 21MB enviados e 1060KB recebidos pelo
 cliente com um tempo total de duração de 16 segundos sem deserialização e 19
 segundos com deserialização no lado do servidor para 10000 requisições.
 
-\begin{lstlisting}[label={ifacetbl},language=Ruby,caption=Interface tbl]
+\begin{lstlisting}[caption={Interface tbl},label={lst:ifacetbl}]
 tbl = {
   resulttype = "double",
   args = {
@@ -377,11 +377,11 @@ do servidor foi configurada com tamanho 3.
 
 Em um primeiro perfil apenas um cliente se conectou ao servidor, sem gerar
 concorrência com outros clientes. Neste caso o atendimento foi satisfatório para
-o método \textit{foo} \ref{ifacefoo}, levando apenas 7 segundos para executar
+o método \textit{foo} \ref{lst:ifacefoo}, levando apenas 7 segundos para executar
 10000 operações de soma de dois \textit{doubles} e de devolução da resposta em
 conjunto com um \textit{string} pequeno.
 
-\begin{lstlisting}[label={ifacefoo},language=Ruby,caption=Interface foo]
+\begin{lstlisting}[caption={Interface foo},label={lst:ifacefoo}]
 foo = {
   resulttype = "double",
   args = {
@@ -414,11 +414,11 @@ memória.
 O mesmo cliente foi usado em todos os testes. A implementação do cliente e do
 servidor é resistente a desconexão da outra ponta e pode tratar da reconexão
 quando necessário. O servidor tem o tamanho do \textit{pool} configurável por
-linha de comando \ref{commandline}, no \textit{start} do processo, e quando
+linha de comando \ref{lst:commandline}, no \textit{start} do processo, e quando
 configurado para \textit{pool} de tamanho 0 ou menor passa a atuar sem
 persistência de conexão, forçando o fechamento após atender cada requisição.
 
-\begin{lstlisting}[label={commandline},language=sh,caption=Linha de comando]
+\begin{lstlisting}[caption={Linha de comando},label={lst:commandline}]
 $ ./rpc_server.lua
 Usage: ./rpc_server.lua <iface_file> [port1] [port2] [pool_size]
 \end{lstlisting}
@@ -508,15 +508,16 @@ depuração (\textit{telnet}).
 Para ficar mais idiomática a implementação em Lua, seria interessante substituir
 no código o trecho que trata de forma mais tradicional as listas circulares por
 algo mais poderoso fornecido pela linguagem Lua. A proposta é alterar o
-tratamento de \textit{pool} utilizando uma \textit{metatable} \cite{metat} que
-pode, no momento da inserção de um novo \textit{socket} de cliente na tabela de
-conexões, avaliar se o limite de conexões foi atingido e poderia então liberar
-as conexões mais antigas. A implementação atual tem exatamente o mesmo efeito,
-mas não usa totalmente o idioma da linguagem Lua. A sugestão é utilizar o
-\textit{metamethod \_\_newindex} para tratar novas entradas em forma de lista
-circular na tabela que agrupa os clientes de um servidor.
+tratamento de \textit{pool} de conexões \ref{lst:connpool} utilizando uma
+\textit{metatable} \cite{metat} que pode, no momento da inserção de um novo
+\textit{socket} de cliente na tabela de conexões, avaliar se o limite de
+conexões foi atingido e poderia então liberar as conexões mais antigas. A
+implementação atual tem exatamente o mesmo efeito, mas não usa totalmente o
+idioma da linguagem Lua. A sugestão é utilizar o \textit{metamethod
+\_\_newindex} para tratar novas entradas em forma de lista circular na tabela
+que agrupa os clientes de um servidor.
 
-\begin{lstlisting}[label={connpool},language=Ruby,caption=Connection Pool]
+\begin{lstlisting}[caption={Pool de conexões},label={lst:connpool}]
 -- Pool size limit.
 if #servant.client_list > servant.pool_size then
   while #servant.client_list > servant.pool_size do
