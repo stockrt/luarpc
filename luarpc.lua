@@ -3,6 +3,8 @@ http://www.inf.puc-rio.br/~noemi/sd-14/trab1.html
 
 TODO:
 - Usar metatable para limitar connection pool. Será que entra em loop?
+- Usar weak tables para tentar liberar memória?
+- Fazer chamada explícita de garbage collector?
 - Close client / deref client.
 - Close no server / deref no server (leak?).
 ]]
