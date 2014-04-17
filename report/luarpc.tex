@@ -296,13 +296,13 @@ teste demonstra o impacto do aumento do tráfego de dados no desempenho da
 aplicação.
 
 Como resultado obtivemos um total de 1120KB enviados e 1060KB recebidos pelo
-cliente com um tempo total de duração de 2 segundos para 10000 requisições. O
+cliente com um tempo total de duração de 6 segundos para 10000 requisições. O
 \textit{string} enviado era mínimo no primeiro teste, apenas um \textit{byte}.
 
 No segundo teste, usando o mesmo método mas agora com um \textit{string} muito
 grande, como sugerido no roteiro de testes do enuncido do trabalho, obtivemos um
 total de 104MB enviados e 1060KB recebidos pelo cliente com um tempo total de
-duração de 21 segundos para 10000 requisições. O \textit{string} enviado neste
+duração de 34 segundos para 10000 requisições. O \textit{string} enviado neste
 teste era grande, continha 10KB.
 
 \begin{lstlisting}[label={ifacemin},language=Ruby,caption=Interface min]
@@ -325,13 +325,13 @@ lado para o outro).
 
 O perfil mencionado no teste de \textit{string} pequeno e grande, na seção
 \ref{subsec:stringsize}, foi realizado usando conexão persistente e tinha
-duração de 2 segundos para \textit{string} pequeno e 21 segundos para
+duração de 6 segundos para \textit{string} pequeno e 34 segundos para
 \textit{string} grande. O mesmo perfil de teste aplicado ao servidor que fecha a
 conexão do cliente assim que ele termina de ser atendido fez com que o tempo
-total de atendimento de 2 segundos passasse para 4 segundos com o
+total de atendimento de 6 segundos passasse para 8 segundos com o
 \textit{string} pequeno. Para o \textit{string} grande não houve modificação no
 tempo, o que pode ser explicado pela menor importância do custo de conexão perto
-do custo de tráfego de rede para o perfil de \textit{string} grande.  Para o
+do custo de tráfego de rede para o perfil de \textit{string} grande. Para o
 perfil de \textit{string} pequeno é possível perceber que o tempo de conexão
 representa uma parte significativa do tempo total da execução do teste.
 
@@ -350,7 +350,7 @@ do servidor que deserializa a tabela e o servidor que não trata da decodificaç
 da tabela.
 
 Como resultado obtivemos um total de 21MB enviados e 1060KB recebidos pelo
-cliente com um tempo total de duração de 8 segundos sem deserialização e 9
+cliente com um tempo total de duração de 16 segundos sem deserialização e 19
 segundos com deserialização no lado do servidor para 10000 requisições.
 
 \begin{lstlisting}[label={ifacetbl},language=Ruby,caption=Interface tbl]
@@ -364,8 +364,8 @@ tbl = {
 
 Ainda sobre a tabela, medimos a execução isolada de serialização e
 deserialização sem o envolvimento de cliente e servidor \gls{rpc}. As chamadas
-em laço local levaram 4 segundos para serializar e 2 segundos para deserializar
-a tabela com 100 doubles em 10000 iterações, totalizando 6 segundos de tempo
+em laço local levaram 8 segundos para serializar e 2 segundos para deserializar
+a tabela com 100 doubles em 10000 iterações, totalizando 10 segundos de tempo
 total de execução local.
 
 \subsection{Diferente número de clientes para pool de conexões}\label{subsec:diffpool}
@@ -376,7 +376,7 @@ do servidor foi configurada com tamanho 3.
 
 Em um primeiro perfil apenas um cliente se conectou ao servidor, sem gerar
 concorrência com outros clientes. Neste caso o atendimento foi satisfatório para
-o método \textit{foo}\ref{ifacefoo}, levando apenas 2 segundos para executar
+o método \textit{foo}\ref{ifacefoo}, levando apenas 7 segundos para executar
 10000 operações de soma de dois \textit{doubles} e de devolução da resposta em
 conjunto com um \textit{string} pequeno.
 
@@ -394,7 +394,7 @@ foo = {
 Na segunda execução, com 3 clientes, a concorrência já causou impacto no tempo
 de execução, mas mesmo assim todos os clientes ainda estavam podendo manter as
 suas conexões abertas o tempo todo, sem necessidade de reconexão. Neste perfil o
-tempo subiu para 7 segundos em cada cliente.
+tempo subiu para 16 segundos em cada cliente.
 
 O último perfil sugerido, com 10 clientes e \textit{pool} de 3 conexões, para
 forçar a reconexão sequencial de todos de tempos em tempos, não pode ser
@@ -422,14 +422,6 @@ $ ./rpc_server.lua
 Usage: ./rpc_server.lua <interface_file> [server_port1] [server_port2] [pool_size]
 \end{lstlisting}
 
-
-\subsection{Conexão persistente contra conexão sem reuso}\label{subsec:persist}
-\subsection{Serializando e deserializando uma tabela
-grande}\label{subsec:serdeser}
-\subsection{Diferente número de clientes para pool de
-conexões}\label{subsec:diffpool}
-
-
 \renewcommand{\arraystretch}{2}
 \begin{table}
 \begin{center}
@@ -437,17 +429,17 @@ conexões}\label{subsec:diffpool}
 \hline
 \multicolumn{5}{c}{Testes de cliente e servidor} \\ \hline
 ~ & Conexão & Enviados & Recebidos & Tempo \\ \hline
-String pequena (1B) & Persistente & 1120KB & 1060KB & 2s \\
-String grande (10KB) & Persistente & 104MB & 1060KB & 21s \\
-String pequena (1B) & Close & 1120KB & 1060KB & 4s \\
-String grande (10KB) & Close & 104MB & 1060KB & 21s \\
-Serialização de tabela & Persistente & 21MB & 1060KB & 8s \\
-Serialização/deserialização de tabela & Persistente & 21MB & 1060KB & 9s \\
-Serialização de tabela & Close & 21MB & 1060KB & - \\
-Serialização/deserialização de tabela & Close & 21MB & 1060KB & - \\
-Serialização de tabela & Local & - & - & 4s \\
+String pequena (1B) & Persistente & 1120KB & 1060KB & 6s \\
+String grande (10KB) & Persistente & 104MB & 1060KB & 34s \\
+String pequena (1B) & Close & 1120KB & 1060KB & 8s \\
+String grande (10KB) & Close & 104MB & 1060KB & 34s \\
+Serialização de tabela & Persistente & 21MB & 1060KB & 16s \\
+Serialização/deserialização de tabela & Persistente & 21MB & 1060KB & 19s \\
+Serialização de tabela & Close & 21MB & 1060KB & 20s \\
+Serialização/deserialização de tabela & Close & 21MB & 1060KB & 21s \\
+Serialização de tabela & Local & - & - & 8s \\
 Deserialização de tabela & Local & - & - & 2s \\
-Serialização/deserialização de tabela & Local & - & - & 6s \\
+Serialização/deserialização de tabela & Local & - & - & 10s \\
 \hline
 \end{tabular}}
 \caption{Tabela com custos para execução de 10000 chamadas em \textit{loop}}
@@ -497,7 +489,7 @@ quando somado a cada iteração do laço principal, ele tem um efeito muito gran
 na performance geral do servidor. Como comparação de desempenho, vale notar que
 usando valores baixos de \textit{timeout} o servidor conseguia atender até 4
 requisições por segundo. Na versão final, sem \textit{timeout} configurado (ou
-seja, sem bloqueio) a capacidade de atendimento do servidor passou para 5000
+seja, sem bloqueio) a capacidade de atendimento do servidor passou para 1600
 requisições por segundo. A principal mudança foi fazer um \textit{select} nos
 \textit{sockets} dos servidores antes do chamar \textit{accept}, assim a chamada
 de \textit{accept} só será feita se já houver algum cliente interessado em abrir
