@@ -73,8 +73,8 @@ Desenvolvemos uma biblioteca para auxílio a chamada remota de procedimento,
 \gls{rpc}, com o objetivo de enfrentar e resolver alguns dos problemas de
 comunicação de rede em sistemas distribuídos. A programação de servidor e
 cliente \gls{rpc} também serviu de exercício na definição, entendimento e
-implementação de um protocolo de comunicação. A linguagem Lua foi escolhida
-para a implementação do trabalho.
+implementação de um protocolo de comunicação. A linguagem Lua foi escolhida para
+a implementação do trabalho.
 
 A biblioteca consiste no arquivo \textit{luarpc.lua}, que depende da definição
 de um arquivo de interface, normalmente chamado de \textit{interface.lua}. A
@@ -89,10 +89,10 @@ trabalho\cite{trab1}.
 
 A definição de \gls{api} utilizada foi aquela do enunciado do trabalho, com os
 métodos \textit{luarpc.createServant()}, \textit{luarpc.waitIncoming()} e
-\textit{luarpc.createProxy()} com exatamente o mesmo número e tipo de
-parâmetros sugeridos pelo texto original. O protocolo sofreu pequenas
-alterações, principalmente no que diz respeito a forma de codificação e
-decodificação do conteúdo das mensagens enviadas.
+\textit{luarpc.createProxy()} com exatamente o mesmo número e tipo de parâmetros
+sugeridos pelo texto original. O protocolo sofreu pequenas alterações,
+principalmente no que diz respeito a forma de codificação e decodificação do
+conteúdo das mensagens enviadas.
 
 Durante a evolução da definição do protocolo, uma lista de discussão por
 \textit{e-mail} for arranjada de forma que as propostas fossem comentadas pelos
@@ -117,12 +117,12 @@ escrito seguindo a \gls{api} especificada.
 
 Na prática, a proposta de especificação e implementação consistente de uma
 biblioteca \gls{rpc} espera que os usuários/programadores possam intercambiar
-seus diferentes servidores e clientes, desde que todos sigam uma mesma
-definição de interface. Uma vez de posse da interface, um cliente qualquer
-pode, utilizando qualquer implementação que siga corretamente a definição da
-biblioteca \textit{luarpc}, fazer requisições a um servidor qualquer, para
-tanto basta que ambos cliente e servidor respeitem e implementem o correto
-tratamento do arquivo de interface.
+seus diferentes servidores e clientes, desde que todos sigam uma mesma definição
+de interface. Uma vez de posse da interface, um cliente qualquer pode,
+utilizando qualquer implementação que siga corretamente a definição da
+biblioteca \textit{luarpc}, fazer requisições a um servidor qualquer, para tanto
+basta que ambos cliente e servidor respeitem e implementem o correto tratamento
+do arquivo de interface.
 
 Um \textit{servant} é um servidor instanciado pela biblioteca de \gls{rpc}, o
 qual atende a requisições em rede e repassa as chamadas para a implementação
@@ -156,16 +156,24 @@ neste trabalho foi a seguinte:
 
 \begin{itemize}
 \item
-Nomes de métodos chamados pelo cliente são enviados sem delimitadores;
+
+    Nomes de métodos chamados pelo cliente são enviados sem delimitadores;
+
 \item
-Parâmetros do tipo \textit{char} ou \textit{string} são enviados com delimitadores
-\textit{""} envolvendo o texto transmitido;
+
+    Parâmetros do tipo \textit{char} ou \textit{string} são enviados com
+    delimitadores \textit{""} envolvendo o texto transmitido;
+
 \item
-Parâmetros do tipo \textit{double} são enviados sem transformação.
+
+    Parâmetros do tipo \textit{double} são enviados sem transformação.
+
 \item
-Parâmetros do tipo \textit{void} são transformados em \textit{nil} e são enviados
-com delimitadores \textit{""} envolvendo o texto transmitido. Resulta no envio
-de \textit{"nil"};
+
+    Parâmetros do tipo \textit{void} são transformados em \textit{nil} e são
+    enviados com delimitadores \textit{""} envolvendo o texto transmitido.
+    Resulta no envio de \textit{"nil"};
+
 \end{itemize}
 
 Ao transmitir conteúdo é necessário que ele seja serializado, codificando
@@ -173,13 +181,24 @@ conforme o seguinte acordo, no transmissor:
 
 \begin{itemize}
 \item
-Usar sequência de escape para \textit{\textbackslash{}}, transformando em \textit{\textbackslash{}\textbackslash{}};
+
+    Usar sequência de escape para \textit{\textbackslash{}}, transformando em
+    \textit{\textbackslash{}\textbackslash{}};
+
 \item
-Usar sequência de escape para \textit{\textbackslash{}n}, transformando em \textit{\textbackslash{}\textbackslash{}n};
+
+    Usar sequência de escape para \textit{\textbackslash{}n}, transformando em
+    \textit{\textbackslash{}\textbackslash{}n};
+
 \item
-Usar sequência de escape para \textit{"}, transformando em \textit{\textbackslash{}"};
+
+    Usar sequência de escape para \textit{"}, transformando em
+    \textit{\textbackslash{}"};
+
 \item
-O processo inverso, de decodificação, deve ser feito no receptor.
+
+    O processo inverso, de decodificação, deve ser feito no receptor.
+
 \end{itemize}
 
 Os tipos válidos \textit{char}, \textit{string}, \textit{double} e
@@ -222,35 +241,35 @@ inversa de passos, de forma a obter valor e tipo originais transmitidos na
 mensagem. Uma saída adotada por alguns desenvolvedores para fazer o escape
 inverso de \textit{string}, por exemplo, foi o uso de uma chamada
 \textit{loadstring("return " .. content)} no conteúdo recebido, o que faz com
-que alguns escapes sejam decodificados transparentemente, evitando a
-necessidade de tratar manualmente, por exemplo, a remoção de delimitadores
-\textit{""} no início e fim da linha recebida. Da mesma forma as contra-barras
-de sequência de escape também são removidas automaticamente. De forma
-contrária, como outras implementações sugeriram, utilizar esse tipo de
-artifício pode facilitar a vida do programador mas ao mesmo tempo introduz uma
-falha de segurança que permite que uma mensagem trocada entre cliente e
-servidor, quando decodificada, tenha seu \textit{payload} executado como código
-Lua, abrindo uma brecha para execução remota de código não desejado (alheio ao
-definido na interface). Para evitar este problema, foi utilizada a alternativa
-de tratamento manual do conteúdo, fazendo uso de técnica de \textit{search and
-replace} dos caracteres codificados \textit{\textbackslash{}"},
-\textit{\textbackslash{}\textbackslash{}n} e delimitadores \textit{""}. As
-funções \textit{string.gsub()} e \textit{string.sub(2,-2)} foram utilizadas
-para decodificar \textit{\textbackslash{}"} em \textit{"},
+que alguns escapes sejam decodificados transparentemente, evitando a necessidade
+de tratar manualmente, por exemplo, a remoção de delimitadores \textit{""} no
+início e fim da linha recebida. Da mesma forma as contra-barras de sequência de
+escape também são removidas automaticamente. De forma contrária, como outras
+implementações sugeriram, utilizar esse tipo de artifício pode facilitar a vida
+do programador mas ao mesmo tempo introduz uma falha de segurança que permite
+que uma mensagem trocada entre cliente e servidor, quando decodificada, tenha
+seu \textit{payload} executado como código Lua, abrindo uma brecha para execução
+remota de código não desejado (alheio ao definido na interface). Para evitar
+este problema, foi utilizada a alternativa de tratamento manual do conteúdo,
+fazendo uso de técnica de \textit{search and replace} dos caracteres codificados
+\textit{\textbackslash{}"}, \textit{\textbackslash{}\textbackslash{}n} e
+delimitadores \textit{""}. As funções \textit{string.gsub()} e
+\textit{string.sub(2,-2)} foram utilizadas para decodificar
+\textit{\textbackslash{}"} em \textit{"},
 \textit{\textbackslash{}\textbackslash{}n} em \textit{\textbackslash{}n} e
 remover os delimitadores \textit{""}.
 
 Ao perceber um erro no lado do cliente ou do servidor, o protocolo deve enviar
 uma mensagem iniciada por "\_\_\_ERRORPC:" contendo, possivelmente, a causa do
-erro. Em alguns casos especiais de erro no modo de uso, a biblioteca deve
-tentar evitar o envio da mensagem de erro e deve procurar corrigir o número e
-tipo de parâmetros chamados no cliente ou respondidos pelo servidor. Para
-tanto, a biblioteca utiliza valores default como alternativa à falta de
-parâmetros nas chamadas do cliente e nas respostas do servidor. O objetivo é
-prover uma construção o mais limpa possível da sequência de mensagens a
-trafegar no canal de comunicação de rede, tentando sempre respeitar o protocolo
-definido quanto a tipos, quantidade, codificação e sequência de parâmetros
-esperados no transporte entre cliente e servidor, ida e volta.
+erro. Em alguns casos especiais de erro no modo de uso, a biblioteca deve tentar
+evitar o envio da mensagem de erro e deve procurar corrigir o número e tipo de
+parâmetros chamados no cliente ou respondidos pelo servidor. Para tanto, a
+biblioteca utiliza valores default como alternativa à falta de parâmetros nas
+chamadas do cliente e nas respostas do servidor. O objetivo é prover uma
+construção o mais limpa possível da sequência de mensagens a trafegar no canal
+de comunicação de rede, tentando sempre respeitar o protocolo definido quanto a
+tipos, quantidade, codificação e sequência de parâmetros esperados no transporte
+entre cliente e servidor, ida e volta.
 
 \section{Testes de performance realizados}\label{sec:perf}
 
@@ -266,8 +285,8 @@ método. Os métodos chamados no laço de teste também foram especialmente
 implementados e escolhidos para terem diferentes comportamentos quanto ao custo
 de tráfego de rede (mensagens pequenas, mensagens grandes) e custo de
 processamento (tempo de CPU). Também foram realizadas medições isoladas para
-determinar o custo de tempo imposto pela biblioteca \textit{luarpc} e o custo
-de tempo imposto pela implementação presente no cliente e no servidor.
+determinar o custo de tempo imposto pela biblioteca \textit{luarpc} e o custo de
+tempo imposto pela implementação presente no cliente e no servidor.
 
 \subsection{Tamanho de string muito pequeno e muito grande}\label{subsec:stringsize}
 
@@ -281,10 +300,10 @@ cliente com um tempo total de duração de 2 segundos para 10000 requisições. 
 \textit{string} enviado era mínimo no primeiro teste, apenas um \textit{byte}.
 
 No segundo teste, usando o mesmo método mas agora com um \textit{string} muito
-grande, como sugerido no roteiro de testes do enuncido do trabalho, obtivemos
-um total de 104MB enviados e 1060KB recebidos pelo cliente com um tempo total
-de duração de 21 segundos para 10000 requisições. O \textit{string} enviado
-neste teste era grande, continha 10KB.
+grande, como sugerido no roteiro de testes do enuncido do trabalho, obtivemos um
+total de 104MB enviados e 1060KB recebidos pelo cliente com um tempo total de
+duração de 21 segundos para 10000 requisições. O \textit{string} enviado neste
+teste era grande, continha 10KB.
 
 \begin{lstlisting}[label={ifacemin},language=Ruby,caption=Interface min]
 min = {
@@ -307,28 +326,28 @@ lado para o outro).
 O perfil mencionado no teste de \textit{string} pequeno e grande, na seção
 \ref{subsec:stringsize}, foi realizado usando conexão persistente e tinha
 duração de 2 segundos para \textit{string} pequeno e 21 segundos para
-\textit{string} grande. O mesmo perfil de teste aplicado ao servidor que fecha
-a conexão do cliente assim que ele termina de ser atendido fez com que o tempo
+\textit{string} grande. O mesmo perfil de teste aplicado ao servidor que fecha a
+conexão do cliente assim que ele termina de ser atendido fez com que o tempo
 total de atendimento de 2 segundos passasse para 4 segundos com o
 \textit{string} pequeno. Para o \textit{string} grande não houve modificação no
-tempo, o que pode ser explicado pela menor importância do custo de conexão
-perto do custo de tráfego de rede para o perfil de \textit{string} grande.
-Para o perfil de \textit{string} pequeno é possível perceber que o tempo de
-conexão representa uma parte significativa do tempo total da execução do teste.
+tempo, o que pode ser explicado pela menor importância do custo de conexão perto
+do custo de tráfego de rede para o perfil de \textit{string} grande.  Para o
+perfil de \textit{string} pequeno é possível perceber que o tempo de conexão
+representa uma parte significativa do tempo total da execução do teste.
 
 \subsection{Serializando e deserializando uma tabela grande}\label{subsec:serdeser}
 
 Outro perfil executado foi o sugerido de serializar uma tabela com 100
 \textit{doubles}. A serialização transforma uma tabela em um \textit{string} e
 envia este \textit{string} para o servidor em uma chamada de tipo nativo
-simples, chamada aqui de \textit{tbl}\ref{ifacetbl}, e que recebe um \textit{string} e
-devolve um \textit{double}. Para este teste foram usados dois servidores, um
-que apenas responde "0" e que não faz deserialização da tabela, e outro que
-responde "1" logo após fazer a deserialização da tabela.
+simples, chamada aqui de \textit{tbl}\ref{ifacetbl}, e que recebe um
+\textit{string} e devolve um \textit{double}. Para este teste foram usados dois
+servidores, um que apenas responde "0" e que não faz deserialização da tabela, e
+outro que responde "1" logo após fazer a deserialização da tabela.
 
 Foi possível observar que neste perfil não houve muita diferença entre o tempo
-do servidor que deserializa a tabela e o servidor que não trata da
-decodificação da tabela.
+do servidor que deserializa a tabela e o servidor que não trata da decodificação
+da tabela.
 
 Como resultado obtivemos um total de 21MB enviados e 1060KB recebidos pelo
 cliente com um tempo total de duração de 8 segundos sem deserialização e 9
@@ -356,10 +375,10 @@ clientes com conexão persistente simultânea. O \textit{pool} (a fila circular)
 do servidor foi configurada com tamanho 3.
 
 Em um primeiro perfil apenas um cliente se conectou ao servidor, sem gerar
-concorrência com outros clientes. Neste caso o atendimento foi satisfatório
-para o método \textit{foo}\ref{ifacefoo}, levando apenas 2 segundos para
-executar 10000 operações de soma de dois \textit{doubles} e de devolução da
-resposta em conjunto com um \textit{string} pequeno.
+concorrência com outros clientes. Neste caso o atendimento foi satisfatório para
+o método \textit{foo}\ref{ifacefoo}, levando apenas 2 segundos para executar
+10000 operações de soma de dois \textit{doubles} e de devolução da resposta em
+conjunto com um \textit{string} pequeno.
 
 \begin{lstlisting}[label={ifacefoo},language=Ruby,caption=Interface foo]
 foo = {
@@ -374,22 +393,22 @@ foo = {
 
 Na segunda execução, com 3 clientes, a concorrência já causou impacto no tempo
 de execução, mas mesmo assim todos os clientes ainda estavam podendo manter as
-suas conexões abertas o tempo todo, sem necessidade de reconexão. Neste perfil
-o tempo subiu para 7 segundos em cada cliente.
+suas conexões abertas o tempo todo, sem necessidade de reconexão. Neste perfil o
+tempo subiu para 7 segundos em cada cliente.
 
 O último perfil sugerido, com 10 clientes e \textit{pool} de 3 conexões, para
 forçar a reconexão sequencial de todos de tempos em tempos, não pode ser
-executado até o final. A causa é um provável erro na implementação da
-biblioteca \textit{luarpc}. O consumo de memória, possivelmente devido ao
-grande número de reconexões, impediu que o perfil completasse a execução antes
-de travar o \textit{hardware} dos testes. Mais detalhes sobre o problema são
-informados na seção \ref{subsec:bottle}. A suspeita é que, de alguma forma, o
-\textit{garbage collector} ficou impedido de coletar os \textit{sockets}
-antigos. Possivelmente, devido a maneira de manter uma lista de
-\textit{sockets} em uma tabela (uma referência, portanto), a memória ocupada
-pelos \textit{sockets} e por suas entradas na tabela de controle não deve estar
-sendo corretamente desreferenciada, impedindo que as entradas sejam coletadas
-para liberação de memória.
+executado até o final. A causa é um provável erro na implementação da biblioteca
+\textit{luarpc}. O consumo de memória, possivelmente devido ao grande número de
+reconexões, impediu que o perfil completasse a execução antes de travar o
+\textit{hardware} dos testes. Mais detalhes sobre o problema são informados na
+seção \ref{subsec:bottle}. A suspeita é que, de alguma forma, o \textit{garbage
+collector} ficou impedido de coletar os \textit{sockets} antigos. Possivelmente,
+devido a maneira de manter uma lista de \textit{sockets} em uma tabela (uma
+referência, portanto), a memória ocupada pelos \textit{sockets} e por suas
+entradas na tabela de controle não deve estar sendo corretamente
+desreferenciada, impedindo que as entradas sejam coletadas para liberação de
+memória.
 
 O mesmo cliente foi usado em todos os testes. A implementação do cliente e do
 servidor é resistente a desconexão da outra ponta e pode tratar da reconexão
@@ -403,6 +422,39 @@ $ ./rpc_server.lua
 Usage: ./rpc_server.lua <interface_file> [server_port1] [server_port2] [pool_size]
 \end{lstlisting}
 
+
+\subsection{Conexão persistente contra conexão sem reuso}\label{subsec:persist}
+\subsection{Serializando e deserializando uma tabela
+grande}\label{subsec:serdeser}
+\subsection{Diferente número de clientes para pool de
+conexões}\label{subsec:diffpool}
+
+
+\renewcommand{\arraystretch}{2}
+\begin{table}
+\begin{center}
+{\footnotesize \begin{tabular}{p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm}}
+\hline
+\multicolumn{5}{c}{Testes de cliente e servidor} \\ \hline
+~ & Conexão & Enviados & Recebidos & Tempo \\ \hline
+String pequena (1B) & Persistente & 1120KB & 1060KB & 2s \\
+String grande (10KB) & Persistente & 104MB & 1060KB & 21s \\
+String pequena (1B) & Close & 1120KB & 1060KB & 4s \\
+String grande (10KB) & Close & 104MB & 1060KB & 21s \\
+Serialização de tabela & Persistente & 21MB & 1060KB & 8s \\
+Serialização/deserialização de tabela & Persistente & 21MB & 1060KB & 9s \\
+Serialização de tabela & Close & 21MB & 1060KB & - \\
+Serialização/deserialização de tabela & Close & 21MB & 1060KB & - \\
+Serialização de tabela & Local & - & - & 4s \\
+Deserialização de tabela & Local & - & - & 2s \\
+Serialização/deserialização de tabela & Local & - & - & 6s \\
+\hline
+\end{tabular}}
+\caption{Tabela com custos para execução de 10000 chamadas em \textit{loop}}
+\label{tab:compare}
+\end{center}
+\end{table}
+
 \subsection{Gargalos identificados}\label{subsec:bottle}
 
 Na configuração de teste que determina o uso de mais clientes do que o
@@ -414,62 +466,62 @@ implementação atual do \textit{servant}, que é a parte da biblioteca
 programação ainda não identificado que faz com que o uso de memória do servidor
 cresça rapidamente, impedindo a execução da bateria até o final.
 
-Aparentemente a memória não está sendo liberada após o fechamento e descarte
-dos \textit{sockets} antigos. Talvez a manipulação da tabela que memoriza a
-lista de clientes não esteja liberando corretamente as entradas antigas para
-que o \textit{garbage collector} possa de fato fazer a limpeza das mesmas.
-Esta tabela que memoriza as conexões dos clientes dentro do intervalo definido
-para o \textit{pool} de conexões funciona como uma lista circular limitada, a
-qual tem o seu limite definido pelo tamanho do \textit{pool} e, ao atingir o
-limite, tem as entradas excedentes (e mais antigas) descartadas. Logo antes do
-descarte de uma entrada uma chamada \textit{socket:close()} é feita na conexão.
+Aparentemente a memória não está sendo liberada após o fechamento e descarte dos
+\textit{sockets} antigos. Talvez a manipulação da tabela que memoriza a lista de
+clientes não esteja liberando corretamente as entradas antigas para que o
+\textit{garbage collector} possa de fato fazer a limpeza das mesmas.  Esta
+tabela que memoriza as conexões dos clientes dentro do intervalo definido para o
+\textit{pool} de conexões funciona como uma lista circular limitada, a qual tem
+o seu limite definido pelo tamanho do \textit{pool} e, ao atingir o limite, tem
+as entradas excedentes (e mais antigas) descartadas. Logo antes do descarte de
+uma entrada uma chamada \textit{socket:close()} é feita na conexão.
 
-O problema fica mais evidente quando o servidor é configurado para não
-persistir conexão e sempre desconectar o cliente assim que o pedido for
-atendido. Isto dá a entender que o ciclo completo e repetido nas listas
-circulares de conexões consome, de alguma forma, bastante memória, a qual não é
-reclamada em tempo pelo \textit{garbage collector}.
+O problema fica mais evidente quando o servidor é configurado para não persistir
+conexão e sempre desconectar o cliente assim que o pedido for atendido. Isto dá
+a entender que o ciclo completo e repetido nas listas circulares de conexões
+consome, de alguma forma, bastante memória, a qual não é reclamada em tempo pelo
+\textit{garbage collector}.
 
-XXXXXXXXXXXXXXXX
 Outro gargalo interessante foi identificado no laço principal de execução do
-servidor no que diz respeito a configuração de \textit{socket:settimeout()} nos
+servidor, no que diz respeito à configuração de \textit{socket:settimeout()} nos
 \textit{sockets} para as \textit{syscalls} \textit{socket:accept()},
 \textit{socket:select()} e \textit{socket:receive()}. No laço principal do
 servidor são feitas chamadas de \textit{socket:accept()} a cada iteração para
-aceitar novos clientes, bem como são feitas chamadas \textit{socket:select()}
-para determinar o conjuto de \textit{sockets} que está pronto para ser consumido
-sem travar. A primeira versão do servidor implementada na biblioteca
-\textit{luarpc} fazia as chamadas mencionadas a cada iteração do laço principal
-e tinha um \textit{timeout} configurado de 100ms. O tempo de 100ms pode parecer
-pouco, mas quando somado a cada iteração do laço principal, ele tem um efeito
-muito grande na performance geral do servidor. Como comparação de desempenho,
-vale notar que usando valores baixos de \textit{timeout} o servidor conseguia
-atender até 4 requisições por segundo. Na versão final, sem \textit{timeout}
-configurado (ou seja, sem bloqueio) a capacidade de atendimento do servidor
-passou para 5000 requisições por segundo. A principal mudança foi fazer um
-\textit{select} nos servidores antes do chamar \textit{accept}, assim a chamada
-de accept só será feita se já houver algum cliente interessado em abrir conexão
-com o servidor, caso contrário o servidor nem precisa perder tempo fazendo a
-chamada de \textit{accept}. Este \textit{select} a mais e o uso de
-\textit{timeout} zero para todas as chamadas de sistema fizeram com que o
-servidor ficasse bem mais interessante do ponto de vista da performance,
-mantendo a estabilidade. Para as etapas de envio e consumo de dados ainda existe
-um \textit{timeout} grande configurado, de 10 segundos, para permitir interação
-humana em console de depuração (\textit{telnet}).
+aceitar conexões de novos clientes, bem como são feitas chamadas
+\textit{socket:select()} para determinar o conjunto de \textit{sockets} ativos
+de clientes que está pronto para ser consumido (lido) sem travar. A primeira
+versão do servidor implementada na biblioteca \textit{luarpc} fazia as chamadas
+mencionadas a cada iteração do laço principal e tinha um \textit{timeout}
+configurado de 100ms para cada chamada. O tempo de 100ms pode parecer pouco, mas
+quando somado a cada iteração do laço principal, ele tem um efeito muito grande
+na performance geral do servidor. Como comparação de desempenho, vale notar que
+usando valores baixos de \textit{timeout} o servidor conseguia atender até 4
+requisições por segundo. Na versão final, sem \textit{timeout} configurado (ou
+seja, sem bloqueio) a capacidade de atendimento do servidor passou para 5000
+requisições por segundo. A principal mudança foi fazer um \textit{select} nos
+\textit{sockets} dos servidores antes do chamar \textit{accept}, assim a chamada
+de \textit{accept} só será feita se já houver algum cliente interessado em abrir
+nova conexão com o servidor, caso contrário o servidor nem precisa perder tempo
+fazendo a chamada de \textit{accept}. Este \textit{select} a mais e o uso de
+\textit{timeout} zero para todas as chamadas de rede do sistema fizeram com que
+o servidor ficasse bem mais interessante do ponto de vista da performance,
+mantendo a estabilidade. Para as etapas de envio e consumo de dados
+(\textit{send} e \textit{receive}) ainda existe um \textit{timeout} grande
+configurado, de 10 segundos, para permitir interação humana em console de
+depuração (\textit{telnet}).
 
 \section{Melhorias futuras}\label{sec:future}
 
-Para ficar mais idiomática a implementação em Lua, seria interessante
-substituir no código o trecho que trata de forma mais tradicional de listas
-circulares por algo mais podereso fornecido pela linguagem Lua. A proposta é
-alterar o tratamento de \textit{pool} utilizando uma
-\textit{metatable}\cite{metat} que no momento da inserção de um novo
-\textit{socket} de cliente na tabela de clientes de um servidor poderia avaliar
-se o limite de conexões foi atingido e poderia liberar as conexões mais
-antigas. A implementação atual tem exatamente o mesmo efeito, mas não usa
-totalmente o idioma da linguagem Lua para tanto. A sugestão é utilizar o
-\textit{metamethod} \textit{\_\_newindex} para tratar novos índices na tabela que
-lista os clientes de um servidor.
+Para ficar mais idiomática a implementação em Lua, seria interessante substituir
+no código o trecho que trata de forma mais tradicional as listas circulares por
+algo mais poderoso fornecido pela linguagem Lua. A proposta é alterar o
+tratamento de \textit{pool} utilizando uma \textit{metatable} \cite{metat} que
+pode, no momento da inserção de um novo \textit{socket} de cliente na tabela de
+conexões, avaliar se o limite de conexões foi atingido e poderia então liberar
+as conexões mais antigas. A implementação atual tem exatamente o mesmo efeito,
+mas não usa totalmente o idioma da linguagem Lua. A sugestão é utilizar o
+\textit{metamethod \_\_newindex} para tratar novas entradas em forma de lista
+circular na tabela que agrupa os clientes de um servidor.
 
 \begin{lstlisting}[label={connpool},language=Ruby,caption=Connection Pool]
 -- Pool size limit.
@@ -481,23 +533,12 @@ if #servant.client_list > servant.pool_size then
 end
 \end{lstlisting}
 
-Leak \cite{weakt}
-
-\renewcommand{\arraystretch}{2}
-\begin{table}
-\begin{center}
-{\footnotesize \begin{tabular}{p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm} p{2.5cm}}
-\hline
-\multicolumn{5}{c}{Comparativo distribuídos} \\ \hline
-~ & Tahoe & Ivy & Coda & Ceph \\ \hline
-Performance & baixa & média & alta & alta \\
-Suporte a redes móveis & não & não & sim & não \\
-\hline
-\end{tabular}}
-\caption{Tabela distribuídos}
-\label{tab:compare}
-\end{center}
-\end{table}
+Para tentar resolver o problema da utilização de memória no servidor poderia ser
+investigada a utilização de \textit{weak tables} \cite{weakt}. Com este recurso
+o funcionamento do \textit{garbage collector} pode ser viabilizado, fazendo com
+que a tabela mantenha referências fracas aos objetos (\textit{sockets})
+agrupados por ela, de maneira que estes objetos poderiam ser liberados com maior
+probabilidade.
 
 \section{Conclusão}\label{sec:conclusion}
 
@@ -506,9 +547,9 @@ linguagem Lua. A escolha por esta linguagem para a implementação do trabalho s
 deu por apresentar bom suporte a comunicação em rede e por ter uma curva pequena
 de aprendizado, afinal trata-se de uma linguagem enxuta. Apesar de enxuta, ela
 oferece a possibilidade de construções elegantes e poderosas com recursos como
-\textit{metatables} e \textit{metamethods}, e como se trata de uma linguagem
-dinâmica ela permite construções adaptáveis em tempo de execução, o que é ideal
-quando se precisa obter flexibilidade na implementação.
+\textit{metatables} e \textit{metamethods}. Ainda, por ser tratar de uma
+linguagem dinâmica ela permite construções adaptáveis em tempo de execução, o
+que é ideal quando se precisa obter flexibilidade na implementação.
 
 % BIB
 \bibliographystyle{abnt-puc-rio}
