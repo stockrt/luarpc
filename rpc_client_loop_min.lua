@@ -2,7 +2,6 @@
 
 -- Module.
 local luarpc = require("luarpc")
-require("tableser")
 
 -- Arguments.
 if #arg < 4 then
