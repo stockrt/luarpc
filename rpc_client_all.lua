@@ -13,9 +13,11 @@ local server_address = arg[2]
 local server_port1 = arg[3]
 local server_port2 = arg[4]
 
+
 -- Proxies.
 local proxy1 = luarpc.createProxy(server_address, server_port1, interface_file)
 local proxy2 = luarpc.createProxy(server_address, server_port2, interface_file)
+
 
 -- proxy1/obj1
 print()

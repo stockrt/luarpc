@@ -15,10 +15,8 @@ local server_port = arg[3]
 local runs = tonumber(arg[4])
 
 
-
 -- Proxy.
 local proxy = luarpc.createProxy(server_address, server_port, interface_file)
-
 
 
 -- Operação matemática simples, com um retorno numérico e um string pequeno.
@@ -41,7 +39,6 @@ file_handler:close()
 os.execute("./stats-collect.sh >> " .. file_name)
 
 
-
 -- Void nos dois sentidos. "nil" e "nil".
 local result = proxy.oid()
 print(result)
@@ -59,7 +56,6 @@ local file_handler = io.open(file_name, "a+")
 file_handler:write("\n\n" .. res .. "\n")
 file_handler:close()
 os.execute("./stats-collect.sh >> " .. file_name)
-
 
 
 -- 1 byte de ida e 1 byte de volta + encoding com wrapping de string "".
@@ -82,7 +78,6 @@ file_handler:close()
 os.execute("./stats-collect.sh >> " .. file_name)
 
 
-
 -- 10240 bytes de ida e 10240 bytes de volta.
 local result = proxy.min(string.rep("R", 10240))
 print(result)
@@ -100,7 +95,6 @@ local file_handler = io.open(file_name, "a+")
 file_handler:write("\n\n" .. res .. "\n")
 file_handler:close()
 os.execute("./stats-collect.sh >> " .. file_name)
-
 
 
 -- Requer o mínimo de tráfego de rede. É melhor do que void pois em nosso
@@ -122,7 +116,6 @@ local file_handler = io.open(file_name, "a+")
 file_handler:write("\n\n" .. res .. "\n")
 file_handler:close()
 os.execute("./stats-collect.sh >> " .. file_name)
-
 
 
 -- Table serialize. Em um rpc_server a tabela não é deserializada, em outro ela

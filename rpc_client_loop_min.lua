@@ -15,10 +15,8 @@ local server_port = arg[3]
 local runs = tonumber(arg[4])
 
 
-
 -- Proxy.
 local proxy = luarpc.createProxy(server_address, server_port, interface_file)
-
 
 
 -- 1 byte de ida e 1 byte de volta + encoding com wrapping de string "".
