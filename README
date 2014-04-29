@@ -1,5 +1,3 @@
-# Rodando no shell interativo do interpretador
-
 lua
 
 luarpc = require("luarpc")
