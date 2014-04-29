@@ -37,5 +37,11 @@ proxy2 = luarpc.createProxy(server_address, server_port2, interface_file)
 # Silent Server
 ./rpc_server.lua interface.lua 8080 8081 >/dev/null 2>&1
 
+# Silent Server (verbose = false)
+./rpc_server.lua interface.lua 8080 8081
+
 # Silent Client
 ./rpc_client_loop_boo.lua interface.lua localhost 8080 50000 | grep took
+
+# Silent Client (verbose = false)
+./rpc_client_loop_boo.lua interface.lua localhost 8080 50000
