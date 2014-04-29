@@ -27,7 +27,7 @@ function interface(iface)
   myinterface = iface
 end
 
--- Verbose
+-- Verbose.
 verbose = false
 
 function luarpc.default_value_by_type(param_type)
