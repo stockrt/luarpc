@@ -1,0 +1,24 @@
+
+
+boo took 0 seconds for server 8080 for 1 runs
+
+
+boo took 0 seconds for server 8080 for 100 runs
+
+
+boo took 0 seconds for server 8080 for 100 runs
+
+
+boo took 0 seconds for server 8080 for 1000 runs
+
+
+boo took 2 seconds for server 8080 for 10000 runs
+
+
+boo took 10 seconds for server 8080 for 50000 runs
+
+
+boo took 20 seconds for server 8080 for 50000 runs
+
+
+boo took 10 seconds for server 8080 for 50000 runs
