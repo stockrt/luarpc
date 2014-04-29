@@ -99,7 +99,7 @@ function luarpc.serialize(param_type, value)
   if param_type == "string" then
     value = "\"" .. luarpc.encode(param_type, value) .. "\""
   elseif param_type == "void" then
-    value = "\"" .. luarpc.encode(param_type, value) .. "\""
+    value = luarpc.encode(param_type, value)
   end
 
   return value
