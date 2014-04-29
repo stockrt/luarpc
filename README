@@ -1,5 +1,9 @@
 # Using in interactive shell
 
+# Server
+./rpc_server.lua interface.lua 8080 8081
+
+# Client
 lua
 
 luarpc = require("luarpc")
@@ -26,10 +30,9 @@ proxy2 = luarpc.createProxy(server_address, server_port2, interface_file)
 
 
 # For performance tests you should use the less verbose mode of server and client.
-
 # Run the suggested commands bellow or change verbose to false in luarpc.lua.
-
-# Changing the flag to false has almost the same effect in throughput then redirecting console output. Use this option if your platform doesn't support console redirection.
+# Changing the flag to false has almost the same effect in throughput then redirecting console output.
+# Use this option if your platform doesn't support console redirection.
 
 # Silent Server
 ./rpc_server.lua interface.lua 8080 8081 >/dev/null 2>&1
