@@ -22,3 +22,15 @@ boo took 20 seconds for server 8080 for 50000 runs
 
 
 boo took 10 seconds for server 8080 for 50000 runs
+
+
+boo took 13 seconds for server 8080 for 50000 runs
+
+
+boo took 14 seconds for server 8080 for 50000 runs
+
+
+boo took 8 seconds for server 8080 for 50000 runs
+
+
+boo took 9 seconds for server 8080 for 50000 runs

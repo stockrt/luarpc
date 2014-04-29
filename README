@@ -30,18 +30,18 @@ proxy2 = luarpc.createProxy(server_address, server_port2, interface_file)
 
 
 # For performance tests you should use the less verbose mode of server and client.
-# Run the suggested commands bellow or change verbose to false in luarpc.lua.
-# Changing the flag to false has almost the same effect in throughput then redirecting console output.
-# Use this option if your platform doesn't support console redirection.
-
-# Silent Server
-./rpc_server.lua interface.lua 8080 8081 >/dev/null 2>&1
+# Change verbose to false in luarpc.lua or run the suggested commands bellow.
+# Redirecting console output to /dev/null has almost the same effect in throughput as changing the flag to false.
+# Prefer changing the flag to false.
 
 # Silent Server (verbose = false)
 ./rpc_server.lua interface.lua 8080 8081
 
-# Silent Client
-./rpc_client_loop_boo.lua interface.lua localhost 8080 50000 | grep took
-
 # Silent Client (verbose = false)
 ./rpc_client_loop_boo.lua interface.lua localhost 8080 50000
+
+# Silent Server (console redirection to /dev/null)
+./rpc_server.lua interface.lua 8080 8081 >/dev/null 2>&1
+
+# Silent Client (console output filtering)
+./rpc_client_loop_boo.lua interface.lua localhost 8080 50000 | grep took
