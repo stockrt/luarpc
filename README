@@ -1,11 +1,38 @@
+# Using in interactive shell
+
 lua
 
 luarpc = require("luarpc")
 
 server_address = "localhost"
-server_port1 = 5001
-server_port2 = 5002
+server_port1 = 8080
+server_port2 = 8081
 interface_file = "interface.lua"
 
 proxy1 = luarpc.createProxy(server_address, server_port1, interface_file)
 proxy2 = luarpc.createProxy(server_address, server_port2, interface_file)
+
+= proxy1.foo(1, 1)
+= proxy1.boo(1)
+
+
+# Using in the command line
+
+# Server
+./rpc_server.lua interface.lua 8080 8081
+
+# Client
+./rpc_client_ok.lua interface.lua localhost 8080 8081
+
+
+# For performance tests you should use the less verbose mode of server and client.
+
+# Run the suggested commands bellow or change verbose to false in luarpc.lua.
+
+# Changing the flag to false has almost the same effect in throughput then redirecting console output. Use this option if your platform doesn't support console redirection.
+
+# Silent Server
+./rpc_server.lua interface.lua 8080 8081 >/dev/null 2>&1
+
+# Silent Client
+./rpc_client_loop_boo.lua interface.lua localhost 8080 50000 | grep took
