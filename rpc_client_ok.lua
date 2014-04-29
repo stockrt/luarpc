@@ -28,17 +28,8 @@ print()
 local result, msg = proxy1.foo(5, 3)
 print("* Result: " .. result .. " / Msg: " .. msg)
 
-local result = proxy1.oid()
-print("* Echo: " .. tostring(result))
-
 local result = proxy1.boo(20)
 print("* Echo: " .. result)
-
-local result = proxy1.hello("Rogerio proxy1")
-print("* Greet: " .. result)
-
-local result = proxy1.capabilities()
-print("* Cap: " .. result)
 
 -- proxy2/obj2
 print()
@@ -51,14 +42,5 @@ print()
 local result, msg = proxy2.foo(5, 3)
 print("* Result: " .. result .. " / Msg: " .. msg)
 
-local result = proxy2.oid()
-print("* Echo: " .. tostring(result))
-
 local result = proxy2.boo(20)
 print("* Fixed: " .. result)
-
-local result = proxy2.hello("Rogerio proxy2")
-print("* Greet: " .. result)
-
-local result = proxy2.capabilities()
-print("* Cap: " .. result)
