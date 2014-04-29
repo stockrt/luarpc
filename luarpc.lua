@@ -27,6 +27,9 @@ function interface(iface)
   myinterface = iface
 end
 
+-- Verbose
+verbose = false
+
 function luarpc.default_value_by_type(param_type)
   if param_type == "char" then
     return "R"
@@ -121,17 +124,17 @@ function luarpc.send_msg(params)
   local msg = params.msg
 
   -- Info.
-  print(params.err_msg)
+  if verbose then print(params.err_msg) end
 
   -- Validate type before send.
   if not luarpc.validate_type(params.param_type, msg) then
     ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(msg) .. "\" expecting type \"" .. tostring(params.param_type) .. "\""
-    print(ret_msg)
+    if verbose then print(ret_msg) end
 
     local _, err = params.client:send(luarpc.serialize("string", ret_msg) .. "\n")
     if err then
       ret_msg = "___ERRONET: Sending client ___ERRORPC notification: \"" .. tostring(err_msg) .. "\" - " .. tostring(err)
-      print(ret_msg)
+      if verbose then print(ret_msg) end
 
       -- Discard disconnected peer.
       if err == "closed" then
@@ -152,7 +155,7 @@ function luarpc.send_msg(params)
     local _, err = params.client:send(msg .. "\n")
     if err then
       ret_msg = "___ERRONET: " .. tostring(params.err_msg)
-      print(ret_msg)
+      if verbose then print(ret_msg) end
 
       -- Discard disconnected peer.
       if err == "closed" then
@@ -170,13 +173,13 @@ function luarpc.recv_msg(params)
   local status = true
 
   -- Info.
-  print(params.err_msg)
+  if verbose then print(params.err_msg) end
 
   -- Receive.
   local ret_msg, err = params.client:receive("*l")
   if err then
     ret_msg = "___ERRONET: " .. tostring(params.err_msg) .. " - " .. tostring(err)
-    print(ret_msg)
+    if verbose then print(ret_msg) end
 
     -- Discard disconnected peer.
     if err == "closed" then
@@ -195,7 +198,7 @@ function luarpc.recv_msg(params)
     -- Validate type after received.
     if not luarpc.validate_type(params.param_type, ret_msg) then
       ret_msg = "___ERRORPC: Wrong type for msg \"" .. tostring(ret_msg) .. "\" expecting type \"" .. tostring(params.param_type) .. "\""
-      print(ret_msg)
+      if verbose then print(ret_msg) end
 
       luarpc.send_msg{msg=ret_msg, client=params.client, client_list=params.client_list, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
 
@@ -208,30 +211,34 @@ end
 
 function luarpc.discard_client(client, client_list)
   -- Peer may have closed the connection.
-  print("Discarding connection closed by peer.")
+  if verbose then print("Discarding connection closed by peer.") end
   client:close()
 
   if client_list then
     -- Current client list.
-    if #client_list == 0 then
-      print("- Current client count: 0")
-    else
-      for k, _ in pairs(client_list) do print("- Current client count: " .. k) end
+    if verbose then
+      if #client_list == 0 then
+        print("- Current client count: 0")
+      else
+        for k, _ in pairs(client_list) do print("- Current client count: " .. k) end
+      end
     end
 
     -- Find and remove closed client.
     for k, v in pairs(client_list) do
       if client == v then
-        print("Found and removed client: " .. k)
+        if verbose then print("Found and removed client: " .. k) end
         table.remove(client_list, k)
       end
     end
 
     -- New client list.
-    if #client_list == 0 then
-      print("+ New client count: 0")
-    else
-      for k, _ in pairs(client_list) do print("+ New client count: " .. k) end
+    if verbose then
+      if #client_list == 0 then
+        print("+ New client count: 0")
+      else
+        for k, _ in pairs(client_list) do print("+ New client count: " .. k) end
+      end
     end
   end
 end
@@ -326,23 +333,23 @@ function luarpc.waitIncoming()
             -- Connection info.
             local l_ip, l_port = client:getsockname()
             local r_ip, r_port = client:getpeername()
-            print("Client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " connected on " .. tostring(l_ip) .. ":" .. tostring(l_port))
+            if verbose then print("Client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " connected on " .. tostring(l_ip) .. ":" .. tostring(l_port)) end
 
             -- Only manage connection pool if pool_size if configured for more than
             -- 0 clients.
             if servant.pool_size > 0 then
               -- Pool size limit.
-              print("- Current number of connected clients: " .. #servant.client_list .. "/" .. servant.pool_size)
+              if verbose then print("- Current number of connected clients: " .. #servant.client_list .. "/" .. servant.pool_size) end
               if #servant.client_list > servant.pool_size then
-                print("Pool size of " .. servant.pool_size .. " connections exceeded, discarding old clients.")
+                if verbose then print("Pool size of " .. servant.pool_size .. " connections exceeded, discarding old clients.") end
                 while #servant.client_list > servant.pool_size do
                   old_client = table.remove(servant.client_list, 1)
                   local l_ip, l_port = old_client:getsockname()
                   local r_ip, r_port = old_client:getpeername()
-                  print("Closing old client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
+                  if verbose then print("Closing old client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port)) end
                   old_client:close()
                 end
-                print("+ New number of connected clients: " .. #servant.client_list .. "/" .. servant.pool_size)
+                if verbose then print("+ New number of connected clients: " .. #servant.client_list .. "/" .. servant.pool_size) end
               end
             end
           end
@@ -358,7 +365,7 @@ function luarpc.waitIncoming()
           -- Connection info.
           local l_ip, l_port = client:getsockname()
           local r_ip, r_port = client:getpeername()
-          print("Receiving request data from client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
+          if verbose then print("Receiving request data from client " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port)) end
 
           -- Method receive.
           local status, rpc_method = luarpc.recv_msg{client=client, client_list=servant.client_list, param_type="string", deserialize=false, err_msg="Receiving request method"}
@@ -366,7 +373,7 @@ function luarpc.waitIncoming()
             -- Interrupt recv ready clients loop.
             break
           end
-          print("< request method: " .. tostring(rpc_method))
+          if verbose then print("< request method: " .. tostring(rpc_method)) end
 
           -- Validate method name.
           if servant.iface.methods[rpc_method] then
@@ -385,7 +392,7 @@ function luarpc.waitIncoming()
                 end
 
                 -- Show request value.
-                print("< request value: " .. tostring(value))
+                if verbose then print("< request value: " .. tostring(value)) end
                 -- Method params to be used when calling local object.
                 table.insert(values, value)
               end
@@ -396,7 +403,9 @@ function luarpc.waitIncoming()
               -- Separate result and extra results for multisend.
               local packed_result = {pcall(servant.obj[rpc_method], unpack(values))}
               local exec_status = packed_result[1]
-              for _, v in pairs(packed_result) do print("- Packed result: " .. tostring(v)) end
+              if verbose then
+                for _, v in pairs(packed_result) do print("- Packed result: " .. tostring(v)) end
+              end
 
               -- Void result placeholder.
               if servant.iface.methods[rpc_method].resulttype == "void" then
@@ -404,7 +413,9 @@ function luarpc.waitIncoming()
               else
                 table.remove(packed_result, 1)
               end
-              for _, v in pairs(packed_result) do print("+ Packed result: " .. tostring(v)) end
+              if verbose then
+                for _, v in pairs(packed_result) do print("+ Packed result: " .. tostring(v)) end
+              end
 
               -- Validate response #params.
               local i = 1
@@ -415,11 +426,11 @@ function luarpc.waitIncoming()
               end
               if #packed_result ~= i then
                 local err_msg = "___ERRORPC: Wrong response number of arguments for method \"" .. tostring(rpc_method) .. "\" expecting " .. i .. " got " .. #packed_result
-                print(err_msg)
+                if verbose then print(err_msg) end
 
                 -- Try to fix things with defaults values for each missing param,
                 -- according to it's type.
-                print("Trying to fix things for method \"" .. rpc_method .. "\" returning default values for missing responses.")
+                if verbose then print("Trying to fix things for method \"" .. rpc_method .. "\" returning default values for missing responses.") end
                 local j = 1
                 for _, param in pairs(servant.iface.methods[rpc_method].args) do
                   if param.direction == "out" or param.direction == "inout" then
@@ -433,7 +444,9 @@ function luarpc.waitIncoming()
                 -- Another option is to fail and don't try to fix server's output, just give up.
                 -- break
               end
-              for _, v in pairs(packed_result) do print("= Packed result: " .. tostring(v)) end
+              if verbose then
+                for _, v in pairs(packed_result) do print("= Packed result: " .. tostring(v)) end
+              end
 
               if not exec_status then
                 luarpc.send_msg{msg="___ERRORPC: Problem calling method \"" .. tostring(rpc_method) .. "\"", client=client, client_list=servant.client_list, param_type="string", serialize=true, err_msg="Sending client ___ERRORPC notification"}
@@ -442,7 +455,7 @@ function luarpc.waitIncoming()
                 local status, msg = luarpc.send_msg{msg=packed_result[1], client=client, client_list=servant.client_list, param_type=servant.iface.methods[rpc_method].resulttype, serialize=true, err_msg="Sending response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[1]) .. "\""}
                 if status then
                   -- Show response value.
-                  print("> response result: " .. tostring(packed_result[1]))
+                  if verbose then print("> response result: " .. tostring(packed_result[1])) end
 
                   -- Extra results.
                   local i = 1
@@ -452,9 +465,9 @@ function luarpc.waitIncoming()
                       local status, msg = luarpc.send_msg{msg=packed_result[i], client=client, client_list=servant.client_list, param_type=param.type, serialize=true, err_msg="Sending extra response method \"" .. tostring(rpc_method) .. "\" with result \"" .. tostring(packed_result[i]) .. "\""}
                       if status then
                         -- Show extra response value.
-                        print("> response extra result: " .. tostring(packed_result[i]))
+                        if verbose then print("> response extra result: " .. tostring(packed_result[i])) end
                       else
-                        print(msg)
+                        if verbose then print(msg) end
                         -- Interrupt param extra result send loop.
                         break
                       end
@@ -462,7 +475,7 @@ function luarpc.waitIncoming()
                   end
                 else
                   -- Err.
-                  print(msg)
+                  if verbose then print(msg) end
                 end
               end
             end
@@ -473,9 +486,11 @@ function luarpc.waitIncoming()
           -- Close connection after serving if pool_size is configured for 0 or
           -- less clients.
           if servant.pool_size <= 0 then
-            local l_ip, l_port = client:getsockname()
-            local r_ip, r_port = client:getpeername()
-            print("No connection pool configured, closing current client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
+            if verbose then
+              local l_ip, l_port = client:getsockname()
+              local r_ip, r_port = client:getpeername()
+              print("No connection pool configured, closing current client connection " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " on " .. tostring(l_ip) .. ":" .. tostring(l_port))
+            end
             luarpc.discard_client(client, servant.client_list)
           end
         end
@@ -499,7 +514,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
     return function ()
       local rpc_method = arg[2]
       local err_msg = "___ERRORPC: Invalid request method \"" .. tostring(rpc_method) .. "\""
-      print(err_msg)
+      if verbose then print(err_msg) end
       return err_msg
     end
   end}
@@ -509,9 +524,11 @@ function luarpc.createProxy(server_address, server_port, interface_file)
   for rpc_method, method in pairs(myinterface.methods) do
     pobj[rpc_method] = function (...)
       local arg = {...}
-      print()
-      print("* Params passed to proxy object when calling \"" .. tostring(rpc_method) .. "\":")
-      for _, v in pairs(arg) do print("- " .. tostring(v)) end
+      if verbose then
+        print()
+        print("* Params passed to proxy object when calling \"" .. tostring(rpc_method) .. "\":")
+        for _, v in pairs(arg) do print("- " .. tostring(v)) end
+      end
 
       -- Validate request #params.
       local i = 0
@@ -522,11 +539,11 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       end
       if #arg ~= i then
         local err_msg = "___ERRORPC: Wrong request number of arguments for method \"" .. tostring(rpc_method) .. "\" expecting " .. i .. " got " .. #arg
-        print(err_msg)
+        if verbose then print(err_msg) end
 
         -- Try to fix things with defaults values for each missing param,
         -- according to it's type.
-        print("Trying to fix things for method \"" .. rpc_method .. "\" passing default values for missing parameters.")
+        if verbose then print("Trying to fix things for method \"" .. rpc_method .. "\" passing default values for missing parameters.") end
         local j = 0
         for _, param in pairs(myinterface.methods[rpc_method].args) do
           if param.direction == "in" or param.direction == "inout" then
@@ -552,22 +569,22 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           -- Close and remove client connection.
           client:close()
           pclient_list[server_address .. server_port] = nil
-          print("Cached connection was closed by server " .. tostring(server_address) .. ":" .. tostring(server_port))
+          if verbose then print("Cached connection was closed by server " .. tostring(server_address) .. ":" .. tostring(server_port)) end
         else
-          print("Cached connection seems ok for server " .. tostring(server_address) .. ":" .. tostring(server_port))
+          if verbose then print("Cached connection seems ok for server " .. tostring(server_address) .. ":" .. tostring(server_port)) end
         end
       else
-        print("No cached connection found for server " .. tostring(server_address) .. ":" .. tostring(server_port))
+        if verbose then print("No cached connection found for server " .. tostring(server_address) .. ":" .. tostring(server_port)) end
       end
 
       -- Try and cache connection to server.
       if not pclient_list[server_address .. server_port] then
         -- Establish client connection to server.
-        print("Trying to establish and cache connection for server " .. tostring(server_address) .. ":" .. tostring(server_port))
+        if verbose then print("Trying to establish and cache connection for server " .. tostring(server_address) .. ":" .. tostring(server_port)) end
         local client, err = socket.connect(server_address, server_port)
         if err then
           local err_msg = "___ERRONET: Could not connect to " .. tostring(server_address) .. ":" .. tostring(server_port) .. " - " .. tostring(err)
-          print(err_msg)
+          if verbose then print(err_msg) end
           return err_msg
         else
           -- Connection options.
@@ -576,7 +593,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           client:setoption("tcp-nodelay", true)
           client:settimeout(10) -- send/receive timeout
 
-          print("Caching connection for server " .. tostring(server_address) .. ":" .. tostring(server_port))
+          if verbose then print("Caching connection for server " .. tostring(server_address) .. ":" .. tostring(server_port)) end
           pclient_list[server_address .. server_port] = client
         end
       end
@@ -585,27 +602,29 @@ function luarpc.createProxy(server_address, server_port, interface_file)
       local client = pclient_list[server_address .. server_port]
       if not client then
         local err_msg = "___ERRONET: Could not retrieve cached connection to " .. tostring(server_address) .. ":" .. tostring(server_port)
-        print(err_msg)
+        if verbose then print(err_msg) end
         return err_msg
       else
-        print("Found cached connection for server " .. tostring(server_address) .. ":" .. tostring(server_port) .. ", reusing it.")
+        if verbose then print("Found cached connection for server " .. tostring(server_address) .. ":" .. tostring(server_port) .. ", reusing it.") end
       end
 
       -- Connection info.
-      local l_ip, l_port = client:getsockname()
-      local r_ip, r_port = client:getpeername()
-      print("Connected to " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " via " .. tostring(l_ip) .. ":" .. tostring(l_port))
-      print("Sending request data to server " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " via " .. tostring(l_ip) .. ":" .. tostring(l_port))
+      if verbose then
+        local l_ip, l_port = client:getsockname()
+        local r_ip, r_port = client:getpeername()
+        print("Connected to " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " via " .. tostring(l_ip) .. ":" .. tostring(l_port))
+        print("Sending request data to server " .. tostring(r_ip) .. ":" .. tostring(r_port) .. " via " .. tostring(l_ip) .. ":" .. tostring(l_port))
+      end
 
       -- Send request method.
       local status, msg = luarpc.send_msg{msg=rpc_method, client=client, param_type="string", serialize=false, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\""}
       if not status then
-        print(msg)
+        if verbose then print(msg) end
         return msg
       end
 
       -- Show request method.
-      print("> request method: " .. tostring(rpc_method))
+      if verbose then print("> request method: " .. tostring(rpc_method)) end
 
       -- Send request values.
       local i = 0
@@ -615,13 +634,13 @@ function luarpc.createProxy(server_address, server_port, interface_file)
           local value = arg[i]
           local status, msg = luarpc.send_msg{msg=value, client=client, param_type=param.type, serialize=true, err_msg="Sending request method \"" .. tostring(rpc_method) .. "\" value #" .. i .. " \"" .. tostring(value) .. "\""}
           if not status then
-            print(msg)
+            if verbose then print(msg) end
             -- Interrupt param send loop.
             return msg
           end
 
           -- Show request value.
-          print("> request value: " .. tostring(value))
+          if verbose then print("> request value: " .. tostring(value)) end
         end
       end
 
@@ -631,7 +650,7 @@ function luarpc.createProxy(server_address, server_port, interface_file)
 
       if status then
         -- Show response value.
-        print("< response value: " .. tostring(value))
+        if verbose then print("< response value: " .. tostring(value)) end
         -- Results to be returned from proxied object.
         table.insert(values, value)
 
@@ -647,14 +666,14 @@ function luarpc.createProxy(server_address, server_port, interface_file)
             end
 
             -- Show response extra value.
-            print("< response extra value: " .. tostring(value))
+            if verbose then print("< response extra value: " .. tostring(value)) end
             -- Results to be returned from proxied object.
             table.insert(values, value)
           end
         end
       else
         -- Err.
-        print(value)
+        if verbose then print(value) end
       end
 
       -- Return unpacked result.
