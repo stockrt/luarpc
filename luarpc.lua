@@ -28,7 +28,7 @@ function interface(iface)
 end
 
 -- Verbose.
-verbose = false
+verbose = true
 
 function luarpc.default_value_by_type(param_type)
   if param_type == "char" then
