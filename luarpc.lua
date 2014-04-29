@@ -500,7 +500,7 @@ function luarpc.waitIncoming()
 end
 
 function luarpc.createProxy(server_address, server_port, interface_file)
-  print("Building proxy object for server " .. server_address .. ":" .. server_port .. "...")
+  if verbose then print("Building proxy object for server " .. server_address .. ":" .. server_port .. "...") end
 
   -- Proxy object.
   local pobj = {}

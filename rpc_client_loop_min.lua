@@ -20,9 +20,6 @@ local proxy = luarpc.createProxy(server_address, server_port, interface_file)
 
 -- 1 byte de ida e 1 byte de volta + encoding com wrapping de string "".
 -- Total 3 bytes de ida e 3 bytes de volta.
-local result = proxy.min("R")
-print(result)
-
 os.execute("./stats-zero.sh")
 tini = os.time()
 for x = 1, runs do
