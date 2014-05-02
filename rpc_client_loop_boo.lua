@@ -18,8 +18,9 @@ local runs = tonumber(arg[4])
 local proxy = luarpc.createProxy(server_address, server_port, interface_file)
 
 
--- 1 byte de ida e 1 byte de volta + nil do result padrão + nome do método
--- Total 5 bytes de ida e 3 bytes de volta.
+-- 1 byte de ida + nome do método = 4 bytes
+-- 1 byte de volta + nil do result padrão = 4 bytes
+-- Total de 8 bytes por chamada.
 tini = os.time()
 for x = 1, runs do
   local result = proxy.boo(1)
