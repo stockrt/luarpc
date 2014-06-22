@@ -1,4 +1,7 @@
 --[[
+
+Author: Rogério Carvalho Schneider <stockrt@gmail.com>
+
 http://www.inf.puc-rio.br/~noemi/sd-14/trab1.html
 
 TODO:
