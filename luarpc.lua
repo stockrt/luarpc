@@ -22,6 +22,9 @@ local luarpc = {}
 local servant_list = {} -- {server, obj, iface, client_list}
 local pclient_list = {} -- {server_address .. server_port = client}
 
+-- Verbose.
+local verbose = true
+
 -- Global namespace.
 myinterface = {}
 
@@ -29,9 +32,6 @@ function interface(iface)
   -- Global namespace.
   myinterface = iface
 end
-
--- Verbose.
-verbose = true
 
 function luarpc.default_value_by_type(param_type)
   if param_type == "char" then
